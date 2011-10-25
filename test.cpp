@@ -1,6 +1,10 @@
 #include <iostream>
+#include <fstream>
+#include <cassert>
 #include "util.h"
 #include "ghash.h"
+#include "lshash.h"
+
 
 using namespace std;
 
@@ -67,12 +71,51 @@ void
 test_lshash() {
 	LShash lsh;
 	Point p;
-	for(int i = 0; i < 100; ++i) {
+	Util::print_now();
+
+	u_int datasetSize = 100000;
+
+	ofstream fout("dataset.rand");
+	assert(fout.is_open());
+
+	for(int i = 0; i < datasetSize; ++i) {
 		Ghash::randomPoint(p);
-		p.identity = Ghash
+		p.identity = i;
 		lsh.addNode(p);
+		fout << "[" << i << "]: ";
+		for(u_int i = 0; i < DIMS; ++i) {
+			fout << p.d[i] << ' ';
+		}
+		fout << endl;
 	}
-	
+
+	Util::print_now();
+
+	ofstream ftest("query.rand");
+	assert(ftest.is_open());
+
+	//Ghash::randomPoint(p);	
+
+	for(u_int i = 0; i < DIMS; ++i) {
+		ftest << p.d[i] << ' ';
+	}
+	ftest << endl;
+
+	vector<u_int> eid;
+	lsh.findNodes(p, eid);
+
+	for(u_int i = 0; i < eid.size(); ++i) {
+		ftest << eid[i] << ' ' ;
+	}
+	ftest << endl;
+	ftest << "num: " << eid.size() << " - " << " total: " << datasetSize << " | " << (eid.size() * 1.0 / datasetSize) << endl;
+	Util::print_now();
+
+	int maxlen = lsh.getMaxBuckLen();
+	cout << "maxlen: " << maxlen << endl;
+
+	ftest.close();
+	fout.close();
 }
 
 int
@@ -80,5 +123,7 @@ main() {
 
 	//	test_util();
 	//	test_ghash();
+	test_lshash();
+
 	return 0;
 }

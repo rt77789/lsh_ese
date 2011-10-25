@@ -2,7 +2,7 @@
 #ifndef LSH_ESE_UTIL_H_XIAOE
 #define LSH_ESE_UTIL_H_XIAOE
 
-#define TABLE_PRIME ((1LL<<14) - 1)
+#define TABLE_PRIME ((1LL<<13) - 1)
 #define HASH_PRIME ((1LL<<32) - 5)
 
 #define U_NUM_IN_G 2

@@ -29,6 +29,11 @@ Ghash::init(u_int _M, u_int _K) {
 
 	uPoints.clear();
 	projectValue.clear();
+	h1Points.clear();
+	h2Points.clear();
+
+	for(int i = 0; i < U_NUM_IN_G; ++i)
+		h1TimesU[i].clear(), h2TimesU[i].clear();
 
 	for(u_int i = 0; i < M; ++i) {
 		vector<Point> u;
@@ -58,7 +63,7 @@ Ghash::init(u_int _M, u_int _K) {
 void
 Ghash::randomPoint(Point &_p) {
 	for(u_int i = 0; i < DIMS; ++i) {
-		_p.d[i] = Util::randomByGaussian();
+		_p.d[i] = Util::randomByUniform(-5,5);
 	}
 }
 
@@ -91,6 +96,15 @@ Ghash::Ghash(u_int *_uIndex) {
 Ghash::~Ghash() {
 }
 
+u_int
+Ghash::getMaxLen() {
+	u_int res = 0;
+	for(u_int i = 0; i < TABLE_PRIME; ++i) {
+		res = res > counter[i] ? res : counter[i];
+	}
+	return res;
+}
+
 void
 Ghash::addNode(const Point &q) {
 	Gnode *ptr = new Gnode();
@@ -101,14 +115,29 @@ Ghash::addNode(const Point &q) {
 	ptr->identity = q.identity;
 
 	if(tables[mask.first] == NULL) {
-		ptr->next = tables[mask.first];
+		ptr->next = NULL;
+		tables[mask.first] = ptr;
+		counter[mask.first] = 1;
 	}
 	else {
-		ptr->next = tables[mask.first]->next;
+		++counter[mask.first];
+		Gnode *ans = tables[mask.first], *pre = ans;
+		while(ans != NULL && ans->h2value < ptr->h2value) {
+			pre = ans;
+			ans = ans->next;
+		}
+		//ptr->next = tables[mask.first]->next;
+		ptr->next = ans;
+		if(pre == tables[mask.first]) {
+			tables[mask.first] = ptr;
+		}
+		else {
+			pre->next = ptr;
+		}
 	}
-	tables[mask.first] = ptr;
 }
 
+//# It's not right here. Replace this function with findNodes();
 Gnode*
 Ghash::findNode(const Point &q) {
 	pair<u64, u64> mask = calh1Andh2(q);
@@ -121,6 +150,19 @@ Ghash::findNode(const Point &q) {
 		ptr = ptr->next;
 	}
 	return NULL;
+}
+
+void
+Ghash::findNodes(const Point &q, vector<u_int> &eid) {
+	pair<u64, u64> mask = calh1Andh2(q);
+	
+	Gnode *ptr = tables[mask.first];
+	while(ptr != NULL) {
+		//# It's wrong here, because there're many node whose h2value == mask.second.
+		if(ptr->h2value == mask.second)
+			eid.push_back(ptr->identity);
+		ptr = ptr->next;
+	}
 }
 
 pair<u64, u64>
