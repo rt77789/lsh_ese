@@ -44,7 +44,7 @@ LShash::estimateParaM(int k, double prob) {
 	double p = prob;
 	double d = (1-mu)/(1-p)*1.0/log(1/mu) * pow(mu, -1/(1-mu));
 	double y = log(d);
-	int m = (1 - y / log(mu) - 1 / (1-mu) + 0.5);
+	int m = (int)(1 - y / log(mu) - 1 / (1-mu) + 0.5);
 	while(pow(mu, m-1) * (1 + m*(1-mu)) > 1 - p)
 		++m;
 	return m;

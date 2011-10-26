@@ -110,7 +110,7 @@ LShashESE::readDataSet(const char *file, vector<Point> &p, u_int _size) {
 	FILE *fh = fopen(file, "rb");
 	assert(fh != NULL);
 	Point tp;
-	int num = 0;
+	u_int num = 0;
 	while(fread(&tp, sizeof(Point), 1, fh) == 1 && num < _size) {
 		++num;
 		p.push_back(tp);
