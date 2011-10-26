@@ -2,7 +2,14 @@
 #ifndef LSH_ESE_LSH_ESE_H_XIAOE
 #define LSH_ESE_LSH_ESE_H_XIAOE
 
+#include <cstdio>
 #include <vector>
+#include "lshash/util.h"
+#include "lshash/point.h"
+#include "lshash/lshash.h"
+#include "wavelet/weps.h"
+#include "wavelet/utils.h"
+
 
 using namespace std;
 
@@ -12,12 +19,22 @@ class LShashESE {
 		~LShashESE();
 
 		//# find the top-k index of most similar signal.
-		void findIndex(const vector<double> &sin, vector<int> &index);
+		void findIndex(const vector<double> &sin, vector<u_int> &_index);
+		//# Random a dataset.
+		static void randomDataSet(const char *file, u_int _size);
+		
+		//# readDataSet and check whether it's right.
+		static void readDataSet(const char *file);
 
-		//# Read a point from external index file.
-		void readPoint(u_int index, Point &p);
+		//# readDataSet into a vector<Point> object.
+		static void readDataSet(const char *file, vector<Point> &p, u_int _size);
 
 	private:
+		//# Read a point from external index file.
+		bool readPoint(u_int index, Point &p);
+		//# load index into lsh.
+		void loadPoint();
+
 		LShash lsh;
 		WaveletEps wavelet;
 		string indexFile;

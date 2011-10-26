@@ -55,6 +55,7 @@ struct WaveletSignal {
 // WaveletSignal & Similar Structrue.
 struct WSSimilar {
 	WaveletSignal ws;
+	int index;
 	double sim;
 	
 	// Sort by sim, from high value to low.
@@ -98,7 +99,7 @@ public:
 	WSSimilar find(const vector<double> &sin);
 	
 	//# Insert a new signal into the waveletEps object.
-	void addSignal(const vector<double> &sin);
+	void addSignal(const vector<double> &sin, int _index);
 	//# Clear sigs.
 	void clear();
 	

@@ -35,7 +35,7 @@ WaveletEps::WaveletEps(const char *file):fileName(file) {
 
 //# Insert a new signal into the waveletEps object.
 void
-WaveletEps::addSignal(const vector<double> &sin) {
+WaveletEps::addSignal(const vector<double> &sin, int _index) {
 	// Wavelet transforming: sin -> wsin.
 	vector<double> tmpSig(sin.begin(), sin.end());
 
@@ -64,6 +64,7 @@ WaveletEps::addSignal(const vector<double> &sin) {
 	WSSimilar tmpWSSSig;
 	tmpWSSSig.ws = ws;
 	tmpWSSSig.sim = 0;
+	tmpWSSSig.index = _index;
 	sigs.push_back(tmpWSSSig);
 }
 
