@@ -17,11 +17,19 @@ class LShash {
 		int getMaxBuckLen();
 		//# Auto self tune the parameters, K & M.
 		void tuneParameter();
+
+		//# Store ghashes into file.
+		void storeGhash(const char *_file);
+		//# Restore ghashes from file.
+		void restoreGhash(const char *_file);
 	private:
 		//# Estimate parameter M according to current k.
 		int estimateParaM(int k, double prob);
 		//# Totally #L Ghash for index the dataset.
 		vector<Ghash> g;
+		u_int K;
+		int M;
+		double prob;
 };
 
 #endif

@@ -16,10 +16,16 @@ using namespace std;
 class LShashESE {
 	public:
 		LShashESE(const char *file);
+		LShashESE(const char *file, const char *_if);
+
 		~LShashESE();
 
 		//# find the top-k index of most similar signal.
 		void findIndex(const vector<double> &sin, vector<u_int> &_index);
+		//# Store lshash.
+		void storeLShash(const char *_if);
+		//# Restore lshash.
+		void restoreLShash(const char *_if);
 		//# Random a dataset.
 		static void randomDataSet(const char *file, u_int _size);
 		

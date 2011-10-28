@@ -6,8 +6,9 @@
 using namespace std;
 
 LShash::LShash() {
-	u_int K = 16;
-	int M = estimateParaM(K, 0.9);
+	K = 10;
+	prob = 0.9;
+	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
 
 	int L = M*(M-1) / 2;
@@ -86,4 +87,49 @@ LShash::addNode(const Point &q) {
 	Ghash::preComputeFields(q);
 	for(u_int i = 0; i < g.size(); ++i)
 		g[i].addNode(q);
+}
+
+void
+LShash::storeGhash(const char *_file) {
+	FILE *fh = fopen(_file, "wb");
+	assert(fh != NULL);
+	
+	//# 
+	assert(1 == fwrite(&K, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&M, sizeof(int), 1, fh));
+	assert(1 == fwrite(&prob, sizeof(double), 1, fh));
+
+	Ghash::storeStaticFields(fh);
+
+	for(u_int i = 0; i < g.size(); ++i) {
+		g[i].storeObjectFields(fh);
+	}
+
+	fclose(fh);
+}
+
+//
+void
+LShash::restoreGhash(const char *_file) {
+	FILE *fh = fopen(_file, "rb");
+	assert(fh != NULL);
+
+	assert(1 == fread(&K, sizeof(u_int), 1, fh));
+	assert(1 == fread(&M, sizeof(int), 1, fh));
+	assert(1 == fread(&prob, sizeof(double), 1, fh));
+
+	Ghash::restoreStaticFields(fh);
+
+	g.clear();
+	int L = M*(M-1) / 2;
+	u_int *uIndex = new u_int[U_NUM_IN_G];
+
+	//# resize(c, obj), obj is NULL then throws exception.
+	g.resize(L, Ghash(uIndex));
+
+	for(u_int i = 0; i < L; ++i) {
+		g[i].restoreObjectFields(fh);
+	}
+
+	fclose(fh);
 }

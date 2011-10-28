@@ -7,6 +7,8 @@
 
 using namespace std;
 
+//#define DEBUG
+
 #define LEVEL 3
 #define K 10
 #define DIMS 1024

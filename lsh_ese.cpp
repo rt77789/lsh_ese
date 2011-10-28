@@ -9,6 +9,13 @@ LShashESE::LShashESE(const char *file):indexFile(file) {
 	loadPoint();
 }
 
+LShashESE::LShashESE(const char *file, const char *_if):indexFile(file) {
+	fhandle = fopen(file, "rb");
+	assert(fhandle != NULL);
+	restoreLShash(_if);
+}
+
+
 LShashESE::~LShashESE() {
 	if(fhandle != NULL)
 		fclose(fhandle);
@@ -41,16 +48,15 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 	Point p;
 	for(u_int i = 0; i < eid.size(); ++i) {
 		assert(true == readPoint(eid[i], p));
-
 		vector<double> tin(p.d, p.d + DIMS);
 		wavelet.addSignal(tin, p.identity);
-
 	}
 
 	WSSimilar wss = wavelet.find(sin);
 	vector<WSSimilar> &vwss = wavelet.getWSSimilar();
 
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
 		_index.push_back(vwss[i].index);
 	}
 }
@@ -116,4 +122,14 @@ LShashESE::readDataSet(const char *file, vector<Point> &p, u_int _size) {
 		p.push_back(tp);
 	}
 	fclose(fh);
+}
+
+void
+LShashESE::storeLShash(const char *_if) {
+	lsh.storeGhash(_if);
+}
+
+void
+LShashESE::restoreLShash(const char *_if) {
+	lsh.restoreGhash(_if);
 }

@@ -2,6 +2,7 @@
 #include "ghash.h"
 #include "util.h"
 #include <iostream>
+#include <cstring>
 
 //# Global u hash function points.
 vector< vector<Point> > Ghash::uPoints;
@@ -59,6 +60,171 @@ Ghash::init(u_int _M, u_int _K) {
 	}
 }
 
+//# Store all static fields into into external index file.
+void
+Ghash::storeStaticFields(FILE *fh) {
+	assert(fh != NULL);
+
+	//# uPoints info.
+	//# uPoints.size()|uPoints[0].size()|uPoints[0][0].d[0]...uPoints[0][0].d[DIMS-1]|uPoints[1].size()|...
+	u_int len = uPoints.size();
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+	for(u_int i = 0; i < uPoints.size(); ++i) {
+		len = uPoints[i].size();
+		assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+		for(u_int j = 0; j < uPoints[i].size(); ++j) {
+			assert(1 == fwrite(&uPoints[i][j], sizeof(Point), 1, fh));
+		}
+	}
+	//# h1TimesU info.
+	len = U_NUM_IN_G;
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+
+	for(int i = 0; i < U_NUM_IN_G; ++i) {
+		len = h1TimesU[i].size();
+		assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+		for(u_int j = 0; j < h1TimesU[i].size(); ++j) {
+			assert(1 == fwrite(&h1TimesU[i][j], sizeof(u64), 1, fh));
+		}
+	}
+	//# h2TimesU info.
+	len = U_NUM_IN_G;
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+
+	for(int i = 0; i < U_NUM_IN_G; ++i) {
+		len = h2TimesU[i].size();
+		assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+		for(u_int j = 0; j < h2TimesU[i].size(); ++j) {
+			assert(1 == fwrite(&h2TimesU[i][j], sizeof(u64), 1, fh));
+		}
+	}
+
+	//# projectValue info.
+	len = projectValue.size();
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+
+	for(u_int i = 0; i < projectValue.size(); ++i) {
+		len = projectValue[i].size();
+		assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+		for(u_int j = 0; j < projectValue[i].size(); ++j) {
+			assert(1 == fwrite(&projectValue[i][j], sizeof(u64), 1, fh));	
+		}
+	}
+	//# h1Points info.
+
+	len = h1Points.size();
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+	for(u_int i = 0; i < h1Points.size(); ++i) {
+		assert(1 == fwrite(&h1Points[i], sizeof(u64), 1, fh));
+	}
+	//# h2Points info.
+
+	len = h2Points.size();
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+	for(u_int i = 0; i < h2Points.size(); ++i) {
+		assert(1 == fwrite(&h2Points[i], sizeof(u64), 1, fh));
+	}
+
+	//# M, K, b, w;
+
+	assert(1 == fwrite(&M, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&K, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&b, sizeof(double), 1, fh));
+	assert(1 == fwrite(&w, sizeof(double), 1, fh));
+}
+
+//# Just the restore the static fields info.
+void 
+Ghash::restoreStaticFields(FILE *fh) {
+	assert(fh != NULL);
+
+	//# uPoints info.
+	//# uPoints.size()|uPoints[0].size()|uPoints[0][0].d[0]...uPoints[0][0].d[DIMS-1]|uPoints[1].size()|...
+	uPoints.clear();
+	u_int len = 0;
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+
+	for(u_int i = 0; i < len; ++i) {
+		u_int lenj = 0;
+		assert(1 == fread(&lenj, sizeof(u_int), 1, fh));
+		vector<Point> vps;
+		for(u_int j = 0; j < lenj; ++j) {
+			Point p;
+			assert(1 == fread(&p, sizeof(Point), 1, fh));
+			vps.push_back(p);
+		}
+		uPoints.push_back(vps);
+	}
+	//# h1TimesU info.
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+	assert(len == U_NUM_IN_G);
+
+	for(int i = 0; i < U_NUM_IN_G; ++i) {
+		u_int lenj = 0;
+		assert(1 == fread(&lenj, sizeof(u_int), 1, fh));
+		h1TimesU[i].clear();
+		for(u_int j = 0; j < lenj; ++j) {
+			u64 tu = 0;
+			assert(1 == fread(&tu, sizeof(u64), 1, fh));
+			h1TimesU[i].push_back(tu);
+		}
+	}
+	//# h2TimesU info.
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+	assert(len == U_NUM_IN_G);
+
+	for(int i = 0; i < U_NUM_IN_G; ++i) {
+		u_int lenj = 0;
+		assert(1 == fread(&lenj, sizeof(u_int), 1, fh));
+		h2TimesU[i].clear();
+		for(u_int j = 0; j < lenj; ++j) {
+			u64 tu = 0;
+			assert(1 == fread(&tu, sizeof(u64), 1, fh));
+			h2TimesU[i].push_back(tu);
+		}
+	}
+	
+
+	//# projectValue info.
+	projectValue.clear();
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+
+	for(u_int i = 0; i < len; ++i) {
+		u_int lenj = 0;
+		assert(1 == fread(&lenj, sizeof(u_int), 1, fh));
+		vector<u64> vu;
+		for(u_int j = 0; j < lenj; ++j) {
+			u64 tu = 0;
+			assert(1 == fread(&tu, sizeof(u64), 1, fh));	
+			vu.push_back(tu);
+		}
+		projectValue.push_back(vu);
+	}
+	//# h1Points info.
+	h1Points.clear();
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+	for(u_int i = 0; i < len; ++i) {
+		u64 tu = 0;
+		assert(1 == fread(&tu, sizeof(u64), 1, fh));
+		h1Points.push_back(tu);
+	}
+	//# h2Points info.
+	h2Points.clear();
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+	for(u_int i = 0; i < len; ++i) {
+		u64 tu = 0;
+		assert(1 == fread(&tu, sizeof(u64), 1, fh));
+		h2Points.push_back(tu);
+	}
+	//# M, K, b, w;
+
+	assert(1 == fread(&M, sizeof(u_int), 1, fh));
+	assert(1 == fread(&K, sizeof(u_int), 1, fh));
+	assert(1 == fread(&b, sizeof(double), 1, fh));
+	assert(1 == fread(&w, sizeof(double), 1, fh));
+
+}
+
 //# random generate a point.
 void
 Ghash::randomPoint(Point &_p) {
@@ -91,6 +257,7 @@ Ghash::preComputeFields(const Point &q) {
 Ghash::Ghash(u_int *_uIndex) {
 	for(u_int i = 0; i < U_NUM_IN_G; ++i)
 		uIndex[i] = _uIndex[i];
+	memset(counter, 0, sizeof(u_int) * TABLE_PRIME);
 }
 
 Ghash::~Ghash() {
@@ -121,14 +288,14 @@ Ghash::addNode(const Point &q) {
 	}
 	else {
 		++counter[mask.first];
-		Gnode *ans = tables[mask.first], *pre = ans;
+		Gnode *ans = tables[mask.first], *pre = NULL;
 		while(ans != NULL && ans->h2value < ptr->h2value) {
 			pre = ans;
 			ans = ans->next;
 		}
 		//ptr->next = tables[mask.first]->next;
 		ptr->next = ans;
-		if(pre == tables[mask.first]) {
+		if(pre == NULL) {
 			tables[mask.first] = ptr;
 		}
 		else {
@@ -152,6 +319,7 @@ Ghash::findNode(const Point &q) {
 	return NULL;
 }
 
+//# Discard.
 void
 Ghash::findNodes(const Point &q, vector<u_int> &eid) {
 	pair<u64, u64> mask = calh1Andh2(q);
@@ -174,4 +342,75 @@ Ghash::calh1Andh2(const Point &q) {
 		h2mask += (h2mask + h2TimesU[i][ uIndex[i] ]) % HASH_PRIME;
 	}
 	return make_pair<u64, u64>(h1mask, h2mask);
+}
+
+//# store ojbect fileds.
+void
+Ghash::storeObjectFields(FILE *fh) {
+	//# uIndex[U_NUM_IN_G] info.
+	u_int len = U_NUM_IN_G;
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+	for(int i = 0; i < U_NUM_IN_G; ++i) {
+		assert(1 == fwrite(&uIndex[i], sizeof(u_int), 1, fh));
+	}
+	//# counter & tables.
+	len = TABLE_PRIME;
+	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
+	for(int i = 0; i < TABLE_PRIME; ++i) {
+		assert(1 == fwrite(&counter[i], sizeof(u_int), 1, fh));
+		Gnode *ptr = tables[i];
+		/*
+		cout << counter[i] << endl;
+		int tnum = 0;
+		while(ptr != NULL) {
+			ptr = ptr->next;
+			++tnum;
+		}
+		cout << "tnum: " << tnum << " - counter[i]:" << counter[i] << endl;
+		assert(tnum == counter[i]);
+		ptr = tables[i];
+		*/
+		for(u_int j = 0; j < counter[i]; ++j) {
+			assert(ptr != NULL);
+			assert(1 == fwrite(ptr, sizeof(Gnode), 1, fh));
+			ptr = ptr->next;
+		}
+	}
+}
+
+//# Restore object fields.
+void
+Ghash::restoreObjectFields(FILE *fh) {
+	//# uIndex[U_NUM_IN_G] info.
+	u_int len = 0;
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+	assert(len == U_NUM_IN_G);
+
+	for(int i = 0; i < U_NUM_IN_G; ++i) {
+		assert(1 == fread(&uIndex[i], sizeof(u_int), 1, fh));
+	}
+	//# counter & tables.
+	len = 0;
+	assert(1 == fread(&len, sizeof(u_int), 1, fh));
+	assert(len == TABLE_PRIME);
+
+	for(int i = 0; i < TABLE_PRIME; ++i) {
+		assert(1 == fread(&counter[i], sizeof(u_int), 1, fh));
+		Gnode *pre = NULL;
+
+		for(u_int j = 0; j < counter[i]; ++j) {
+			Gnode *ptr = new Gnode();
+			assert(ptr != NULL);
+			assert(1 == fread(ptr, sizeof(Gnode), 1, fh));
+			ptr->next = NULL;
+
+			if(j == 0) {
+				pre = tables[i] = ptr;
+			}
+			else {
+				pre->next = ptr;
+				pre = ptr;
+			}
+		}
+	}
 }

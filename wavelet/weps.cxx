@@ -54,8 +54,9 @@ WaveletEps::addSignal(const vector<double> &sin, int _index) {
 		waveletTransform(tmpSig);
 	}
 	
+#ifdef DEBUG
 	cout << "waveletTransforming over...\n";
-	
+#endif	
 		
 	for(size_t i = 0; i < ws.wsig.size() / 2; ++i) {
 		swap(ws.wsig[i], ws.wsig[ws.wsig.size()-1-i]);
@@ -195,7 +196,9 @@ WaveletEps::find(const vector<double> &sin) {
 		tmpSig.push_back(0);
 	}
 	
+#ifdef DEBUG
 	cout << "waveletTransforming now...\n";
+#endif
 	
 	// Wavelet transforming: sin -> wsin.
 	
@@ -213,26 +216,32 @@ WaveletEps::find(const vector<double> &sin) {
 		waveletTransform(tmpSig);
 	}
 	
+#ifdef DEBUG
 	cout << "waveletTransforming over...\n";
+#endif
 	
 		
 	for(size_t i = 0; i < ws.wsig.size() / 2; ++i) {
 		swap(ws.wsig[i], ws.wsig[ws.wsig.size()-1-i]);
 	}
 	
+#ifdef DEBUG
 	cout << "loadin now...\n";
 	// loadin: Load and get the top-K most similar sigs useing LEVEL = 0, largest scale.
 	//loadin(ws);
 	cout << "loadin over...\n";
 	
 	cout << "findByLayer now...\n";
+#endif
 	// 3-layer cross-correlation.
 	for(int i = 0; i < LEVEL; ++i) {
 		// i = 0 already computed in the loadin process.
 		findByLayer(ws, i);
 	}
 	
+#ifdef DEBUG
 	cout << "findByLayer over...\n";
+#endif
 	// return most similar Signal.
 	assert(sigs.size() > 0);
 	return sigs[0];

@@ -4,6 +4,8 @@
 
 
 #include <vector>
+#include <cstdio>
+#include <cassert>
 #include "util.h"
 #include "point.h"
 #include "gnode.h"
@@ -32,6 +34,16 @@ class Ghash {
 		static void randomPoint(Point &_p);
 		//# Pre-compute fields used in next step(addNode & findNode).
 		static void preComputeFields(const Point &q);
+		//# Store static fields.
+		static void storeStaticFields(FILE *fh);
+		//# Restore static fields.
+		static void restoreStaticFields(FILE *fh);
+
+		//# store object fields.
+		void storeObjectFields(FILE *fh);
+		//# Restore object fields.
+		void restoreObjectFields(FILE *fh);
+
 	private:
 		//# cal h1 & h2 mask.
 		pair<u64, u64> calh1Andh2(const Point &q);
