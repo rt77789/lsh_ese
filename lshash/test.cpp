@@ -78,7 +78,7 @@ test_lshash() {
 	ofstream fout("dataset.rand");
 	assert(fout.is_open());
 
-	for(int i = 0; i < datasetSize; ++i) {
+	for(u_int i = 0; i < datasetSize; ++i) {
 		Ghash::randomPoint(p);
 		p.identity = i;
 		lsh.addNode(p);

@@ -265,6 +265,7 @@ typedef struct sac_head
 
 
 /* a SAC structure containing all null values */
+
 static SACHEAD sac_null = {
   -12345., -12345., -12345., -12345., -12345.,
   -12345., -12345., -12345., -12345., -12345.,
@@ -302,6 +303,7 @@ static SACHEAD sac_null = {
   { '-','1','2','3','4','5',' ',' ' }, { '-','1','2','3','4','5',' ',' ' },
   { '-','1','2','3','4','5',' ',' ' }
 };
+
 
 /* number of bytes in header that need to be swapped on PC (int+float+long)*/
 #define HD_SIZE 440

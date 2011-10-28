@@ -21,7 +21,7 @@ void List_Files_Core(vector<string> &v, const char *path, int recursive)
 	pdir = opendir(path);
 	if(pdir)
 	{
-		while(pdirent = readdir(pdir))
+		while((pdirent = readdir(pdir)))
 		{
 			//Ì¹ý".."
 			if(strcmp(pdirent->d_name, ".") == 0

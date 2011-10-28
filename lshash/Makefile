@@ -3,20 +3,20 @@ CPP=g++
 
 CFLAGS=-Wall -O -g
 
-lsh: ghash.h main.cpp util.o ghash.o lshash.o 
-	$(CPP) $(CFLAGS) util.o ghash.o lshash.o main.cpp -o lsh
+OBJ=util.o ghash.o lshash.o
 
-test: ghash.h test.cpp util.o ghash.o lshash.o
-	$(CPP) $(CFLAGS) util.o ghash.o lshash.o test.cpp -o lsh
-util.o: util.h util.cpp
-	$(CPP) $(CFLAGS) -c util.cpp -o util.o
+.PHONY : all clean
 
-ghash.o: ghash.h ghash.cpp
-	$(CPP) $(CFLAGS) -c ghash.cpp -o ghash.o
+all: lsh test
 
-lshash.o: lshash.h lshash.cpp
-	$(CPP) $(CFLAGS) -c lshash.cpp -o lshash.o
+lsh: ghash.h ${OBJ} main.cpp
+	$(CPP) $(CFLAGS) ${OBJ} main.cpp -o lsh
 
+test: ghash.h ${OBJ} test.cpp 
+	$(CPP) $(CFLAGS) ${OBJ} test.cpp -o lsh
+
+${OBJ}:%.o:%.cpp
+	${CPP} ${CFLAGS} -c $< -o $@
 
 clean:
 	rm -rf *.o lsh

@@ -11,7 +11,7 @@ LShash::LShash() {
 	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
 
-	int L = M*(M-1) / 2;
+	//int L = M*(M-1) / 2;
 
 	Util::init();
 	Ghash::init(M, K);
@@ -127,7 +127,7 @@ LShash::restoreGhash(const char *_file) {
 	//# resize(c, obj), obj is NULL then throws exception.
 	g.resize(L, Ghash(uIndex));
 
-	for(u_int i = 0; i < L; ++i) {
+	for(int i = 0; i < L; ++i) {
 		g[i].restoreObjectFields(fh);
 	}
 

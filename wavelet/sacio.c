@@ -156,7 +156,7 @@ int	write_sac(const char	*name,
 		const float	*ar
 	)
 {
-  FILE		*strm;
+  FILE		*strm = NULL;
   unsigned	sz;
   float		*data;
   int		error = 0;
@@ -458,7 +458,7 @@ float*	read_sac2(const char	*name,
   }
   if (nt2>npts) nt2=npts;
   nn = nt2-nt1;
-  if (fread((char *) fpt, sizeof(float), nn, strm) != nn) {
+  if (fread((char *) fpt, sizeof(float), nn, strm) != (unsigned int)nn) {
      fprintf(stderr, "Error in reading SAC data %s\n",name);
      return NULL;
   }

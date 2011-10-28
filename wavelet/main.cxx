@@ -88,9 +88,10 @@ find_similar_signal(void *ptr) {
 	vector<WSSimilar> &vwss = we[i].getWSSimilar();
 	// cout << "vwss.size(): " << vwss.size() << endl;
 
-	for(int j = 0; j < vwss.size() && j < K; ++j)
+	for(size_t j = 0; j < vwss.size() && j < K; ++j)
 		qsout[i].push_back(vwss[j]);
 	// cout << "qsout: "<< i << " - " << qsout[i].size() << endl;
+	return (void*)0;
 }
 
 
@@ -140,7 +141,7 @@ test() {
 		for(int i = 0; i < THREAD_NUM; ++i) {
 			// ans.insert(ans.begin(), qsout[i].begin(), qsout[i].end());	
 			// cout << "qsout[" << i << " ].size(): " << qsout[i].size() << endl;
-			for(int j = 0; j < qsout[i].size(); ++j)
+			for(size_t j = 0; j < qsout[i].size(); ++j)
 				ans.push_back(qsout[i][j]);
 		}
 		sort(ans.begin(), ans.end());
@@ -149,7 +150,7 @@ test() {
 
 		fout << "res: ";
 
-		for(int j = 0; j < ans.size() && j < K; ++j) {
+		for(size_t j = 0; j < ans.size() && j < K; ++j) {
 			fout << "[" << j << "]: " << endl;
 			vector<double> &sig = ans[j].ws.wsig[ans[j].ws.wsig.size()-1].sig;
 			for(size_t i = 0; i < sig.size(); ++i) {
