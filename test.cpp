@@ -44,7 +44,6 @@ test_restore_index(const char *dataset, const char *_if, u_int queryNum) {
 	}
 	cout << "end... | ";
 	Util::print_now();
-
 }
 
 void

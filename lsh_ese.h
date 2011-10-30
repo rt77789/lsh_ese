@@ -28,6 +28,8 @@ class LShashESE {
 		void restoreLShash(const char *_if);
 		//# Random a dataset.
 		static void randomDataSet(const char *file, u_int _size);
+		//# Transform dataset into binary format.
+		static void transformDataSet(const char *_fin, const char *_fout);
 		
 		//# readDataSet and check whether it's right.
 		static void readDataSet(const char *file);

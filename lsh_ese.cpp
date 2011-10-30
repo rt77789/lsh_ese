@@ -2,6 +2,8 @@
 #include "lshash/util.h"
 #include "lshash/point.h"
 #include "lshash/ghash.h"
+#include <sstream>
+#include <fstream>
 
 LShashESE::LShashESE(const char *file):indexFile(file) {
 	fhandle = fopen(file, "rb");
@@ -74,6 +76,35 @@ LShashESE::readPoint(u_int index, Point &p) {
 	return rv == 1;
 }
 
+
+//# Transform dataset into binary format.
+void
+LShashESE::transformDataSet(const char *_fin, const char *_fout) {
+	ifstream in(_fin);
+	assert(in.is_open());
+	FILE *fh = fopen(_fout, "wb");
+	assert(fh != NULL);
+
+	string line;
+	int i = 0;
+
+	while(getline(in, line)) {
+		istringstream iss(line);
+		double d;
+		Point p;
+		p.identity = i++;
+		u_int j = 0;
+		while(iss >> d) {
+			p.d[j++] = d;	
+		}
+		assert(j == DIMS);
+
+		assert(fwrite(&p, sizeof(Point), 1, fh) == 1);
+	}
+
+	fclose(fh);
+	in.close();
+}
 
 //# Random a dataset of size = _size, and write into the 'file'.
 void
