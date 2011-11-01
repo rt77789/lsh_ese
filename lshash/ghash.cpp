@@ -3,6 +3,7 @@
 #include "util.h"
 #include <iostream>
 #include <cstring>
+#include <cmath>
 
 //# Global u hash function points.
 vector< vector<Point> > Ghash::uPoints;
@@ -19,6 +20,7 @@ u_int Ghash::M;
 u_int Ghash::K;
 double Ghash::b;
 double Ghash::w;
+double Ghash::R;
 
 
 //# initial Ghash static fields.
@@ -27,6 +29,7 @@ Ghash::init(u_int _M, u_int _K) {
 	M = _M, K = _K;
 	w = 4;
 	b = Util::randomByUniform(0.0, w);
+	R = 7;
 
 	uPoints.clear();
 	projectValue.clear();
@@ -131,6 +134,7 @@ Ghash::storeStaticFields(FILE *fh) {
 	assert(1 == fwrite(&K, sizeof(u_int), 1, fh));
 	assert(1 == fwrite(&b, sizeof(double), 1, fh));
 	assert(1 == fwrite(&w, sizeof(double), 1, fh));
+	assert(1 == fwrite(&R, sizeof(double), 1, fh));
 }
 
 //# Just the restore the static fields info.
@@ -222,7 +226,7 @@ Ghash::restoreStaticFields(FILE *fh) {
 	assert(1 == fread(&K, sizeof(u_int), 1, fh));
 	assert(1 == fread(&b, sizeof(double), 1, fh));
 	assert(1 == fread(&w, sizeof(double), 1, fh));
-
+	assert(1 == fread(&R, sizeof(double), 1, fh));
 }
 
 //# random generate a point.
@@ -235,7 +239,19 @@ Ghash::randomPoint(Point &_p) {
 
 //#
 void
-Ghash::preComputeFields(const Point &q) {
+Ghash::preComputeFields(Point &q) {
+	//# normalize.
+	double maxd = 0;
+	const double eps = 1e-8;
+	//# Normalize the initial signal, point[] / max{ point[] }.
+	for(int i = 0; i < DIMS; ++i)
+		maxd = maxd > q.d[i] ? maxd : q.d[i];
+
+	assert(fabs(maxd) >= eps);
+
+	for(int i = 0; i < DIMS; ++i)
+		q.d[i] = q.d[i] / maxd / R;
+
 	//# Projection.
 	for(u_int i = 0; i < uPoints.size(); ++i) {
 		for(u_int j = 0; j < uPoints[i].size(); ++j) {

@@ -83,9 +83,8 @@ void*
 find_similar_signal(void *ptr) {
 	long i = (long)ptr;
 	// cout << "i - " << i << endl;
-	WSSimilar wss = we[i].find(qsin[i]);
 
-	vector<WSSimilar> &vwss = we[i].getWSSimilar();
+	vector<WSSimilar> &vwss = we[i].find(qsin[i]);
 	// cout << "vwss.size(): " << vwss.size() << endl;
 
 	for(size_t j = 0; j < vwss.size() && j < K; ++j)

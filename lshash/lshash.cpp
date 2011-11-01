@@ -6,8 +6,8 @@
 using namespace std;
 
 LShash::LShash() {
-	K = 10;
-	prob = 0.9;
+	K = 12;
+	prob = 0.99;
 	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
 
@@ -63,12 +63,14 @@ LShash::getMaxBuckLen() {
 
 void
 LShash::findNodes(const Point &q, vector<u_int> &eid) {
-	Ghash::preComputeFields(q);
+	Point p = q;
+	//# p.d = q.d[] / R
+	Ghash::preComputeFields(p);
 	set<u_int> idSet;
 
 	for(u_int i = 0; i < g.size(); ++i) {
 		vector<u_int> tid;
-		g[i].findNodes(q, tid);
+		g[i].findNodes(p, tid);
 		for(u_int j = 0; j < tid.size(); ++j) {
 			if(idSet.find(tid[j]) == idSet.end()) {
 				idSet.insert(tid[j]);
@@ -84,9 +86,11 @@ LShash::findNodes(const Point &q, vector<u_int> &eid) {
 
 void
 LShash::addNode(const Point &q) {
-	Ghash::preComputeFields(q);
+	Point p = q;
+	//# p.d = q.d[] / R
+	Ghash::preComputeFields(p);
 	for(u_int i = 0; i < g.size(); ++i)
-		g[i].addNode(q);
+		g[i].addNode(p);
 }
 
 void

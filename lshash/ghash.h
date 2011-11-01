@@ -33,7 +33,7 @@ class Ghash {
 		//# Random a point and store it in _p.
 		static void randomPoint(Point &_p);
 		//# Pre-compute fields used in next step(addNode & findNode).
-		static void preComputeFields(const Point &q);
+		static void preComputeFields(Point &q);
 		//# Store static fields.
 		static void storeStaticFields(FILE *fh);
 		//# Restore static fields.
@@ -70,5 +70,6 @@ class Ghash {
 		static u_int K;
 		static double b;
 		static double w;
+		static double R;
 };
 #endif

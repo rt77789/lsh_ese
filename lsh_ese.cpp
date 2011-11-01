@@ -54,14 +54,61 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 		wavelet.addSignal(tin, p.identity);
 	}
 
-	WSSimilar wss = wavelet.find(sin);
-	vector<WSSimilar> &vwss = wavelet.getWSSimilar();
+	vector<WSSimilar> &vwss = wavelet.find(sin);
+
+	/*
+	for(int i = 0; i < DIMS; ++i) {
+		cout << q.d[i] << ' ';
+	}
+	cout << endl;
+	*/
+
+	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+		/*
+		for(int j = 0; j < DIMS; ++j)
+			cout << vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] << ' ';
+		cout << endl;
+		*/
+		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
+		_index.push_back(vwss[i].index);
+	}
+}
+
+void
+LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
+	assert(sin.size() == DIMS);
+	Point q;
+	for(u_int i = 0; i < sin.size(); ++i)
+		q.d[i] = sin[i];
+
+	vector<u_int> eid;
+	//lsh.findNodes(q, eid);
+
+	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
+
+	wavelet.clear();
+
+	Point p;
+	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
+
+	int tnum = 0;
+	while(fread(&p, sizeof(Point), 1, fhandle) == 1) {
+		vector<double> tin(p.d, p.d + DIMS);
+		//cout << "p.identity: " << p.identity << endl;
+		wavelet.addSignal(tin, p.identity);
+		++tnum;
+	}
+
+	cout << "total signals : " << tnum << endl;
+
+	vector<WSSimilar> &vwss = wavelet.find(sin);
 
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
 		_index.push_back(vwss[i].index);
 	}
 }
+
 
 //# Read a point from external index file and insert into waveletEps obejct.
 bool
@@ -105,6 +152,30 @@ LShashESE::transformDataSet(const char *_fin, const char *_fout) {
 	fclose(fh);
 	in.close();
 }
+
+//#
+void
+LShashESE::iTransformDataSet(const char *_fin, const char *_fout) {
+	FILE *fh = fopen(_fin, "rb");
+	assert(fh != NULL);
+
+	ofstream out(_fout);
+	assert(out.is_open());
+
+	Point p;
+	while(fread(&p, sizeof(Point), 1, fh) == 1) {
+		for(int i = 0; i < DIMS; ++i) {
+			out << p.d[i];		
+			if(i + 1 != DIMS)
+				out << " ";
+		}
+		out << endl;
+	}
+
+	out.close();
+	fclose(fh);
+}
+
 
 //# Random a dataset of size = _size, and write into the 'file'.
 void

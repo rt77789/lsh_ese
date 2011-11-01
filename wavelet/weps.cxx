@@ -186,7 +186,7 @@ WaveletEps::mergeWSS(vector<WSSimilar> &tmpWSS) {
 }
 
 // Find the most similar signal.
-WSSimilar
+vector<WSSimilar>&
 WaveletEps::find(const vector<double> &sin) {
 	vector<double> tmpSig(sin);
 	
@@ -243,8 +243,9 @@ WaveletEps::find(const vector<double> &sin) {
 	cout << "findByLayer over...\n";
 #endif
 	// return most similar Signal.
-	assert(sigs.size() > 0);
-	return sigs[0];
+	// assert(sigs.size() > 0);
+//	return sigs[0];
+	return sigs;
 }
 
 // Wavelet transforming.
@@ -284,6 +285,19 @@ WaveletEps::findByLayer(const WaveletSignal &sin, int layer) {
 	for(size_t i = 0; i < upper; ++i) {
 		pair<double, int> p = cross_correlation(sigs[i].ws.wsig[layer], sin.wsig[layer]);
 		sigs[i].sim = p.first;
+		/*
+		cout << "layer: " << layer << " | index: " << sigs[i].index << " | sim: " << sigs[i].sim << endl;
+		cout << "ppos: " << sigs[i].ws.wsig[layer].ppos << " | ";
+		for(size_t j = 0; j < sigs[i].ws.wsig[layer].sig.size(); ++j) {
+			cout << sigs[i].ws.wsig[layer].sig[j] << " ";
+		}
+		cout << endl;
+		cout << "sin.ppos: " << sin.wsig[layer].ppos << " | ";
+		for(size_t j = 0; j < sin.wsig[layer].sig.size(); ++j) {
+			cout << sin.wsig[layer].sig[j] << " ";
+		}
+		cout << endl;
+		*/
 	}
 	sort(sigs.begin(), (size_t)levelLimit[layer] < sigs.size() ? (sigs.begin() + levelLimit[layer]) : sigs.end());
 	// Erase/delete/clean the useless data.
@@ -322,8 +336,8 @@ WaveletEps::cross_correlation(const Signal &sa, const Signal &sb) const {
 	}
 
 	deta = sqrt(deta * detb);
-	// cout << "-len " << -(int)len << endl;
-	int eps = 5;
+	//# Make sure, it's fair for all resolutions.
+	int eps = len / 10;
 	for(int dp = -eps; dp < eps; ++dp) {
 		// cout << "test" << endl;
 		int d = dp + abs(sa.ppos - sb.ppos);
@@ -341,9 +355,10 @@ WaveletEps::cross_correlation(const Signal &sa, const Signal &sb) const {
 	// cout << "res: " << res << endl;
 	return make_pair<double, int>(res, offset);
 }
-
+/*
 vector<WSSimilar>&
 WaveletEps::getWSSimilar() {
 	return sigs;
 }
+*/
 

@@ -96,7 +96,7 @@ private:
 	
 public:
 	// Find the most similar signal.
-	WSSimilar find(const vector<double> &sin);
+	vector<WSSimilar>& find(const vector<double> &sin);
 	
 	//# Insert a new signal into the waveletEps object.
 	void addSignal(const vector<double> &sin, int _index);
@@ -107,7 +107,7 @@ public:
 	WaveletEps(const char *file);
 	WaveletEps();
 	void init();
-	vector<WSSimilar>& getWSSimilar();
+	// vector<WSSimilar>& getWSSimilar();
 
 	// Wavelet transforming.
 	void waveletTransform(vector<double> &sv);
