@@ -4,6 +4,7 @@
 #include "lshash/ghash.h"
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 LShashESE::LShashESE(const char *file):indexFile(file) {
 	fhandle = fopen(file, "rb");
@@ -36,48 +37,64 @@ LShashESE::loadPoint() {
 void
 LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 	assert(sin.size() == DIMS);
+
+	vector<WSSimilar> res;
+
+	vector<double> nsin;
 	Point q;
-	for(u_int i = 0; i < sin.size(); ++i)
-		q.d[i] = sin[i];
 
-	vector<u_int> eid;
-	lsh.findNodes(q, eid);
-
-	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
-
-	wavelet.clear();
-
-	Point p;
-	for(u_int i = 0; i < eid.size(); ++i) {
-		assert(true == readPoint(eid[i], p));
-		vector<double> tin(p.d, p.d + DIMS);
-		wavelet.addSignal(tin, p.identity);
-	}
-
-	vector<WSSimilar> &vwss = wavelet.find(sin);
-
-	/*
-	for(int i = 0; i < DIMS; ++i) {
-		cout << q.d[i] << ' ';
-	}
-	cout << endl;
-	*/
-
-	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
-		/*
-		for(int j = 0; j < DIMS; ++j)
-			cout << vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] << ' ';
-		cout << endl;
-		*/
-		/*
-		double dis = 0;
-		for(int j = 0; j < DIMS; ++j) {
-			dis += pow(vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] - sin[j], 2);
+	for(int h = 0; h < DIMS; ++h) {
+		nsin.clear();
+		for(u_int i = 0; i < sin.size(); ++i) {
+			q.d[i] = sin[(i + h) % DIMS];
+			nsin.push_back(q.d[i]);
 		}
-		cout << "dis: " << sqrt(dis) << " | ";
-		*/
-		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
-		_index.push_back(vwss[i].index);
+
+		vector<u_int> eid;
+		cout << "before lsh.find..." << endl;
+
+		try {
+			//# Here always throw segment fault.
+			lsh.findNodes(q, eid);
+		} catch(exception) {
+			cerr << "just fuck it...\n";
+			throw;
+		}
+
+		cout << "offset: " << h << " | lsh.findNodes returns: eid.size() == " << eid.size() << endl;
+
+		wavelet.clear();
+
+		cout << "before readPoint..." << endl;
+		Point p;
+		for(u_int i = 0; i < eid.size(); ++i) {
+			assert(true == readPoint(eid[i], p));
+			vector<double> tin(p.d, p.d + DIMS);
+			wavelet.addSignal(tin, p.identity);
+		}
+
+		cout << "before find..." << endl;
+		vector<WSSimilar> &vwss = wavelet.find(nsin);
+
+		cout << "after find..." << endl;
+		for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+			if(res.size() > K) {
+				//res.push_back(vwss[i]);
+				//sort(res.begin(), res.end());
+				//res.erase(K);
+			}
+			else {
+				res.push_back(vwss[i]);
+			}
+		}
+		cout << "after push..." << endl;
+	}
+
+	sort(res.begin(), res.end());
+
+	for(u_int i = 0; i < res.size() && i < K; ++i) {
+		cout << "[" << i << "]: " << res[i].sim << " - index: " << res[i].index << endl;
+		_index.push_back(res[i].index);
 	}
 }
 

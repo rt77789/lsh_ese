@@ -255,16 +255,33 @@ Ghash::preComputeFields(Point &q) {
 	//# Projection.
 	for(u_int i = 0; i < uPoints.size(); ++i) {
 		for(u_int j = 0; j < uPoints[i].size(); ++j) {
+			assert(i < projectValue.size());
+			assert(j < projectValue[i].size());
+
 			projectValue[i][j] = (u64)(((uPoints[i][j] * q) + b)/w);
 		}
 	}
 	
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
 		for(u_int j = 0; j < M; ++j) {
+			assert(j < h1TimesU[i].size());
+			assert(j < h2TimesU[i].size());
+
 			h1TimesU[i][j] = h2TimesU[i][j] = 0;
-			for(u_int k = 0; k < (K/U_NUM_IN_G); ++k) {
-				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*(K/U_NUM_IN_G) + k] * h1Points[i *(K/U_NUM_IN_G) + k]) % HASH_PRIME ) % TABLE_PRIME;
-				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*(K/U_NUM_IN_G) + k] * h2Points[i *(K/U_NUM_IN_G) + k]) % HASH_PRIME;
+
+			int upper = (int) K / U_NUM_IN_G;
+			for(u_int k = 0; k < upper; ++k) {
+				assert(i*upper + k < h1Points.size());
+				assert(i*upper + k < h2Points.size());
+				assert(j < projectValue.size());
+				assert(i*upper + k < projectValue[j].size());
+				
+	//			cout << "h1TimesU: " << h1TimesU[i][j] << " | ";
+	//			cout << "projectValue: " << projectValue[j][i*upper + k] << " | ";
+	//			cout << "h1Points: " << h1Points[i*upper + k] << endl;
+
+				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*upper + k] * h1Points[i *upper + k]) % HASH_PRIME ) % TABLE_PRIME;
+				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*upper + k] * h2Points[i *upper + k]) % HASH_PRIME;
 			}
 		}
 	}
@@ -353,16 +370,19 @@ Ghash::findNode(const Point &q) {
 
 //# Discard.
 void
-Ghash::findNodes(const Point &q, vector<u_int> &eid) {
+Ghash::findNodes(const Point &q, set<u_int> &eid) {
 	pair<u64, u64> mask = calh1Andh2(q);
 	
 	Gnode *ptr = tables[mask.first];
+	int pnum = 0;
 	while(ptr != NULL) {
 		//# It's wrong here, because there're many node whose h2value == mask.second.
-		if(ptr->h2value == mask.second)
-			eid.push_back(ptr->identity);
+		if(ptr->h2value == mask.second) {
+			eid.insert(ptr->identity);
+		}
 		ptr = ptr->next;
 	}
+	cout << " eid.size:" << eid.size() << endl;
 }
 
 pair<u64, u64>
@@ -370,9 +390,13 @@ Ghash::calh1Andh2(const Point &q) {
 	u64 h1mask = 0, h2mask = 0;
 
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
+		assert( uIndex[i] < h1TimesU[i].size());
+		assert( uIndex[i] < h2TimesU[i].size());
+
 		h1mask = ((h1mask + h1TimesU[i][ uIndex[i] ]) % HASH_PRIME) % TABLE_PRIME;
 		h2mask += (h2mask + h2TimesU[i][ uIndex[i] ]) % HASH_PRIME;
 	}
+	assert(h1mask < TABLE_PRIME);
 	return make_pair<u64, u64>(h1mask, h2mask);
 }
 

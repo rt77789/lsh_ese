@@ -4,6 +4,7 @@
 
 
 #include <vector>
+#include <set>
 #include <cstdio>
 #include <cassert>
 #include "util.h"
@@ -22,7 +23,7 @@ class Ghash {
 		//# Find a Point in Ghash object.
 		Gnode *findNode(const Point &q);
 		//# Find all nodes hashed into buckets as same as q.
-		void findNodes(const Point &q, vector<u_int> &eid);
+		void findNodes(const Point &q, set<u_int> &eid);
 
 		//# Get the maximal length of buckets in current Ghash object.
 		u_int getMaxChainLen();
