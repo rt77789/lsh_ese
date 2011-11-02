@@ -6,7 +6,7 @@
 using namespace std;
 
 LShash::LShash() {
-	K = 12;
+	K = 10;
 	prob = 0.99;
 	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
@@ -51,14 +51,25 @@ LShash::estimateParaM(int k, double prob) {
 	return m;
 }
 
+//# Get the maximum length of all ghash's chains.
 int
 LShash::getMaxBuckLen() {
 	int res = 0;
 	for(u_int i = 0; i < g.size(); ++i) {
-		int tmp = g[i].getMaxLen();
+		int tmp = g[i].getMaxChainLen();
 		res = res > tmp ? res : tmp;
 	}
 	return res;
+}
+
+//# Get the average length of all ghash's chains.
+int
+LShash::getAveBuckLen() {
+	int res = 0;
+	for(u_int i = 0; i < g.size(); ++i) {
+		res += g[i].getAveChainLen();
+	}
+	return g.size() ? res / g.size() : res;
 }
 
 void

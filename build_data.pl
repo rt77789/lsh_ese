@@ -8,7 +8,7 @@ my $i = 0;
 while(<>) {
 	if($i % 4 == 3) {
 		chomp;
-		my @a = map { $_ - 2} split /\s+/;
+		my @a = map { $_} split /\s+/;
 		
 		shift @a;
 		print join(" ", @a), "\n";

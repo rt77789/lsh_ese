@@ -25,7 +25,10 @@ class Ghash {
 		void findNodes(const Point &q, vector<u_int> &eid);
 
 		//# Get the maximal length of buckets in current Ghash object.
-		u_int getMaxLen();
+		u_int getMaxChainLen();
+
+		//# Get the average length of all chains of this ghash object.
+		u_int getAveChainLen();
 
 		//# static functions.
 		//# initial all the fields.

@@ -69,6 +69,13 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 			cout << vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] << ' ';
 		cout << endl;
 		*/
+		/*
+		double dis = 0;
+		for(int j = 0; j < DIMS; ++j) {
+			dis += pow(vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] - sin[j], 2);
+		}
+		cout << "dis: " << sqrt(dis) << " | ";
+		*/
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
 		_index.push_back(vwss[i].index);
 	}
@@ -234,4 +241,17 @@ LShashESE::storeLShash(const char *_if) {
 void
 LShashESE::restoreLShash(const char *_if) {
 	lsh.restoreGhash(_if);
+}
+
+
+//#
+int
+LShashESE::getMaxBuckLen() {
+	return lsh.getMaxBuckLen();
+}
+
+//#
+int
+LShashESE::getAveBuckLen() {
+	return lsh.getAveBuckLen();
 }

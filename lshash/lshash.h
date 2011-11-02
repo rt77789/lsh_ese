@@ -13,8 +13,13 @@ class LShash {
 		void findNodes(const Point &q, vector<u_int> &eid);
 		//# Add a new Node into the LShash object.
 		void addNode(const Point &q);
-		//# Print the maximal bucket length.
+
+		//# Return the maximal bucket length.
 		int getMaxBuckLen();
+
+		//# Return the average bucket length.
+		int getAveBuckLen();
+
 		//# Auto self tune the parameters, K & M.
 		void tuneParameter();
 
