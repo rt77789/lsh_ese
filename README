@@ -2,3 +2,9 @@ lsh version of ESE.
 
 A LSH implementation same as e2lsh, but more OO-like.
 A wavelet transform method for computing similar signals.
+
+TO DO:
+
+0. Refactor the branch - expand_query, ugly and unefficent codes.
+1. Multi-thread transfer.
+2. Contrast experiments.
