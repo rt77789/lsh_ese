@@ -76,17 +76,12 @@ void
 LShash::findNodes(const Point &q, vector<u_int> &eid) {
 	Point p = q;
 	//# p.d = q.d[] / R
-	cout << "before preCompute..." << endl;
 	Ghash::preComputeFields(p);
 	set<u_int> idSet;
 
-	cout << "before g.findNodes..." << endl;
 	for(u_int i = 0; i < g.size(); ++i) {
-		cout << "g[" << i << "]:" ;
 		g[i].findNodes(p, idSet);
-		cout << "i: " << i << " - g.size():" << g.size() << endl;
 	}
-	cout << "before eid.push..." << endl;
 
 	for(set<u_int>::iterator iter = idSet.begin(); iter != idSet.end(); ++iter) {
 		eid.push_back(*iter);

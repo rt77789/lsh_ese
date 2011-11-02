@@ -51,7 +51,6 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 		}
 
 		vector<u_int> eid;
-		cout << "before lsh.find..." << endl;
 
 		try {
 			//# Here always throw segment fault.
@@ -61,11 +60,10 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 			throw;
 		}
 
-		cout << "offset: " << h << " | lsh.findNodes returns: eid.size() == " << eid.size() << endl;
+		//cout << "offset: " << h << " | lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
 		wavelet.clear();
 
-		cout << "before readPoint..." << endl;
 		Point p;
 		for(u_int i = 0; i < eid.size(); ++i) {
 			assert(true == readPoint(eid[i], p));
@@ -73,28 +71,28 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 			wavelet.addSignal(tin, p.identity);
 		}
 
-		cout << "before find..." << endl;
 		vector<WSSimilar> &vwss = wavelet.find(nsin);
 
-		cout << "after find..." << endl;
 		for(u_int i = 0; i < vwss.size() && i < K; ++i) {
 			if(res.size() > K) {
-				//res.push_back(vwss[i]);
+				res.push_back(vwss[i]);
 				//sort(res.begin(), res.end());
-				//res.erase(K);
+				//res.resize(K);
 			}
 			else {
 				res.push_back(vwss[i]);
 			}
 		}
-		cout << "after push..." << endl;
 	}
 
 	sort(res.begin(), res.end());
-
-	for(u_int i = 0; i < res.size() && i < K; ++i) {
-		cout << "[" << i << "]: " << res[i].sim << " - index: " << res[i].index << endl;
-		_index.push_back(res[i].index);
+	set<u_int> seen;
+	for(u_int i = 0; i < res.size() && _index.size() < K; ++i) {
+		if(seen.find(res[i].index) == seen.end()) {
+			cout << "[" << i << "]: " << res[i].sim << " - index: " << res[i].index << endl;
+			_index.push_back(res[i].index);
+			seen.insert(res[i].index);
+		}
 	}
 }
 

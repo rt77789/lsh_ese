@@ -264,22 +264,22 @@ Ghash::preComputeFields(Point &q) {
 	
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
 		for(u_int j = 0; j < M; ++j) {
+#ifdef DEBUG
 			assert(j < h1TimesU[i].size());
 			assert(j < h2TimesU[i].size());
+#endif
 
 			h1TimesU[i][j] = h2TimesU[i][j] = 0;
 
-			int upper = (int) K / U_NUM_IN_G;
+			u_int upper =  K / U_NUM_IN_G;
 			for(u_int k = 0; k < upper; ++k) {
+#ifdef DEBUG
 				assert(i*upper + k < h1Points.size());
 				assert(i*upper + k < h2Points.size());
 				assert(j < projectValue.size());
 				assert(i*upper + k < projectValue[j].size());
+#endif
 				
-	//			cout << "h1TimesU: " << h1TimesU[i][j] << " | ";
-	//			cout << "projectValue: " << projectValue[j][i*upper + k] << " | ";
-	//			cout << "h1Points: " << h1Points[i*upper + k] << endl;
-
 				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*upper + k] * h1Points[i *upper + k]) % HASH_PRIME ) % TABLE_PRIME;
 				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*upper + k] * h2Points[i *upper + k]) % HASH_PRIME;
 			}
@@ -291,6 +291,8 @@ Ghash::Ghash(u_int *_uIndex) {
 	for(u_int i = 0; i < U_NUM_IN_G; ++i)
 		uIndex[i] = _uIndex[i];
 	memset(counter, 0, sizeof(u_int) * TABLE_PRIME);
+	//# Initial tables, else segment fault, such a idiot bug...
+	memset(tables, 0, sizeof(Gnode*) * TABLE_PRIME);
 }
 
 Ghash::~Ghash() {
@@ -374,15 +376,12 @@ Ghash::findNodes(const Point &q, set<u_int> &eid) {
 	pair<u64, u64> mask = calh1Andh2(q);
 	
 	Gnode *ptr = tables[mask.first];
-	int pnum = 0;
 	while(ptr != NULL) {
-		//# It's wrong here, because there're many node whose h2value == mask.second.
 		if(ptr->h2value == mask.second) {
 			eid.insert(ptr->identity);
 		}
 		ptr = ptr->next;
 	}
-	cout << " eid.size:" << eid.size() << endl;
 }
 
 pair<u64, u64>
