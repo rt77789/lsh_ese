@@ -274,6 +274,8 @@ Ghash::Ghash(u_int *_uIndex) {
 	for(u_int i = 0; i < U_NUM_IN_G; ++i)
 		uIndex[i] = _uIndex[i];
 	memset(counter, 0, sizeof(u_int) * TABLE_PRIME);
+	//# inital tables.
+	memset(tables, 0, sizeof(Gnode*) * TABLE_PRIME);
 }
 
 Ghash::~Ghash() {

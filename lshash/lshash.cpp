@@ -6,6 +6,7 @@
 using namespace std;
 
 LShash::LShash() {
+	//# adjust K & R.
 	K = 10;
 	prob = 0.99;
 	M = estimateParaM(K, prob);

@@ -4,6 +4,7 @@
 #include "lshash/ghash.h"
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 
 LShashESE::LShashESE(const char *file):indexFile(file) {
 	fhandle = fopen(file, "rb");
@@ -29,6 +30,8 @@ LShashESE::loadPoint() {
 	assert(fhandle != NULL);
 	Point p;
 	for(u_int i = 0; readPoint(i, p) ; ++i) {
+		//# sort p.d[].
+		sort(p.d, p.d + DIMS);
 		lsh.addNode(p);
 	}
 }
@@ -40,7 +43,10 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 	for(u_int i = 0; i < sin.size(); ++i)
 		q.d[i] = sin[i];
 
+	sort(q.d, q.d + DIMS);
+
 	vector<u_int> eid;
+
 	lsh.findNodes(q, eid);
 
 	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
