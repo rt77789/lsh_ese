@@ -42,6 +42,8 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 
 	vector<double> nsin;
 	Point q;
+	u_int teids = 0;
+	set<int> seid;
 
 	for(int h = 0; h < DIMS; ++h) {
 		nsin.clear();
@@ -60,39 +62,28 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 			throw;
 		}
 
-		//cout << "offset: " << h << " | lsh.findNodes returns: eid.size() == " << eid.size() << endl;
-
-		wavelet.clear();
-
-		Point p;
-		for(u_int i = 0; i < eid.size(); ++i) {
-			assert(true == readPoint(eid[i], p));
-			vector<double> tin(p.d, p.d + DIMS);
-			wavelet.addSignal(tin, p.identity);
-		}
-
-		vector<WSSimilar> &vwss = wavelet.find(nsin);
-
-		for(u_int i = 0; i < vwss.size() && i < K; ++i) {
-			if(res.size() > K) {
-				res.push_back(vwss[i]);
-				//sort(res.begin(), res.end());
-				//res.resize(K);
-			}
-			else {
-				res.push_back(vwss[i]);
-			}
-		}
+		cout << "offset: " << h << " | lsh.findNodes returns: eid.size() == " << eid.size() << endl;
+		teids += eid.size();
+		for(u_int i = 0; i < eid.size(); ++i)
+			seid.insert(eid[i]);
 	}
 
-	sort(res.begin(), res.end());
-	set<u_int> seen;
-	for(u_int i = 0; i < res.size() && _index.size() < K; ++i) {
-		if(seen.find(res[i].index) == seen.end()) {
-			cout << "[" << i << "]: " << res[i].sim << " - index: " << res[i].index << endl;
-			_index.push_back(res[i].index);
-			seen.insert(res[i].index);
-		}
+	wavelet.clear();
+
+	Point p;
+	for(set<int>::iterator iter = seid.begin(); iter != seid.end(); ++iter) {
+		assert(true == readPoint(*iter, p));
+		vector<double> tin(p.d, p.d + DIMS);
+		wavelet.addSignal(tin, p.identity);
+	}
+
+	vector<WSSimilar> &vwss = wavelet.find(nsin);
+
+	cout << "tedis: " << teids << " | seid: " << seid.size() << endl;
+
+	for(u_int i = 0; i < vwss.size() && _index.size() < K; ++i) {
+		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
+		_index.push_back(vwss[i].index);
 	}
 }
 

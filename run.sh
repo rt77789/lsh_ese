@@ -6,7 +6,7 @@ then
 	echo "Using test dataset..."
 	make
 	./test -build dataset.input dataset.index
-	./test -load dataset.input dataset.index dataset.test 10
+	./test -load dataset.input dataset.index dataset.test 1
 elif [[ $1 = "-naive" ]]
 then
 	echo "Using naive test..."
@@ -21,12 +21,12 @@ then
 elif [[ $1 = "-bt" ]]
 then
 	make
-	perl build_data.pl < filt3.wavelet.3.0.250 >  dataset.test.raw
+	perl build_data.pl < filt3.wavelet.3.0 >  dataset.test.raw
 	./main -trans dataset.test.raw dataset.test
 elif [[ $1 = "-bi" ]]
 then
 	make
-	perl build_data.pl < filt3.wavelet.3.0.250 >  dataset.raw
+	perl build_data.pl < filt3.wavelet.3.0 >  dataset.raw
 	./main -trans dataset.raw dataset.input
 
 elif [[ $1 = "-build" ]]

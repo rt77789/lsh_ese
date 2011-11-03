@@ -337,17 +337,17 @@ WaveletEps::cross_correlation(const Signal &sa, const Signal &sb) const {
 
 	deta = sqrt(deta * detb);
 	//# Make sure, it's fair for all resolutions.
-	//int eps = len;
+	int eps = len;
 
-	//for(int dp = -eps; dp < eps; ++dp) {
-	for(int dp = 0; dp < 1; ++dp) {
+	for(int dp = -eps; dp < eps; ++dp) {
+	//for(int dp = 0; dp < 1; ++dp) {
 		// cout << "test" << endl;
-		//int d = dp + abs(sa.ppos - sb.ppos);
-		int d = dp;
+		int d = dp + abs(sa.ppos - sb.ppos);
+		//int d = dp;
 		double num = 0;
 		for(int i = 0; i < len; ++i) {
-			//num += (sa.sig[i] - ma) * (sb.sig[((i + d) % len + len) %len] - mb);
-			num += (sa.sig[i] - ma) * (sb.sig[i] - mb);
+			num += (sa.sig[i] - ma) * (sb.sig[((i + d) % len + len) %len] - mb);
+		//	num += (sa.sig[i] - ma) * (sb.sig[i] - mb);
 		}
 
 		double rd = num / deta;
