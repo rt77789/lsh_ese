@@ -14,11 +14,6 @@ test_build_index(const char *dataset, const char *_if) {
 
 	LShashESE lsese(dataset);
 	lsese.storeLShash(_if);
-	cout << "lsese get the maximum length of all chains: ";
-	cout << lsese.getMaxBuckLen() << endl;;
-	cout << "lsese get the average length of all chains: ";
-	cout << lsese.getAveBuckLen() << endl;;
-
 }
 
 void

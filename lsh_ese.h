@@ -31,11 +31,6 @@ class LShashESE {
 
 		//# Restore lshash.
 		void restoreLShash(const char *_if);
-
-		//# Get the maximum length of all ghash's chains.
-		int getMaxBuckLen();
-		//# Get the average length of all ghash's chains.
-		int getAveBuckLen();
 		
 		//# Random a dataset.
 		static void randomDataSet(const char *file, u_int _size);

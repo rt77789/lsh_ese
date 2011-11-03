@@ -29,7 +29,7 @@ Ghash::init(u_int _M, u_int _K) {
 	M = _M, K = _K;
 	w = 4;
 	b = Util::randomByUniform(0.0, w);
-	R = 1;
+	R = 7;
 
 	uPoints.clear();
 	projectValue.clear();
@@ -281,29 +281,13 @@ Ghash::Ghash(u_int *_uIndex) {
 Ghash::~Ghash() {
 }
 
-//# Get the maximum length of all chains of this ghash object.
 u_int
-Ghash::getMaxChainLen() {
+Ghash::getMaxLen() {
 	u_int res = 0;
 	for(u_int i = 0; i < TABLE_PRIME; ++i) {
 		res = res > counter[i] ? res : counter[i];
 	}
 	return res;
-}
-
-//# Get the average length of all chains of this ghash object.
-u_int
-Ghash::getAveChainLen() {
-	u_int res = 0;
-	u_int noEmptys = 0;
-
-	for(u_int i = 0; i < TABLE_PRIME; ++i) {
-		res += counter[i];
-		if(counter[i])
-			++noEmptys;
-	}
-
-	return noEmptys ? res / noEmptys : res;
 }
 
 void

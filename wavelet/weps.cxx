@@ -337,8 +337,7 @@ WaveletEps::cross_correlation(const Signal &sa, const Signal &sb) const {
 
 	deta = sqrt(deta * detb);
 	//# Make sure, it's fair for all resolutions.
-	int eps = len;
-
+	int eps = len / 10;
 	for(int dp = -eps; dp < eps; ++dp) {
 		// cout << "test" << endl;
 		int d = dp + abs(sa.ppos - sb.ppos);
