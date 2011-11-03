@@ -6,7 +6,7 @@ then
 	echo "Using test dataset..."
 	make
 	./test -build dataset.input dataset.index
-	./test -load dataset.input dataset.index dataset.test 1
+	./test -load dataset.input dataset.index dataset.test 10
 elif [[ $1 = "-naive" ]]
 then
 	echo "Using naive test..."

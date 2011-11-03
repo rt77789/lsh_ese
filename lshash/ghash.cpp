@@ -319,6 +319,7 @@ Ghash::getAveChainLen() {
 		if(counter[i])
 			++noEmptys;
 	}
+	cout << "noEmptys: " << noEmptys << endl;
 
 	return noEmptys ? res / noEmptys : res;
 }

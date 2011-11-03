@@ -6,7 +6,7 @@
 using namespace std;
 
 LShash::LShash() {
-	K = 12;
+	K = 10;
 	prob = 0.99;
 	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
