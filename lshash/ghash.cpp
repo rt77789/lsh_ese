@@ -29,7 +29,7 @@ Ghash::init(u_int _M, u_int _K) {
 	M = _M, K = _K;
 	w = 4;
 	b = Util::randomByUniform(0.0, w);
-	R = 7;
+	R = 1;
 
 	uPoints.clear();
 	projectValue.clear();
@@ -276,6 +276,7 @@ Ghash::Ghash(u_int *_uIndex) {
 	memset(counter, 0, sizeof(u_int) * TABLE_PRIME);
 	//# inital tables.
 	memset(tables, 0, sizeof(Gnode*) * TABLE_PRIME);
+	memset(meanPoints, 0, sizeof(Point*) * TABLE_PRIME);
 }
 
 Ghash::~Ghash() {
@@ -303,9 +304,17 @@ Ghash::addNode(const Point &q) {
 		ptr->next = NULL;
 		tables[mask.first] = ptr;
 		counter[mask.first] = 1;
+		meanPoints[mask.first] = new Point();
+		*meanPoints[mask.first] = q;
+		meanPoints[mask.first]->identity = mask.first;
 	}
 	else {
+		//# Calculate the mean point of current bucket chain.
+		for(int i = 0; i < DIMS; ++i) {
+			meanPoints[mask.first]->d[i] = (meanPoints[mask.first]->d[i] * counter[mask.first] + q.d[i]) / (counter[mask.first] + 1);
+		}
 		++counter[mask.first];
+
 		Gnode *ans = tables[mask.first], *pre = NULL;
 		while(ans != NULL && ans->h2value < ptr->h2value) {
 			pre = ans;
@@ -337,16 +346,23 @@ Ghash::findNode(const Point &q) {
 	return NULL;
 }
 
+Point**
+Ghash::getMeanPoints() {
+	return meanPoints;
+}
+
 //# Discard.
 void
 Ghash::findNodes(const Point &q, vector<u_int> &eid) {
-	pair<u64, u64> mask = calh1Andh2(q);
-	
-	Gnode *ptr = tables[mask.first];
+//#	
+	assert(1);
+}
+
+void
+Ghash::fillFromChain(int off, set<u_int> &siden) {
+	Gnode *ptr = tables[off];
 	while(ptr != NULL) {
-		//# It's wrong here, because there're many node whose h2value == mask.second.
-		if(ptr->h2value == mask.second)
-			eid.push_back(ptr->identity);
+		siden.insert(ptr->identity);
 		ptr = ptr->next;
 	}
 }
@@ -376,6 +392,8 @@ Ghash::storeObjectFields(FILE *fh) {
 	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
 	for(int i = 0; i < TABLE_PRIME; ++i) {
 		assert(1 == fwrite(&counter[i], sizeof(u_int), 1, fh));
+		if(counter[i])
+		assert(1 == fwrite(meanPoints[i], sizeof(Point), 1, fh));
 		Gnode *ptr = tables[i];
 		/*
 		cout << counter[i] << endl;
@@ -414,6 +432,13 @@ Ghash::restoreObjectFields(FILE *fh) {
 
 	for(int i = 0; i < TABLE_PRIME; ++i) {
 		assert(1 == fread(&counter[i], sizeof(u_int), 1, fh));
+		if(counter[i]) {
+			meanPoints[i] = new Point();
+			assert(1 == fread(meanPoints[i], sizeof(Point), 1, fh));
+		}
+		else
+			meanPoints[i] = NULL;
+
 		Gnode *pre = NULL;
 
 		for(u_int j = 0; j < counter[i]; ++j) {

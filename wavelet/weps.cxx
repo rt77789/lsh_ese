@@ -149,7 +149,7 @@ WaveletEps::loadin(const WaveletSignal &sin) {
 		tmpSig.ws = ws;
 		tmpSig.sim = p.first;
 		tmpSigs.push_back(tmpSig);
-		if(tmpSigs.size() >= K) {
+		if(tmpSigs.size() >= ANSWER_TOP_NUM) {
 			mergeWSS(tmpSigs);
 			tmpSigs.clear();
 		}
@@ -169,7 +169,7 @@ WaveletEps::mergeWSS(vector<WSSimilar> &tmpWSS) {
 	sort(tmpWSS.begin(), tmpWSS.end());
 	// Merge tmpWSS to the  sigs.
 	size_t i = 0, j = 0;
-	while(resWSS.size() < K && (i < tmpWSS.size() || j < sigs.size()) ) {
+	while(resWSS.size() < ANSWER_TOP_NUM&& (i < tmpWSS.size() || j < sigs.size()) ) {
 		if(j >= sigs.size() || tmpWSS[i].sim > sigs[j].sim) {
 			resWSS.push_back(tmpWSS[i++]);
 		}

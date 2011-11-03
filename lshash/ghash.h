@@ -4,6 +4,7 @@
 
 
 #include <vector>
+#include <set>
 #include <cstdio>
 #include <cassert>
 #include "util.h"
@@ -27,6 +28,9 @@ class Ghash {
 		//# Get the maximal length of buckets in current Ghash object.
 		u_int getMaxLen();
 
+		//#
+		void fillFromChain(int off, set<u_int> &siden);
+
 		//# static functions.
 		//# initial all the fields.
 		static void init(u_int _M, u_int _K);
@@ -43,6 +47,8 @@ class Ghash {
 		void storeObjectFields(FILE *fh);
 		//# Restore object fields.
 		void restoreObjectFields(FILE *fh);
+		//# Get Mean Points.
+		Point** getMeanPoints();
 
 	private:
 		//# cal h1 & h2 mask.
@@ -51,6 +57,7 @@ class Ghash {
 		//# tables[x] is the head of some chain.
 		Gnode* tables[TABLE_PRIME];
 		u_int counter[TABLE_PRIME];
+		Point* meanPoints[TABLE_PRIME];
 		u_int uIndex[U_NUM_IN_G];
 		
 		//# Global u hash function points.

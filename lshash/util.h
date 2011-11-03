@@ -4,6 +4,8 @@
 
 #define TABLE_PRIME ((1LL<<13) - 1)
 #define HASH_PRIME ((1LL<<32) - 5)
+#define TOP_BUCKET_NUM 100
+#define INF 1<<31
 
 #define U_NUM_IN_G 2
 //# Dimensions of a signal.

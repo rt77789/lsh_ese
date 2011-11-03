@@ -1,12 +1,23 @@
 #include "lshash.h"
 #include <set>
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 using namespace std;
 
+struct LGI {
+	double sim;
+	int gid;
+	int goff;
+	LGI(double _sim, int _gid, int _goff):sim(_sim), gid(_gid), goff(_goff) {}
+	bool operator<(const LGI &l) const {
+		return sim > l.sim;
+	}
+};
+
 LShash::LShash() {
-	K = 12;
+	K = 10;
 	prob = 0.99;
 	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
@@ -59,6 +70,81 @@ LShash::getMaxBuckLen() {
 		res = res > tmp ? res : tmp;
 	}
 	return res;
+}
+
+void
+LShash::findMeanPoints(const Point &q, vector<u_int> &eid) {
+	vector<LGI> lgi;
+
+	for(u_int i = 0; i < g.size(); ++i) {
+		Point **plist = g[i].getMeanPoints();
+		for(int j = 0; j < TABLE_PRIME; ++j) {
+			if(plist[j] != NULL) {
+				//# xcorrelation plist[i] and q;
+				double sim = xCorrelation(&q, plist[j]);
+			//	cout << "sim : " << sim << endl;
+				lgi.push_back(LGI(sim, i, j));		
+			}
+		}
+	}
+	sort(lgi.begin(), lgi.end());
+
+	set<u_int> siden;
+	cout << "lgi.size(): " << lgi.size() << endl;
+	for(u_int i = 0; i < lgi.size() && i < TOP_BUCKET_NUM; ++i) {
+		g[lgi[i].gid].fillFromChain(lgi[i].goff, siden);
+	}
+	for(set<u_int>::iterator iter = siden.begin(); iter != siden.end(); ++iter) {
+		eid.push_back(*iter);
+	}
+}
+
+double
+LShash::xCorrelation(const Point *sa, const Point *sb) {
+	double ma = 0, mb = 0;
+
+	// cout << sa.sig.size() << endl << sb.sig.size() << endl;
+
+	int len = DIMS;
+
+	for(int i = 0; i < len; ++i) {
+		ma += sa->d[i];
+		mb += sb->d[i];
+	}
+
+	ma /= len;
+	mb /= len;
+
+	double res = -INF;
+	int offset = -INF;
+
+	double deta = 0;
+	double detb = 0;
+	for(int i = 0; i < len; ++i) {
+		deta += (sa->d[i] - ma) * (sa->d[i] - ma);
+		detb += (sb->d[i] - mb) * (sb->d[i] - mb);
+	}
+
+	deta = sqrt(deta * detb);
+	//# Make sure, it's fair for all resolutions.
+	int eps = len;
+	for(int dp = -eps; dp < eps; ++dp) {
+		// cout << "test" << endl;
+		double num = 0;
+		for(int i = 0; i < len; ++i) {
+			num += (sa->d[i] - ma) * (sb->d[((i + dp) % len + len) %len] - mb);
+		}
+
+		double rd = num / deta;
+		if(rd > res) {
+			res = rd;
+			offset = dp;
+		}
+	}
+	// cout << "res: " << res << endl;
+	return res;
+	//return make_pair<double, int>(res, offset);
+
 }
 
 void

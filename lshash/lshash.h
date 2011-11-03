@@ -22,6 +22,9 @@ class LShash {
 		void storeGhash(const char *_file);
 		//# Restore ghashes from file.
 		void restoreGhash(const char *_file);
+
+		void findMeanPoints(const Point &q, vector<u_int> &eid);
+		double xCorrelation(const Point *a, const Point *b);
 	private:
 		//# Estimate parameter M according to current k.
 		int estimateParaM(int k, double prob);

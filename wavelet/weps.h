@@ -100,6 +100,8 @@ public:
 	
 	//# Insert a new signal into the waveletEps object.
 	void addSignal(const vector<double> &sin, int _index);
+
+	void addSignal(const double *d);
 	//# Clear sigs.
 	void clear();
 	

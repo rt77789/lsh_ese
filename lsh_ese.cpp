@@ -31,7 +31,6 @@ LShashESE::loadPoint() {
 	Point p;
 	for(u_int i = 0; readPoint(i, p) ; ++i) {
 		//# sort p.d[].
-		sort(p.d, p.d + DIMS);
 		lsh.addNode(p);
 	}
 }
@@ -43,11 +42,9 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 	for(u_int i = 0; i < sin.size(); ++i)
 		q.d[i] = sin[i];
 
-	sort(q.d, q.d + DIMS);
-
 	vector<u_int> eid;
 
-	lsh.findNodes(q, eid);
+	lsh.findMeanPoints(q, eid);
 
 	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
@@ -69,7 +66,7 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 	cout << endl;
 	*/
 
-	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+	for(u_int i = 0; i < vwss.size() && i < ANSWER_TOP_NUM; ++i) {
 		/*
 		for(int j = 0; j < DIMS; ++j)
 			cout << vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] << ' ';
@@ -109,7 +106,7 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
 
 	vector<WSSimilar> &vwss = wavelet.find(sin);
 
-	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+	for(u_int i = 0; i < vwss.size() && i < ANSWER_TOP_NUM; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
 		_index.push_back(vwss[i].index);
 	}

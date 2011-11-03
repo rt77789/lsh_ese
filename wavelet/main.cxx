@@ -87,7 +87,7 @@ find_similar_signal(void *ptr) {
 	vector<WSSimilar> &vwss = we[i].find(qsin[i]);
 	// cout << "vwss.size(): " << vwss.size() << endl;
 
-	for(size_t j = 0; j < vwss.size() && j < K; ++j)
+	for(size_t j = 0; j < vwss.size() && j < ANSWER_TOP_NUM; ++j)
 		qsout[i].push_back(vwss[j]);
 	// cout << "qsout: "<< i << " - " << qsout[i].size() << endl;
 	return (void*)0;
@@ -149,7 +149,7 @@ test() {
 
 		fout << "res: ";
 
-		for(size_t j = 0; j < ans.size() && j < K; ++j) {
+		for(size_t j = 0; j < ans.size() && j < ANSWER_TOP_NUM; ++j) {
 			fout << "[" << j << "]: " << endl;
 			vector<double> &sig = ans[j].ws.wsig[ans[j].ws.wsig.size()-1].sig;
 			for(size_t i = 0; i < sig.size(); ++i) {

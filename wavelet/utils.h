@@ -10,7 +10,7 @@ using namespace std;
 //#define DEBUG
 
 #define LEVEL 3
-#define K 10
+#define ANSWER_TOP_NUM 10
 #define DIMS 1024
 #define FREQUENT 100
 
