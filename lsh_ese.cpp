@@ -31,7 +31,6 @@ LShashESE::loadPoint() {
 	Point p;
 	for(u_int i = 0; readPoint(i, p) ; ++i) {
 		//# sort p.d[].
-		sort(p.d, p.d + DIMS);
 		lsh.addNode(p);
 	}
 }
@@ -42,8 +41,6 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 	Point q;
 	for(u_int i = 0; i < sin.size(); ++i)
 		q.d[i] = sin[i];
-
-	sort(q.d, q.d + DIMS);
 
 	vector<u_int> eid;
 

@@ -2,3 +2,10 @@ lsh version of ESE.
 
 A LSH implementation same as e2lsh, but more OO-like.
 A wavelet transform method for computing similar signals.
+
+T=0 cross-correlation calculation.
+
+TO DO:
+0. Query Point -> Expand some nearby Point.
+1. Normalize all the Point?
+2. Features? How to use it?

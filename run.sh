@@ -28,5 +28,3 @@ else
 		-build : build new dataset.test file.\n\
 		-naive : naive wavelet transforming test."
 fi
-
-
