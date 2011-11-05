@@ -3,6 +3,7 @@ CC=cc
 CPP=g++
 LSH=lshash
 WAVE=wavelet
+FFT=fft
 
 CFLAGS = -Wall -O -g
 
@@ -27,7 +28,12 @@ lshash_make:
 wavelet_make:
 	$(MAKE) -C ${WAVE}
 
+fft_make:
+	${MAKE} -C ${FFT}
+
 clean:
 	cd ${LSH}; make clean 
 	cd ${WAVE}; make clean
+	cd ${FFT}; make clean
+
 	rm -rf *.o main test
