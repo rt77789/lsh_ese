@@ -23,10 +23,10 @@ lsh_ese.o:  lsh_ese.h lsh_ese.cpp
 	$(CPP) $(CFLAGS) -c lsh_ese.cpp -o lsh_ese.o 
 
 lshash_make:
-	$(MAKE) -C ${LSH}
+	${MAKE} -C ${LSH}
 
 wavelet_make:
-	$(MAKE) -C ${WAVE}
+	${MAKE} -C ${WAVE}
 
 fft_make:
 	${MAKE} -C ${FFT}
