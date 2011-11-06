@@ -6,11 +6,17 @@ then
 	echo "Using test dataset..."
 	./test -build dataset.input dataset.index
 	./test -load dataset.input dataset.index dataset.test 10
-elif [[ $1 = "-naive" ]]
+elif [[ $1 = "-nf" ]]
 then
 	make
-	echo "Using naive test..."
-	./test -naive dataset.input dataset.test 10
+	echo "Using naive FFT test..."
+	./test -nf dataset.input dataset.test 10
+elif [[ $1 = "-nw" ]]
+then
+make
+	echo "Using naive FFT & Wavelet test..."
+	./test -nw dataset.input dataset.test 10
+
 elif [[ $1 = "-load" ]]
 then
 	make
@@ -26,5 +32,6 @@ else
 		-test : use dataset.test for testing.\n\
 		-rand : use rand.10000 for testing.\n\
 		-build : build new dataset.test file.\n\
-		-naive : naive wavelet transforming test."
+		-nf	: naive FFT-Convolution computing cross-correlation.\n\
+		-nw	: naive wavelet transform and FFT-Convolution.\n"
 fi

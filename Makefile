@@ -8,12 +8,12 @@ FFT=fft
 CFLAGS = -Wall -O -g
 
 OBJ=$(LSH)/util.o $(LSH)/ghash.o $(LSH)/lshash.o $(WAVE)/weps.o\
-	$(WAVE)/utils.o lsh_ese.o
+	$(WAVE)/utils.o ${FFT}/fft.o ${FFT}/complex.o lsh_ese.o
 
 
 all: main test
 
-main: lshash_make wavelet_make ${OBJ} lsh_ese.h main.cpp
+main: lshash_make wavelet_make fft_make ${OBJ} lsh_ese.h main.cpp
 	$(CPP) $(CFLAGS) ${OBJ} main.cpp -o main
 
 test: lshash_make wavelet_make ${OBJ} lsh_ese.h test.cpp

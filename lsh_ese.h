@@ -23,8 +23,14 @@ class LShashESE {
 		//# find the top-k index of most similar signal.
 		void findIndex(const vector<double> &sin, vector<u_int> &_index);
 
+		//#
+		void findByLSH(const vector<double> &sin, vector<u_int> &_index);
+
 		//# Naive wavelet find the top-k index of most similar signal.
 		void naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index);
+		
+		//# Naive FFT-Convolution computing cross-correlation.
+		void naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index);
 
 		//# Store lshash.
 		void storeLShash(const char *_if);

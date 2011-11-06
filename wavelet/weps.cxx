@@ -8,10 +8,40 @@
 
 #include "weps.h"
 #include "utils.h"
+#include "../fft/fft.h"
 
 WaveletEps::WaveletEps() {
 	// Initial the h[] & g[].
 	init();
+}
+
+WaveletEps::WaveletEps(const vector<double> &q) {
+	init();
+
+	query.assign(q.begin(), q.end());
+
+	vector<double> tmpSig(query);
+
+	// Wavelet transforming: sin -> wsin.
+
+	WaveletSignal ws;
+	for(int i = 0; i < LEVEL; ++i) {
+
+		Signal ts;
+		ts.sig.assign(tmpSig.begin(), tmpSig.begin() + ((int)tmpSig.size() >> i));
+		// Calculate the ppos of Signal.
+		ts.calPPos();
+		// cout << tmpSig.size() << endl;
+		ws.wsig.push_back(ts);
+
+		//insertWaveletTransform(tmpSig);
+		waveletTransform(tmpSig);
+	}
+
+	for(size_t i = 0; i < ws.wsig.size() / 2; ++i) {
+		swap(ws.wsig[i], ws.wsig[ws.wsig.size()-1-i]);
+	}
+	queryWS = ws;
 }
 
 void
@@ -161,26 +191,76 @@ WaveletEps::loadin(const WaveletSignal &sin) {
 	fin.close();
 }
 
+//# Batch push into WaveletEps object.
+void
+WaveletEps::batch_push(const vector< vector<double> > &vsin, const vector<int> &index) {
+	vector<WSSimilar> vwss;
+	for(size_t vi = 0; vi < vsin.size(); ++vi) {
+		vector<double> tmpSig(vsin[vi]);
+
+		// Wavelet transforming: sin -> wsin.
+
+		WaveletSignal ws;
+		for(int i = 0; i < LEVEL; ++i) {
+
+			Signal ts;
+			ts.sig.assign(tmpSig.begin(), tmpSig.begin() + ((int)tmpSig.size() >> i));
+			// Calculate the ppos of Signal.
+			ts.calPPos();
+			// cout << tmpSig.size() << endl;
+			ws.wsig.push_back(ts);
+
+			//insertWaveletTransform(tmpSig);
+			waveletTransform(tmpSig);
+		}
+
+		for(size_t i = 0; i < ws.wsig.size() / 2; ++i) {
+			swap(ws.wsig[i], ws.wsig[ws.wsig.size()-1-i]);
+		}
+
+		try {
+			double sim = FFT::xcorr(ws.wsig[0].sig, queryWS.wsig[0].sig);
+
+			WSSimilar wss;
+			wss.ws = ws;
+			wss.index = index[vi];
+			wss.sim = sim;
+			vwss.push_back(wss);
+		}catch(...) {
+			cerr << "FFT::xcorr exception." << endl;
+			throw;
+		}
+	}
+
+	try {
+		mergeWSS(vwss);	
+	}catch(...) {
+		cerr << "mergeWSS exception." << endl;
+		throw;
+	}
+}
+
 // Merge tmpWSS with sigs, and copy back to the source sigs.
 void 
 WaveletEps::mergeWSS(vector<WSSimilar> &tmpWSS) {
-	vector<WSSimilar> resWSS;
 	// Sort the temporary WSSimilar vector.
 	sort(tmpWSS.begin(), tmpWSS.end());
 	// Merge tmpWSS to the  sigs.
 	size_t i = 0, j = 0;
-	while(resWSS.size() < K && (i < tmpWSS.size() || j < sigs.size()) ) {
-		if(j >= sigs.size() || tmpWSS[i].sim > sigs[j].sim) {
-			resWSS.push_back(tmpWSS[i++]);
+	vector<WSSimilar> resWSS;
+
+	while(resWSS.size() < IN_MEMORY_NUM && (i < tmpWSS.size() || j < sigs.size()) ) {
+		if(j >= sigs.size() || (i < tmpWSS.size() && tmpWSS[i].sim > sigs[j].sim)) {
+				resWSS.push_back(tmpWSS[i++]);
 		}
-		else if (i >= tmpWSS.size() || sigs[j].sim >= tmpWSS[i].sim) {
+		else if (i >= tmpWSS.size() || (j < sigs.size() && sigs[j].sim >= tmpWSS[i].sim)) {
 			resWSS.push_back(sigs[j++]);
 		}
 		else {
 			perror("mergeWSS error.");
+			exit(0);
 		}
 	}
-	sigs.clear();
 	// Copy back to the source sigs.
 	sigs.assign(resWSS.begin(), resWSS.end());
 }
@@ -283,21 +363,9 @@ WaveletEps::findByLayer(const WaveletSignal &sin, int layer) {
 	upper = upper < (size_t)levelLimit[layer] ? upper : (size_t)levelLimit[layer];
 	
 	for(size_t i = 0; i < upper; ++i) {
-		pair<double, int> p = cross_correlation(sigs[i].ws.wsig[layer], sin.wsig[layer]);
-		sigs[i].sim = p.first;
-		/*
-		cout << "layer: " << layer << " | index: " << sigs[i].index << " | sim: " << sigs[i].sim << endl;
-		cout << "ppos: " << sigs[i].ws.wsig[layer].ppos << " | ";
-		for(size_t j = 0; j < sigs[i].ws.wsig[layer].sig.size(); ++j) {
-			cout << sigs[i].ws.wsig[layer].sig[j] << " ";
-		}
-		cout << endl;
-		cout << "sin.ppos: " << sin.wsig[layer].ppos << " | ";
-		for(size_t j = 0; j < sin.wsig[layer].sig.size(); ++j) {
-			cout << sin.wsig[layer].sig[j] << " ";
-		}
-		cout << endl;
-		*/
+		//pair<double, int> p = cross_correlation(sigs[i].ws.wsig[layer], sin.wsig[layer]);
+		double sim  = FFT::xcorr(sigs[i].ws.wsig[layer].sig, sin.wsig[layer].sig);
+		sigs[i].sim = sim;
 	}
 	sort(sigs.begin(), (size_t)levelLimit[layer] < sigs.size() ? (sigs.begin() + levelLimit[layer]) : sigs.end());
 	// Erase/delete/clean the useless data.

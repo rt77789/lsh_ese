@@ -149,7 +149,7 @@ FFT::xcorr(const vector<double> &x, const vector<double> &y) {
 
 	//# Attention, here 'len' is suitable?
 	for(size_t i = 0; i < len; ++i) {
-		cout << i << " : " << res[i].real() << " - " << res[i].imagin() << endl;
+		//cout << i << " [:] " << res[i].real() << " - " << res[i].imagin() << endl;
 		if(res[i].real() > maxcorr)
 			maxcorr = res[i].real();
 	}

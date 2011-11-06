@@ -2,9 +2,12 @@
 #include "lshash/util.h"
 #include "lshash/point.h"
 #include "lshash/ghash.h"
+#include "fft/fft.h"
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+
+bool comPair (pair<double, u_int> i, pair<double, u_int> j) { return (i.first > j.first); }
 
 LShashESE::LShashESE(const char *file):indexFile(file) {
 	fhandle = fopen(file, "rb");
@@ -36,45 +39,99 @@ LShashESE::loadPoint() {
 }
 
 void
-LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
+LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
 	assert(sin.size() == DIMS);
+
+	Point q;
+	for(u_int i = 0; i < sin.size(); ++i)
+		q.d[i] = sin[i];
+
+	lsh.findNodes(q, _index);
+}
+
+void
+LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
+	
+	//# Find by LSHash.
+	vector<u_int> eid;
+	findByLSH(sin, eid);
+
+	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
+
+	Point p;
+	vector<pair<double, u_int> > xlist;
+
+	//# sort eid, decreate disk move.
+	sort(eid.begin(), eid.end());
+
+	WaveletEps twe(sin);
+	vector< vector<double> > vtin;
+	vector<int> iden;
+
+	for(u_int i = 0; i < eid.size(); ++i) {
+		assert(true == readPoint(eid[i], p));
+		vector<double> tin(p.d, p.d + DIMS);
+
+		vtin.push_back(tin);
+		iden.push_back(p.identity);
+
+		if(vtin.size() >= IN_MEMORY_NUM) {
+			try {
+				twe.batch_push(vtin, iden);
+			}catch(...) {
+				cerr << "batch_push exception" << endl;
+				throw;
+			}
+			vtin.clear();
+			iden.clear();
+		}
+	}
+	if(vtin.size() > 0) {
+		twe.batch_push(vtin, iden);
+	}
+
+	vector<WSSimilar> &vwss = twe.find(sin);
+
+	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
+		_index.push_back(vwss[i].index);
+	}
+}
+
+void
+LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
+	assert(sin.size() == DIMS);
+
 	Point q;
 	for(u_int i = 0; i < sin.size(); ++i)
 		q.d[i] = sin[i];
 
 	vector<u_int> eid;
-
-	lsh.findNodes(q, eid);
-
-	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
-
-	wavelet.clear();
+	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
 	Point p;
-	for(u_int i = 0; i < eid.size(); ++i) {
-		assert(true == readPoint(eid[i], p));
+	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
+	vector<pair<double, u_int> > xlist;
+
+	int tnum = 0;
+
+	while(fread(&p, sizeof(Point), 1, fhandle) == 1) {
 		vector<double> tin(p.d, p.d + DIMS);
-		wavelet.addSignal(tin, p.identity);
+		//cout << "p.identity: " << p.identity << endl;
+		double sim = FFT::xcorr(sin, tin);
+		xlist.push_back(make_pair<double, u_int>(sim, p.identity));
+		++tnum;
+	}
+	sort(xlist.begin(), xlist.end(), comPair);
+
+	cout << "total signals : " << tnum << endl;
+
+
+	for(u_int i = 0; i < xlist.size() && i < K; ++i) {
+		cout << "[" << i << "]: " << xlist[i].first<< " - index: " << xlist[i].second << endl;
+		_index.push_back(xlist[i].second);
 	}
 
-	vector<WSSimilar> &vwss = wavelet.find(sin);
-
-	/*
-	for(int i = 0; i < DIMS; ++i) {
-		cout << q.d[i] << ' ';
-	}
-	cout << endl;
-	*/
-
-	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
-		/*
-		for(int j = 0; j < DIMS; ++j)
-			cout << vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig[j] << ' ';
-		cout << endl;
-		*/
-		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
-		_index.push_back(vwss[i].index);
-	}
 }
 
 void
@@ -84,27 +141,41 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
 	for(u_int i = 0; i < sin.size(); ++i)
 		q.d[i] = sin[i];
 
-	vector<u_int> eid;
-	//lsh.findNodes(q, eid);
-
-	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
-
-	wavelet.clear();
+	WaveletEps twe(sin);
 
 	Point p;
 	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
 
 	int tnum = 0;
+
+	vector< vector<double> > vtin;
+	vector<int> iden;
+
 	while(fread(&p, sizeof(Point), 1, fhandle) == 1) {
 		vector<double> tin(p.d, p.d + DIMS);
 		//cout << "p.identity: " << p.identity << endl;
-		wavelet.addSignal(tin, p.identity);
+		//# Can't load all dataset in memory.
+		vtin.push_back(tin);
+		iden.push_back(p.identity);
+		if(vtin.size() >= IN_MEMORY_NUM) {
+			try {
+				twe.batch_push(vtin, iden);
+			}catch(...) {
+				cerr << "batch_push exception" << endl;
+				throw;
+			}
+			vtin.clear();
+			iden.clear();
+		}
 		++tnum;
+	}
+	if(vtin.size() > 0) {
+		twe.batch_push(vtin, iden);
 	}
 
 	cout << "total signals : " << tnum << endl;
 
-	vector<WSSimilar> &vwss = wavelet.find(sin);
+	vector<WSSimilar> &vwss = twe.find(sin);
 
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;

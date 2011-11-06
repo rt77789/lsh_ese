@@ -70,6 +70,8 @@ private:
 	
 	double h[4];
 	double g[4];
+	vector<double> query;
+	WaveletSignal queryWS;
 	vector<WSSimilar> sigs;
 	string fileName;
 	
@@ -92,7 +94,6 @@ private:
 	void loadin(const WaveletSignal &sin);
 	
 	void loadin();
-
 	
 public:
 	// Find the most similar signal.
@@ -103,9 +104,14 @@ public:
 	//# Clear sigs.
 	void clear();
 	
+	//#
+	void batch_push(const vector< vector<double> > &sin, const vector<int> &index);
+
+
 	// Constructor.
 	WaveletEps(const char *file);
 	WaveletEps();
+	WaveletEps(const vector<double> &q);
 	void init();
 	// vector<WSSimilar>& getWSSimilar();
 

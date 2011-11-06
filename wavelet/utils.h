@@ -11,6 +11,7 @@ using namespace std;
 
 #define LEVEL 3
 #define K 10
+#define IN_MEMORY_NUM 10000
 #define DIMS 1024
 #define FREQUENT 100
 

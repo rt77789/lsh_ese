@@ -1,79 +1,39 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/dir.h>
-#include <sys/stat.h>
-#include <string.h>
-//Å¶ÏǷñ¿¼
-int IS_DIR(const char* path)
-{
-	struct stat st;
-	lstat(path, &st);
-	return S_ISDIR(st.st_mode);
-}
-//±éÎ¼þ¼Ðeµݹ麯Ê
-void List_Files_Core(const char *path, int recursive)
-{
-	DIR *pdir;
-	struct dirent *pdirent;
-	char temp[256];
-	pdir = opendir(path);
-	if(pdir)
-	{
-		while(pdirent = readdir(pdir))
-		{
-			//Ì¹ý".."
-			if(strcmp(pdirent->d_name, ".") == 0
-					|| strcmp(pdirent->d_name, "..") == 0)
-				continue;
-			sprintf(temp, "%s/%s", path, pdirent->d_name);
-			// printf("%s\n", temp);
-			//µ±tempΪĿ¼²¢ÇrecursiveΪ1µÄ±ºò鴦À×Ŀ¼
-			if(IS_DIR(temp) && recursive)
-			{
-				List_Files_Core(temp, recursive);
-			}
-			else if(!IS_DIR(temp)) {
-				int len = strlen(temp);	
-				if(strcmp(temp + len - 4, ".SAC") == 0 || strcmp(temp + len - 4, ".sac") == 0) {
-					printf("%s\n", temp);
-				}
-			}
-		}
-	}
-	else
-	{
-		printf("opendir error:%s\n", path);
-	}
-	closedir(pdir);
-}
-void List_Files(const char *path, int recursive)
-{
-	int len;
-	char temp[256];
-	//ȥµô²µÄ/'
-	len = strlen(path);
-	strcpy(temp, path);
-	if(temp[len - 1] == '/') temp[len -1] = '\0';
+#include <iostream>
+#include "wavelet.h"
+#include "weps.h"
 
-	if(IS_DIR(temp))
-	{
-		//´¦ÀĿ¼
-		List_Files_Core(temp, recursive);
-	}
-	else   //Ê³öþ
-	{
-		printf("%s\n", path);
-	}
-}
-int main(int argc, char** argv)
-{
-	if(argc != 2)
-	{
-		printf("Usage: ./program absolutePath\n");
-		exit(0);
-	}
+using namespace std;
 
-	List_Files(argv[1], 1);
+int
+main() {
+	vector<double> x, nx, y;
+	x.push_back(0);
+	x.push_back(1);
+	x.push_back(2);
+	x.push_back(3);
+	x.push_back(4);
+	x.push_back(5);
+	x.push_back(6);
+	x.push_back(7);
+	for(size_t i = 0; i < x.size(); ++i)
+		cout << x[i] << " ";
+	cout << endl;
+
+	Wavelet::transform(x, nx);
+	for(size_t i = 0; i < nx.size(); ++i)
+		cout << nx[i] << " ";
+	cout << endl;
+
+	WaveletEps we;
+	we.waveletTransform(x);
+	for(size_t i = 0; i < x.size(); ++i)
+		cout << x[i] << " ";
+	cout << endl;
+
+	Wavelet::itransform(nx, y);
+	for(size_t i = 0; i < y.size(); ++i)
+		cout << y[i] << " ";
+	cout << endl;
 
 	return 0;
 }

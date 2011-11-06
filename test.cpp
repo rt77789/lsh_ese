@@ -77,7 +77,7 @@ test_lshese(const char *dataset, u_int queryNum) {
 }
 
 void
-test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum) {
+test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum, const char *which) {
 
 	LShashESE lsese(dataset);
 
@@ -94,7 +94,12 @@ test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum)
 		vector<double> sin(p[i].d, p[i].d + DIMS);
 		vector<u_int> index;
 
-		lsese.naiveWaveletFind(sin, index);
+		if(strcmp(which, "FFT") == 0) {
+			lsese.naiveFFTConvFind(sin, index);
+		}
+		else {
+			lsese.naiveWaveletFind(sin, index);
+		}
 
 		for(u_int i = 0; i < index.size(); ++i) {
 			cout << "id: " << index[i] << endl;
@@ -114,17 +119,24 @@ main(int argc , char **args) {
 		assert(queryNum >= 0);
 		test_restore_index(args[2], args[3], args[4], queryNum);
 	}
-	else if(argc >= 5 && strcmp(args[1], "-naive") == 0) {
+	else if(argc >= 5 && strcmp(args[1], "-nw") == 0) {
 		int queryNum = atoi(args[4]);
 		assert(queryNum >= 0);
-		test_naive_wavelet(args[2], args[3], queryNum);
+		test_naive_wavelet(args[2], args[3], queryNum, "nw");
 	}
+	else if(argc >= 5 && strcmp(args[1], "-nf") == 0) {
+		int queryNum = atoi(args[4]);
+		assert(queryNum >= 0);
+		test_naive_wavelet(args[2], args[3], queryNum, "FFT");
+	}
+
 	else {
 		perror("usage: \n\
-				./test (-build | -load | -naive) \n\
+				./test (-build | -load | -nf | -nw) \n\
 				\t-build dataset.file index.file\n\
 				\t-load dataset.file index.file query.file #query_number\n\
-				\t-naive dataset.file query.file #query_number\n");
+				\t-nf dataset.file query.file #query_number\n\
+				\t-nw dataset.file query.file #query_number\n");
 		exit(0);
 	}
 	//test_lshese(args[1], queryNum);
