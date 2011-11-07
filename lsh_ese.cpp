@@ -86,6 +86,7 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 			iden.clear();
 		}
 	}
+
 	if(vtin.size() > 0) {
 		twe.batch_push(vtin, iden);
 	}
@@ -109,18 +110,23 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
 	vector<u_int> eid;
 	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
-	Point p;
 	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
 	vector<pair<double, u_int> > xlist;
 
 	int tnum = 0;
 
-	while(fread(&p, sizeof(Point), 1, fhandle) == 1) {
-		vector<double> tin(p.d, p.d + DIMS);
-		//cout << "p.identity: " << p.identity << endl;
-		double sim = FFT::xcorr(sin, tin);
-		xlist.push_back(make_pair<double, u_int>(sim, p.identity));
-		++tnum;
+	Point p[BATCH_READ_NUM];
+
+	int cpnum = 0;	
+
+	while((cpnum = fread(p, sizeof(Point), BATCH_READ_NUM, fhandle)) > 0) {
+		for(int i = 0; i < cpnum; ++i) {
+			vector<double> tin(p[i].d, p[i].d + DIMS);
+			//cout << "p.identity: " << p.identity << endl;
+			double sim = FFT::xcorr(sin, tin);
+			xlist.push_back(make_pair<double, u_int>(sim, p[i].identity));
+		}
+		tnum += cpnum;
 	}
 	sort(xlist.begin(), xlist.end(), comPair);
 
@@ -131,7 +137,6 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
 		cout << "[" << i << "]: " << xlist[i].first<< " - index: " << xlist[i].second << endl;
 		_index.push_back(xlist[i].second);
 	}
-
 }
 
 void
@@ -143,31 +148,28 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
 
 	WaveletEps twe(sin);
 
-	Point p;
 	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
 
 	int tnum = 0;
 
 	vector< vector<double> > vtin;
 	vector<int> iden;
+	Point p[BATCH_READ_NUM];
+	int cpnum = 0;
 
-	while(fread(&p, sizeof(Point), 1, fhandle) == 1) {
-		vector<double> tin(p.d, p.d + DIMS);
-		//cout << "p.identity: " << p.identity << endl;
-		//# Can't load all dataset in memory.
-		vtin.push_back(tin);
-		iden.push_back(p.identity);
-		if(vtin.size() >= IN_MEMORY_NUM) {
-			try {
+	while((cpnum = fread(&p, sizeof(Point), 1, fhandle)) > 0) {
+		for(int i = 0; i < cpnum; ++i) {
+			vector<double> tin(p[i].d, p[i].d + DIMS);
+			//# Can't load all dataset in memory.
+			vtin.push_back(tin);
+			iden.push_back(p[i].identity);
+			if(vtin.size() >= IN_MEMORY_NUM) {
 				twe.batch_push(vtin, iden);
-			}catch(...) {
-				cerr << "batch_push exception" << endl;
-				throw;
+				vtin.clear();
+				iden.clear();
 			}
-			vtin.clear();
-			iden.clear();
 		}
-		++tnum;
+		tnum += cpnum;
 	}
 	if(vtin.size() > 0) {
 		twe.batch_push(vtin, iden);

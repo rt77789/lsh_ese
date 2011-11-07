@@ -11,7 +11,11 @@ using namespace std;
 
 #define LEVEL 3
 #define K 10
+//# Maximum number of Points in memory.
 #define IN_MEMORY_NUM 10000
+//# Batch fread Points at one time.
+#define BATCH_READ_NUM 4
+
 #define DIMS 1024
 #define FREQUENT 100
 

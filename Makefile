@@ -13,7 +13,7 @@ OBJ=$(LSH)/util.o $(LSH)/ghash.o $(LSH)/lshash.o $(WAVE)/weps.o\
 
 all: main test
 
-main: lshash_make wavelet_make fft_make ${OBJ} lsh_ese.h main.cpp
+main: fft_make lshash_make wavelet_make ${OBJ} lsh_ese.h main.cpp
 	$(CPP) $(CFLAGS) ${OBJ} main.cpp -o main
 
 test: lshash_make wavelet_make ${OBJ} lsh_ese.h test.cpp
@@ -22,14 +22,14 @@ test: lshash_make wavelet_make ${OBJ} lsh_ese.h test.cpp
 lsh_ese.o:  lsh_ese.h lsh_ese.cpp
 	$(CPP) $(CFLAGS) -c lsh_ese.cpp -o lsh_ese.o 
 
+fft_make:
+	${MAKE} -C ${FFT}
+
 lshash_make:
 	${MAKE} -C ${LSH}
 
 wavelet_make:
 	${MAKE} -C ${WAVE}
-
-fft_make:
-	${MAKE} -C ${FFT}
 
 clean:
 	cd ${LSH}; make clean 
