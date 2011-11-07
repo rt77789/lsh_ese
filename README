@@ -14,6 +14,7 @@ TO DO:
 5. [DONE] Batch dealing with loading data from external file.
 6. Adjusting the parameters.
 7. SAC file as the input query | non-consistent dimensions.
+8. Plotting the signal, matlab or java.
 
 
 Remove remote branch:(:heads/new_created_branch)
