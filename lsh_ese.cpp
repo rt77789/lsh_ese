@@ -7,7 +7,7 @@
 #include <fstream>
 #include <algorithm>
 
-bool comPair (pair<double, u_int> i, pair<double, u_int> j) { return (i.first > j.first); }
+bool comPair (pair<double, vector<double> > i, pair<double, vector<double> > j) { return (i.first > j.first); }
 
 LShashESE::LShashESE(const char *file):indexFile(file) {
 	fhandle = fopen(file, "rb");
@@ -50,7 +50,7 @@ LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
 }
 
 void
-LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
+LShashESE::findIndex(const vector<double> &sin, vector< vector<double> > &resig) {
 	
 	//# Find by LSHash.
 	vector<u_int> eid;
@@ -95,12 +95,12 @@ LShashESE::findIndex(const vector<double> &sin, vector<u_int> &_index) {
 
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
-		_index.push_back(vwss[i].index);
+		resig.push_back(vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig);
 	}
 }
 
 void
-LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
+LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > &resig) {
 	assert(sin.size() == DIMS);
 
 	Point q;
@@ -111,7 +111,7 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
 	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
 	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
-	vector<pair<double, u_int> > xlist;
+	vector<pair<double, vector<double> > > xlist, rlist;
 
 	int tnum = 0;
 
@@ -124,23 +124,31 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
 			vector<double> tin(p[i].d, p[i].d + DIMS);
 			//cout << "p.identity: " << p.identity << endl;
 			double sim = FFT::xcorr(sin, tin);
-			xlist.push_back(make_pair<double, u_int>(sim, p[i].identity));
+			xlist.push_back(make_pair<double, vector<double> >(sim, tin));
+			if(xlist.size() >= IN_MEMORY_NUM) {
+				//# merge
+				rlist.insert(rlist.end(), xlist.begin(), xlist.end());
+				sort(rlist.begin(), rlist.end(), comPair);
+				if(rlist.size() > IN_MEMORY_NUM) {
+					rlist.resize(IN_MEMORY_NUM);
+				}
+				xlist.clear();
+			}
 		}
 		tnum += cpnum;
 	}
-	sort(xlist.begin(), xlist.end(), comPair);
 
 	cout << "FFT total signals : " << tnum << endl;
 
 
-	for(u_int i = 0; i < xlist.size() && i < K; ++i) {
-		cout << "[" << i << "]: " << xlist[i].first<< " - index: " << xlist[i].second << endl;
-		_index.push_back(xlist[i].second);
+	for(u_int i = 0; i < rlist.size() && i < K; ++i) {
+		cout << "[" << i << "]: " << rlist[i].first << endl;
+		resig.push_back(rlist[i].second);
 	}
 }
 
 void
-LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
+LShashESE::naiveWaveletFind(const vector<double> &sin, vector< vector<double> > &resig) {
 	assert(sin.size() == DIMS);
 	Point q;
 	for(u_int i = 0; i < sin.size(); ++i)
@@ -181,7 +189,7 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
 
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
-		_index.push_back(vwss[i].index);
+		resig.push_back(vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig);
 	}
 }
 

@@ -34,12 +34,15 @@ test_restore_index(const char *dataset, const char *_if, const char *_query_file
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector<u_int> index;
+		vector< vector<double> > resig;
 
-		lsese.findIndex(sin, index);
+		lsese.findIndex(sin, resig);
 
-		for(u_int i = 0; i < index.size(); ++i) {
-			cout << "id: " << index[i] << endl;
+		for(u_int i = 0; i < resig.size(); ++i) {
+			for(size_t j = 0; j < resig[i].size(); ++j) {
+				cout << resig[i][j] << " ";
+			}
+			cout << endl;
 		}
 	}
 	cout << "end... | ";
@@ -64,12 +67,15 @@ test_lshese(const char *dataset, u_int queryNum) {
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector<u_int> index;
+		vector< vector<double> > resig;
 
-		lsese.findIndex(sin, index);
+		lsese.findIndex(sin, resig);
 
-		for(u_int i = 0; i < index.size(); ++i) {
-			cout << "id: " << index[i] << endl;
+		for(u_int i = 0; i < resig.size(); ++i) {
+			for(size_t j = 0; j < resig[i].size(); ++j) {
+				cout << resig[i][j] << " ";
+			}
+			cout << endl;
 		}
 	}
 	cout << "end... | ";
@@ -92,17 +98,20 @@ test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum,
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector<u_int> index;
+		vector< vector<double> > resig;
 
 		if(strcmp(which, "FFT") == 0) {
-			lsese.naiveFFTConvFind(sin, index);
+			lsese.naiveFFTConvFind(sin, resig);
 		}
 		else {
-			lsese.naiveWaveletFind(sin, index);
+			lsese.naiveWaveletFind(sin, resig);
 		}
 
-		for(u_int i = 0; i < index.size(); ++i) {
-			cout << "id: " << index[i] << endl;
+		for(u_int i = 0; i < resig.size(); ++i) {
+			for(size_t j = 0; j < resig[i].size(); ++j) {
+				cout << resig[i][j] << " ";
+			}
+			cout << endl;
 		}
 	}
 	cout << "end... | ";
