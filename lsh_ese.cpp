@@ -130,7 +130,7 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<u_int> &_index) {
 	}
 	sort(xlist.begin(), xlist.end(), comPair);
 
-	cout << "total signals : " << tnum << endl;
+	cout << "FFT total signals : " << tnum << endl;
 
 
 	for(u_int i = 0; i < xlist.size() && i < K; ++i) {
@@ -175,7 +175,7 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<u_int> &_index) {
 		twe.batch_push(vtin, iden);
 	}
 
-	cout << "total signals : " << tnum << endl;
+	cout << "Wavelet FFT total signals : " << tnum << endl;
 
 	vector<WSSimilar> &vwss = twe.find(sin);
 
@@ -217,8 +217,14 @@ LShashESE::transformDataSet(const char *_fin, const char *_fout) {
 		Point p;
 		p.identity = i++;
 		u_int j = 0;
-		while(iss >> d) {
-			p.d[j++] = d;	
+		string sd;
+		while(iss >> sd) {
+			try {
+				p.d[j++] = sci2double(sd);	
+			}catch(...) {
+				cerr << "sci2double exception." << endl;
+				throw;
+			}
 		}
 		assert(j == DIMS);
 

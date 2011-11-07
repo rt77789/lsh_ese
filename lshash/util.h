@@ -5,9 +5,9 @@
 #define TABLE_PRIME ((1LL<<13) - 1)
 #define HASH_PRIME ((1LL<<32) - 5)
 
+#define DIMS 4096
 #define U_NUM_IN_G 2
 //# Dimensions of a signal.
-#define DIMS 1024
 
 typedef unsigned int u_int;
 typedef unsigned long long u64;

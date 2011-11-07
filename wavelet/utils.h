@@ -16,7 +16,7 @@ using namespace std;
 //# Batch fread Points at one time.
 #define BATCH_READ_NUM 4
 
-#define DIMS 1024
+#define DIMS 4096
 #define FREQUENT 100
 
 #define INF 1<<31
@@ -34,7 +34,7 @@ class Const {
 */
 
 // The array for limit the top-k at different level.
-const int levelLimit[] = {1<<30, 1000, 100, 10};
+const int levelLimit[] = {1<<30, 8, 8, 8};
 
 double	sci2double(string sci);
 void	print_now();

@@ -80,7 +80,14 @@ sci2double(string sci) {
 		res *= pow(10., atof(sci.substr(i+1).c_str()));
 	}
 	else {
-		res = atof(sci.c_str());
+		i = sci.find('E');
+		if(i != string::npos) {
+			res = atof(sci.substr(0, i).c_str());
+			res *= pow(10., atof(sci.substr(i+1).c_str()));
+		}
+		else {
+			res = atof(sci.c_str());
+		}
 	}
 	
 	return res;

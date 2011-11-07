@@ -270,12 +270,6 @@ vector<WSSimilar>&
 WaveletEps::find(const vector<double> &sin) {
 	vector<double> tmpSig(sin);
 	
-	
-	// If the dimension of sin less than 22518, then fill zeros.
-	for(size_t i = tmpSig.size(); i < DIMS; ++i) {
-		tmpSig.push_back(0);
-	}
-	
 #ifdef DEBUG
 	cout << "waveletTransforming now...\n";
 #endif

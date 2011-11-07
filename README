@@ -9,9 +9,9 @@ TO DO:
 0. Query Point -> Expand some nearby Point.
 1. Normalize all the Point?
 2. Features? How to use it?
-3. Multi-threads.
+3. [DOING] Multi-threads.
 4. Experimences to check the precisions.
-5. Batch dealing with loading data from external file.
+5. [DONE] Batch dealing with loading data from external file.
 6. Adjusting the parameters.
 7. SAC file as the input query | non-consistent dimensions.
 

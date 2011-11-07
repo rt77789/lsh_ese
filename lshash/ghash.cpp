@@ -29,7 +29,7 @@ Ghash::init(u_int _M, u_int _K) {
 	M = _M, K = _K;
 	w = 4;
 	b = Util::randomByUniform(0.0, w);
-	R = 10;
+	R = 100;
 
 	uPoints.clear();
 	projectValue.clear();
