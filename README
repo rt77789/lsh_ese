@@ -19,3 +19,8 @@ TO DO:
 
 Remove remote branch:(:heads/new_created_branch)
 git push origin :heads/origin/t0corr
+
+Plot using R.
+R CMD BATCH --args plot.R
+
+Permission problem costs me such a long time to deal with, finally I chown the directory that the systems' root dir as 'www-data'.

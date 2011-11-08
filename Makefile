@@ -19,7 +19,7 @@ main: fft_make lshash_make wavelet_make ${OBJ} lsh_ese.h main.cpp
 test: lshash_make wavelet_make ${OBJ} lsh_ese.h test.cpp
 	$(CPP) $(CFLAGS) ${OBJ} test.cpp -o test 
 
-lsh_ese.o:  lsh_ese.h lsh_ese.cpp
+lsh_ese.o:  ${WAVE}/utils.h lsh_ese.h lsh_ese.cpp
 	$(CPP) $(CFLAGS) -c lsh_ese.cpp -o lsh_ese.o 
 
 fft_make:

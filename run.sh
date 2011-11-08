@@ -2,24 +2,24 @@
 
 if [[ $1 = "-test" ]]
 then
-	make
+#	make
 	echo "Using test dataset..."
 	#./test -build dataset.input dataset.index
 	#./test -load dataset.input dataset.index dataset.test 10
 	./test -build ${2} ${2}.index
-	./test -load ${2} ${2}.index ${3} 10
+	./test -load ${2} ${2}.index ${3} 1
 
 elif [[ $1 = "-nf" ]]
 then
-	make
+#	make
 	echo "Using naive FFT test..."
-	./test -nf ${2} ${3} 10
+	./test -nf ${2} ${3} 1
 	#./test -nf dataset.input dataset.test 10
 elif [[ $1 = "-nw" ]]
 then
-make
+#make
 	echo "Using naive FFT & Wavelet test..."
-	./test -nw ${2} ${3} 10
+	./test -nw ${2} ${3} 1
 	#./test -nw dataset.input dataset.test 10
 elif [[ $1 = "-build" ]]
 then

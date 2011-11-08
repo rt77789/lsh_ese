@@ -137,8 +137,17 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > 
 		}
 		tnum += cpnum;
 	}
+	if(xlist.size() > 0) {
+		//# merge
+		rlist.insert(rlist.end(), xlist.begin(), xlist.end());
+		sort(rlist.begin(), rlist.end(), comPair);
+		if(rlist.size() > IN_MEMORY_NUM) {
+			rlist.resize(IN_MEMORY_NUM);
+		}
+	}
 
 	cout << "FFT total signals : " << tnum << endl;
+	cout << "rlist.size() : " << rlist.size() << "-K: " << K << endl;
 
 
 	for(u_int i = 0; i < rlist.size() && i < K; ++i) {
