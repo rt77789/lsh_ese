@@ -35,8 +35,8 @@ test_restore_index(const char *dataset, const char *_if, const char *_query_file
 	cout << "start querying... | ";
 	Util::print_now();
 
-	ofstream fout(tmpOut);
-	assert(fout.is_open());
+	//ofstream fout(tmpOut);
+	//assert(fout.is_open());
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
@@ -46,12 +46,14 @@ test_restore_index(const char *dataset, const char *_if, const char *_query_file
 
 		for(u_int i = 0; i < resig.size(); ++i) {
 			for(size_t j = 0; j < resig[i].size(); ++j) {
-				fout << resig[i][j] << " ";
+				//fout << resig[i][j] << " ";
+				cerr << resig[i][j] << " ";
 			}
-			fout << endl;
+			//fout << endl;
+			cerr << endl;
 		}
 	}
-	fout.close();
+	//fout.close();
 	cout << "end... | ";
 	Util::print_now();
 }
@@ -72,8 +74,8 @@ test_lshese(const char *dataset, u_int queryNum) {
 	cout << "start querying... | ";
 	Util::print_now();
 
-	ofstream fout(tmpOut);
-	assert(fout.is_open());
+	//ofstream fout(tmpOut);
+	//assert(fout.is_open());
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
@@ -83,12 +85,14 @@ test_lshese(const char *dataset, u_int queryNum) {
 
 		for(u_int i = 0; i < resig.size(); ++i) {
 			for(size_t j = 0; j < resig[i].size(); ++j) {
-				fout << resig[i][j] << " ";
+				//fout << resig[i][j] << " ";
+				cerr << resig[i][j] << " ";
 			}
-			fout << endl;
+			//fout << endl;
+			cerr << endl;
 		}
 	}
-	fout.close();
+	//fout.close();
 
 	cout << "end... | ";
 	Util::print_now();
@@ -108,8 +112,8 @@ test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum,
 	cout << "start querying... | ";
 	Util::print_now();
 
-	ofstream fout(tmpOut);
-	assert(fout.is_open());
+	//ofstream fout(tmpOut);
+	//assert(fout.is_open());
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
@@ -124,12 +128,14 @@ test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum,
 
 		for(u_int i = 0; i < resig.size(); ++i) {
 			for(size_t j = 0; j < resig[i].size(); ++j) {
-				fout << resig[i][j] << " ";
+				//fout << resig[i][j] << " ";
+				cerr << resig[i][j] << " ";
 			}
-			fout << endl;
+			//fout << endl;
+			cerr << endl;
 		}
 	}
-	fout.close();
+	//fout.close();
 	cout << "end... | ";
 	Util::print_now();
 }
