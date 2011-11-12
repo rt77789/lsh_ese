@@ -19,6 +19,8 @@ using namespace std;
 #define DIMS 4096
 #define FREQUENT 100
 
+//# switch t0.
+#define T0XCORR
 #define INF 1<<31
 
 /*

@@ -41,7 +41,9 @@ test_restore_index(const char *dataset, const char *_if, const char *_query_file
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
 		vector< vector<double> > resig;
-
+#ifdef T0XCORR
+		cout << "T0 cross-correlation computing..." << endl;
+#endif
 		lsese.findIndex(sin, resig);
 
 		for(u_int i = 0; i < resig.size(); ++i) {
@@ -80,7 +82,10 @@ test_lshese(const char *dataset, u_int queryNum) {
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
 		vector< vector<double> > resig;
-
+		resig.push_back(sin);
+#ifdef T0XCORR
+		cout << "T0 cross-correlation computing..." << endl;
+#endif
 		lsese.findIndex(sin, resig);
 
 		for(u_int i = 0; i < resig.size(); ++i) {
@@ -118,7 +123,10 @@ test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum,
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
 		vector< vector<double> > resig;
-
+#ifdef T0XCORR
+		cout << "T0 cross-correlation computing..." << endl;
+#endif
+		resig.push_back(sin);
 		if(strcmp(which, "FFT") == 0) {
 			lsese.naiveFFTConvFind(sin, resig);
 		}

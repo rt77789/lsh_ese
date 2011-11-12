@@ -3,6 +3,7 @@
 #include "lshash/point.h"
 #include "lshash/ghash.h"
 #include "fft/fft.h"
+#include "wavelet/utils.h"
 #include <sstream>
 #include <fstream>
 #include <algorithm>
@@ -123,7 +124,11 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > 
 		for(int i = 0; i < cpnum; ++i) {
 			vector<double> tin(p[i].d, p[i].d + DIMS);
 			//cout << "p.identity: " << p.identity << endl;
+#ifdef T0XCORR
+			double sim = FFT::t0xcorr(sin, tin);
+#else
 			double sim = FFT::xcorr(sin, tin);
+#endif
 			xlist.push_back(make_pair<double, vector<double> >(sim, tin));
 			if(xlist.size() >= IN_MEMORY_NUM) {
 				//# merge

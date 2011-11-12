@@ -167,3 +167,49 @@ FFT::xcorr(const double *x, const double *y, size_t len) {
 	}
 	return xcorr(nx, ny);
 }
+
+//# T0 moment cross-correlation.
+double
+FFT::t0xcorr(const vector<double> &sa, const vector<double> &sb) {
+	double ma = 0, mb = 0;
+
+	if(sa.size() != sb.size()) {
+		throw "sa.size() != sb.size()";
+	}
+
+	size_t len = sa.size();
+
+	for(size_t i = 0; i < len; ++i) {
+		ma += sa[i];
+		mb += sb[i];
+	}
+	ma /= len;
+	mb /= len;
+
+	double res = -1e100;
+
+	double deta = 0;
+	double detb = 0;
+
+	for(int i = 0; i < len; ++i) {
+		deta += (sa[i] - ma) * (sa[i] - ma);
+		detb += (sb[i] - mb) * (sb[i] - mb);
+	}
+
+	deta = sqrt(deta * detb);
+	//# Make sure, it's fair for all resolutions.
+	for(int dp = 0; dp < 1; ++dp) {
+		// cout << "test" << endl;
+		double num = 0;
+		for(size_t i = 0; i < len; ++i) {
+			num += (sa[i] - ma) * (sb[i] - mb);
+		}
+
+		double rd = num / deta;
+		if(rd > res) {
+			res = rd;
+		}
+	}
+	// cout << "res: " << res << endl;
+	return res;
+}

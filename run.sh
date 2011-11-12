@@ -6,7 +6,7 @@ then
 	echo "Using test dataset..."
 	#./test -build dataset.input dataset.index
 	#./test -load dataset.input dataset.index dataset.test 10
-	./test -build ${2} ${2}.index
+#	./test -build ${2} ${2}.index
 	./test -load ${2} ${2}.index ${3} 1
 
 elif [[ $1 = "-nf" ]]

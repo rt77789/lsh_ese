@@ -219,7 +219,11 @@ WaveletEps::batch_push(const vector< vector<double> > &vsin, const vector<int> &
 		}
 
 		try {
+#ifdef T0XCORR
+			double sim = FFT::t0xcorr(ws.wsig[0].sig, queryWS.wsig[0].sig);
+#else
 			double sim = FFT::xcorr(ws.wsig[0].sig, queryWS.wsig[0].sig);
+#endif
 
 			WSSimilar wss;
 			wss.ws = ws;
@@ -358,7 +362,11 @@ WaveletEps::findByLayer(const WaveletSignal &sin, int layer) {
 	
 	for(size_t i = 0; i < upper; ++i) {
 		//pair<double, int> p = cross_correlation(sigs[i].ws.wsig[layer], sin.wsig[layer]);
+#ifdef T0XCORR
+		double sim  = FFT::t0xcorr(sigs[i].ws.wsig[layer].sig, sin.wsig[layer].sig);
+#else
 		double sim  = FFT::xcorr(sigs[i].ws.wsig[layer].sig, sin.wsig[layer].sig);
+#endif
 		sigs[i].sim = sim;
 	}
 	sort(sigs.begin(), (size_t)levelLimit[layer] < sigs.size() ? (sigs.begin() + levelLimit[layer]) : sigs.end());
