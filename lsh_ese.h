@@ -2,13 +2,20 @@
 #ifndef LSH_ESE_LSH_ESE_H_XIAOE
 #define LSH_ESE_LSH_ESE_H_XIAOE
 
+#include "mplshash/mplshash.h"
+
 #include <cstdio>
 #include <vector>
+
 #include "lshash/util.h"
 #include "lshash/point.h"
 #include "lshash/lshash.h"
-#include "wavelet/weps.h"
+#include "lshash/ghash.h"
+
+#include "fft/fft.h"
+
 #include "wavelet/utils.h"
+#include "wavelet/weps.h"
 
 
 using namespace std;
@@ -21,7 +28,7 @@ class LShashESE {
 		~LShashESE();
 
 		//# find the top-k index of most similar signal.
-		void findIndex(const vector<double> &sin, vector< vector<double> > &resig);
+		void findIndex(const vector<double> &sin, vector< vector<double> > &resig, const string &_lshtype);
 
 		//#
 		void findByLSH(const vector<double> &sin, vector<u_int> &_index);
@@ -37,6 +44,9 @@ class LShashESE {
 
 		//# Restore lshash.
 		void restoreLShash(const char *_if);
+
+		//# Initiralize MPLSHash object.
+		void initMPL();
 		
 		//# Random a dataset.
 		static void randomDataSet(const char *file, u_int _size);
@@ -61,6 +71,8 @@ class LShashESE {
 
 		LShash lsh;
 		WaveletEps wavelet;
+		MPLSHash mpl;
+
 		string indexFile;
 		FILE *fhandle;
 };

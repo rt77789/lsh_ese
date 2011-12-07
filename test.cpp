@@ -1,6 +1,7 @@
 #include "lsh_ese.h"
 #include "lshash/ghash.h"
 #include "lshash/util.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -16,7 +17,9 @@ test_build_index(const char *dataset, const char *_if) {
 	Util::print_now();
 
 	LShashESE lsese(dataset);
+	cout << "begin store index..." << endl;
 	lsese.storeLShash(_if);
+	cout << "end store index..." << endl;
 }
 
 void
@@ -44,7 +47,49 @@ test_restore_index(const char *dataset, const char *_if, const char *_query_file
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
 #endif
-		lsese.findIndex(sin, resig);
+		lsese.findIndex(sin, resig, "lsh");
+
+		for(u_int i = 0; i < resig.size(); ++i) {
+			for(size_t j = 0; j < resig[i].size(); ++j) {
+				//fout << resig[i][j] << " ";
+				cerr << resig[i][j] << " ";
+			}
+			//fout << endl;
+			cerr << endl;
+		}
+	}
+	//fout.close();
+	cout << "end... | ";
+	Util::print_now();
+}
+
+void
+test_mplsh(const char *dataset, const char *_if, const char *_query_file, u_int queryNum) {
+	cout << "mplsh test ... | ";
+	Util::print_now();
+
+	LShashESE lsese(dataset, _if);
+	lsese.initMPL();
+
+	cout << "readDataSet-#queryNum=" << queryNum << " | ";
+	Util::print_now();
+
+	vector<Point> p;
+	LShashESE::readDataSet(_query_file, p, queryNum);
+
+	cout << "mplsh start querying... | ";
+	Util::print_now();
+
+	//ofstream fout(tmpOut);
+	//assert(fout.is_open());
+
+	for(u_int i = 0; i < p.size(); ++i) {
+		vector<double> sin(p[i].d, p[i].d + DIMS);
+		vector< vector<double> > resig;
+#ifdef T0XCORR
+		cout << "T0 cross-correlation computing..." << endl;
+#endif
+		lsese.findIndex(sin, resig, "mpl");
 
 		for(u_int i = 0; i < resig.size(); ++i) {
 			for(size_t j = 0; j < resig[i].size(); ++j) {
@@ -86,7 +131,7 @@ test_lshese(const char *dataset, u_int queryNum) {
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
 #endif
-		lsese.findIndex(sin, resig);
+		lsese.findIndex(sin, resig, "lsh");
 
 		for(u_int i = 0; i < resig.size(); ++i) {
 			for(size_t j = 0; j < resig[i].size(); ++j) {
@@ -158,6 +203,11 @@ main(int argc , char **args) {
 		assert(queryNum >= 0);
 		test_restore_index(args[2], args[3], args[4], queryNum);
 	}
+	else if(argc >= 6 && strcmp(args[1], "-mpl") == 0) {
+		int queryNum = atoi(args[5]);
+		assert(queryNum >= 0);
+		test_mplsh(args[2], args[3], args[4], queryNum);
+	}
 	else if(argc >= 5 && strcmp(args[1], "-nw") == 0) {
 		int queryNum = atoi(args[4]);
 		assert(queryNum >= 0);
@@ -173,6 +223,7 @@ main(int argc , char **args) {
 				./test (-build | -load | -nf | -nw) \n\
 				\t-build dataset.file index.file\n\
 				\t-load dataset.file index.file query.file #query_number\n\
+				\t-mpl dataset.file index.file query.file #query_number\n\
 				\t-nf dataset.file query.file #query_number\n\
 				\t-nw dataset.file query.file #query_number\n");
 		exit(0);

@@ -1,0 +1,12 @@
+W = 10.0
+M = 20
+T = 30
+L = 30
+Q = 10
+K = 80
+R = 100000
+H = 1017881
+dim = 4096 
+recall = 0.99
+dataset = mplshash/output_moment.raw.mpl.input
+index = mplshash/output_moment.raw.mpl.index

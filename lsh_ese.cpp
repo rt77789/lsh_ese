@@ -1,9 +1,4 @@
 #include "lsh_ese.h"
-#include "lshash/util.h"
-#include "lshash/point.h"
-#include "lshash/ghash.h"
-#include "fft/fft.h"
-#include "wavelet/utils.h"
 #include <sstream>
 #include <fstream>
 #include <algorithm>
@@ -26,6 +21,11 @@ LShashESE::LShashESE(const char *file, const char *_if):indexFile(file) {
 LShashESE::~LShashESE() {
 	if(fhandle != NULL)
 		fclose(fhandle);
+}
+
+void
+LShashESE::initMPL() {
+	mpl.init("mplshash/config");
 }
 
 //# Load point from external file and add into lsh object.
@@ -51,11 +51,23 @@ LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
 }
 
 void
-LShashESE::findIndex(const vector<double> &sin, vector< vector<double> > &resig) {
+LShashESE::findIndex(const vector<double> &sin, vector< vector<double> > &resig, const string &_lshtype) {
 	
 	//# Find by LSHash.
 	vector<u_int> eid;
-	findByLSH(sin, eid);
+	if(_lshtype == "mpl") {
+		cout << "mpl find..." << endl;
+		float *fsin = new float[sin.size()];
+		for(u_int i = 0; i < sin.size(); ++i)
+			fsin[i] = sin[i];
+		mpl.query(fsin, sin.size(), eid);
+		if(fsin != NULL)
+		delete fsin;
+	}
+	else {
+		cout << "basic lsh find..." << endl;
+		findByLSH(sin, eid);
+	}
 
 	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 

@@ -22,14 +22,13 @@ double Ghash::b;
 double Ghash::w;
 double Ghash::R;
 
-
 //# initial Ghash static fields.
 void
 Ghash::init(u_int _M, u_int _K) {
 	M = _M, K = _K;
 	w = 4;
 	b = Util::randomByUniform(0.0, w);
-	R = 10;
+	R = 0.5;
 
 	uPoints.clear();
 	projectValue.clear();
@@ -242,15 +241,27 @@ void
 Ghash::preComputeFields(Point &q) {
 	//# normalize.
 	double maxd = 0;
-	const double eps = 1e-8;
+	const double eps = 1e-32;
 	//# Normalize the initial signal, point[] / max{ point[] }.
+	//for(int i = 0; i < DIMS; ++i)
+	//	maxd = maxd > q.d[i] ? maxd : q.d[i];
 	for(int i = 0; i < DIMS; ++i)
-		maxd = maxd > q.d[i] ? maxd : q.d[i];
-
-	assert(fabs(maxd) >= eps);
+		maxd += q.d[i];
+	maxd /= DIMS;
 
 	for(int i = 0; i < DIMS; ++i)
-		q.d[i] = q.d[i] / maxd / R;
+		q.d[i] -= maxd;
+	double ts = 0;
+	for(int i = 0; i < DIMS; ++i)
+		ts += q.d[i] * q.d[i];
+	ts = sqrt(ts);
+
+	//# ??
+	//assert(fabs(maxd) >= eps);
+
+	for(int i = 0; i < DIMS; ++i)
+		q.d[i] = q.d[i] / ts / R;
+		//q.d[i] = q.d[i] / maxd / R;
 
 	//# Projection.
 	for(u_int i = 0; i < uPoints.size(); ++i) {

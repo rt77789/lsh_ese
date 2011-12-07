@@ -6,7 +6,7 @@
 using namespace std;
 
 LShash::LShash() {
-	K = 12;
+	K = 10;
 	prob = 0.99;
 	M = estimateParaM(K, prob);
 	cout << "M: " << M << endl;
@@ -103,6 +103,7 @@ LShash::storeGhash(const char *_file) {
 	assert(1 == fwrite(&M, sizeof(int), 1, fh));
 	assert(1 == fwrite(&prob, sizeof(double), 1, fh));
 
+	cout << "begin store static fileds" << endl;
 	Ghash::storeStaticFields(fh);
 
 	for(u_int i = 0; i < g.size(); ++i) {
