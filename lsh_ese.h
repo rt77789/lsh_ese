@@ -20,6 +20,37 @@
 
 using namespace std;
 
+
+/* Search result class. */
+class SearchRes {
+	vector<double> signal;
+	double sim;
+	u_int id;
+
+	public:
+	SearchRes() {}
+	SearchRes(u_int _id, double _sim, const vector<double> &_signal):id(_id), sim(_sim) {
+		signal.assign(_signal.begin(), _signal.end());
+	}
+	~SearchRes() {}
+
+	u_int getID() const { return id; }
+	double getSim() const { return sim; }
+	vector<double>& getSignal() { return signal; }
+
+	void setID(u_int _id) { id = _id; }
+	void setSim(double _sim) { sim = _sim; }
+	void setSignal(const vector<double> &_signal) { 
+		signal.assign(_signal.begin(), _signal.end());
+	}
+
+	/* Compare function. */
+	bool operator<(const SearchRes &_sr) const {
+		return sim > _sr.sim;
+	}
+};
+
+
 class LShashESE {
 	public:
 		LShashESE(const char *file);
@@ -28,16 +59,16 @@ class LShashESE {
 		~LShashESE();
 
 		//# find the top-k index of most similar signal.
-		void findIndex(const vector<double> &sin, vector< vector<double> > &resig, const string &_lshtype);
+		int findIndex(const vector<double> &sin, vector<SearchRes> &resig, const string &_lshtype);
 
 		//#
 		void findByLSH(const vector<double> &sin, vector<u_int> &_index);
 
 		//# Naive wavelet find the top-k index of most similar signal.
-		void naiveWaveletFind(const vector<double> &sin, vector< vector<double> > &resig);
+		int naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig);
 		
 		//# Naive FFT-Convolution computing cross-correlation.
-		void naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > &_resig);
+		int naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig);
 
 		//# Store lshash.
 		void storeLShash(const char *_if);
@@ -76,5 +107,4 @@ class LShashESE {
 		string indexFile;
 		FILE *fhandle;
 };
-
 #endif

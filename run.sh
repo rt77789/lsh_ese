@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-TOPK=3
+TOPK=100
 
 if [[ $1 = "-test" ]]
 then

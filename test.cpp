@@ -11,6 +11,21 @@ using namespace std;
 
 const char *tmpOut = "tmp_out";
 
+/* Test benchmark, return the match number. */
+int
+test_bench(const vector<SearchRes> &bench, const vector<SearchRes> &diff) {
+	int mn = 0;
+	for(u_int i = 0; i < bench.size(); ++i) {
+		for(u_int j = 0; j < diff.size(); ++j) {
+			if(bench[i].getID() == diff[j].getID()) {
+				++mn;
+				break;
+			}
+		}
+	}
+	return mn;
+}
+
 void
 test_build_index(const char *dataset, const char *_if) {
 	cout << "lsese constructing... | ";
@@ -40,24 +55,32 @@ test_restore_index(const char *dataset, const char *_if, const char *_query_file
 
 	//ofstream fout(tmpOut);
 	//assert(fout.is_open());
+	double recall = 0;
+	double cost = 0;
 
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector< vector<double> > resig;
+		vector<SearchRes> resig, bench;
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
 #endif
-		lsese.findIndex(sin, resig, "lsh");
+		int total = lsese.naiveFFTConvFind(sin, bench);
+		int candi = lsese.findIndex(sin, resig, "lsh");
+		cost += 1.0 * candi / total;
+
+		recall += test_bench(bench, resig) * 1.0 / bench.size();
 
 		for(u_int i = 0; i < resig.size(); ++i) {
-			for(size_t j = 0; j < resig[i].size(); ++j) {
+			for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
 				//fout << resig[i][j] << " ";
-				cerr << resig[i][j] << " ";
+				cerr << resig[i].getSignal()[j] << " ";
 			}
 			//fout << endl;
 			cerr << endl;
 		}
 	}
+	cout << "recall: " << recall / p.size() << endl;
+	cout << "cost: " << cost / p.size() << endl;
 	//fout.close();
 	cout << "end... | ";
 	Util::print_now();
@@ -83,23 +106,31 @@ test_mplsh(const char *dataset, const char *_if, const char *_query_file, u_int 
 	//ofstream fout(tmpOut);
 	//assert(fout.is_open());
 
+	double recall = 0;
+	double cost = 0;
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector< vector<double> > resig;
+		vector<SearchRes> resig, bench;
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
 #endif
-		lsese.findIndex(sin, resig, "mpl");
+		int total = lsese.naiveFFTConvFind(sin, bench);
+		int candi = lsese.findIndex(sin, resig, "mpl");
 
+		cost += 1.0 * candi / total;
+
+		recall += test_bench(bench, resig) * 1.0 / bench.size();
 		for(u_int i = 0; i < resig.size(); ++i) {
-			for(size_t j = 0; j < resig[i].size(); ++j) {
+			for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
 				//fout << resig[i][j] << " ";
-				cerr << resig[i][j] << " ";
+				cerr << resig[i].getSignal()[j] << " ";
 			}
 			//fout << endl;
 			cerr << endl;
 		}
 	}
+	cout << "recall: " << recall / p.size() << endl;
+	cout << "cost: " << cost / p.size() << endl;
 	//fout.close();
 	cout << "end... | ";
 	Util::print_now();
@@ -124,24 +155,33 @@ test_lshese(const char *dataset, u_int queryNum) {
 	//ofstream fout(tmpOut);
 	//assert(fout.is_open());
 
+	double recall = 0;
+	double cost = 0;
+
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector< vector<double> > resig;
-		resig.push_back(sin);
+		vector<SearchRes> resig, bench;
+		//resig.push_back(sin);
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
 #endif
-		lsese.findIndex(sin, resig, "lsh");
+		int total = lsese.naiveFFTConvFind(sin, bench);
+		int candi = lsese.findIndex(sin, resig, "lsh");
+
+		recall += test_bench(bench, resig) * 1.0 / bench.size();
+		cost += 1.0 * candi / total;
 
 		for(u_int i = 0; i < resig.size(); ++i) {
-			for(size_t j = 0; j < resig[i].size(); ++j) {
+			for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
 				//fout << resig[i][j] << " ";
-				cerr << resig[i][j] << " ";
+				cerr << resig[i].getSignal()[j] << " ";
 			}
 			//fout << endl;
 			cerr << endl;
 		}
 	}
+	cout << "recall: " << recall / p.size() << endl;
+	cout << "cost: " << cost / p.size() << endl;
 	//fout.close();
 
 	cout << "end... | ";
@@ -164,35 +204,43 @@ test_naive_wavelet(const char *dataset, const char *_query_file, u_int queryNum,
 
 	//ofstream fout(tmpOut);
 	//assert(fout.is_open());
-
+	double recall = 0;
+	double cost = 0;
 	for(u_int i = 0; i < p.size(); ++i) {
 		vector<double> sin(p[i].d, p[i].d + DIMS);
-		vector< vector<double> > resig;
+		vector<SearchRes> resig, bench;
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
 #endif
-		resig.push_back(sin);
+		//resig.push_back(sin);
+		int total = lsese.naiveFFTConvFind(sin, bench);
+		int candi = 0;
+
 		if(strcmp(which, "FFT") == 0) {
-			lsese.naiveFFTConvFind(sin, resig);
+			candi = lsese.naiveFFTConvFind(sin, resig);
 		}
 		else {
-			lsese.naiveWaveletFind(sin, resig);
+			candi = lsese.naiveWaveletFind(sin, resig);
 		}
+		cost += 1.0 * candi / total;
+		
+		recall += test_bench(bench, resig) * 1.0 / bench.size();
 
 		for(u_int i = 0; i < resig.size(); ++i) {
-			for(size_t j = 0; j < resig[i].size(); ++j) {
+			for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
 				//fout << resig[i][j] << " ";
-				cerr << resig[i][j] << " ";
+				cerr << resig[i].getSignal()[j] << " ";
 			}
 			//fout << endl;
 			cerr << endl;
 		}
 	}
+	cout << "recall: " << recall / p.size() << endl;
+	cout << "cost: " << cost / p.size() << endl;
 	//fout.close();
 	cout << "end... | ";
 	Util::print_now();
 }
-
 int
 main(int argc , char **args) {
 	if(argc >= 4 && strcmp(args[1], "-build") == 0) {

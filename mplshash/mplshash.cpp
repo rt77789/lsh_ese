@@ -3,7 +3,7 @@
 #include "mplshash.h"
 
 /* Constructor. */
-MPLSHash::MPLSHash() {
+MPLSHash::MPLSHash():loadIndex(false) {
 	scan = NULL;
 }
 
@@ -38,6 +38,7 @@ void MPLSHash::config(const std::string &_path) {
 		("H", po::value<u_int>(&H)->default_value(1017881), "# hash table size.")
 		("dim", po::value<u_int>(&dim)->default_value(1024), "# dimensionality.")
 		("recall", po::value<float>(&desire_recall)->default_value(1.0), "# desire recall.")
+		("load_index", po::value<bool>(&loadIndex)->default_value(false), "# load index?.")
 		("dataset", po::value<string>(&dataset_path)->default_value("./dataset.in"), "# dataset.")
 		("index", po::value<string>(&index_path)->default_value("./dataset.index"), "# dataset index file.")
 		;
@@ -59,6 +60,7 @@ void MPLSHash::config(const std::string &_path) {
 	   cout << "dataset : " << dataset_path << endl;
 	   cout << "index: " << index_path << endl;
 	 */
+	cout << "loadIndex: " << loadIndex << endl;
 
 	param.W = W;
 	param.range = H;
@@ -102,7 +104,7 @@ void MPLSHash::load_index(const std::string &_path) {
 
 	/* Try to restore the index file, if failed build a new index and store it.  */
 	cout << "Try to restore from index file..." << endl;
-	if(!restore(_path)) {
+	if(!loadIndex || !restore(_path)) {
 		cout << "restore failed..." << endl;
 		DefaultRng rng;	
 		index.init(this->param, rng, L);

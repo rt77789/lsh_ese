@@ -3,8 +3,6 @@
 #include <fstream>
 #include <algorithm>
 
-bool comPair (pair<double, vector<double> > i, pair<double, vector<double> > j) { return (i.first > j.first); }
-
 LShashESE::LShashESE(const char *file):indexFile(file) {
 	fhandle = fopen(file, "rb");
 	assert(fhandle != NULL);
@@ -50,8 +48,8 @@ LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
 	lsh.findNodes(q, _index);
 }
 
-void
-LShashESE::findIndex(const vector<double> &sin, vector< vector<double> > &resig, const string &_lshtype) {
+int
+LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const string &_lshtype) {
 	
 	//# Find by LSHash.
 	vector<u_int> eid;
@@ -106,14 +104,16 @@ LShashESE::findIndex(const vector<double> &sin, vector< vector<double> > &resig,
 
 	vector<WSSimilar> &vwss = twe.find(sin);
 
+	resig.clear();
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
-		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
-		resig.push_back(vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig);
+		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
+		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
+	return eid.size();
 }
 
-void
-LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > &resig) {
+int
+LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig) {
 	assert(sin.size() == DIMS);
 
 	Point q;
@@ -124,7 +124,7 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > 
 	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
 	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
-	vector<pair<double, vector<double> > > xlist, rlist;
+	vector<SearchRes> xlist, rlist;
 
 	int tnum = 0;
 
@@ -141,11 +141,11 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > 
 #else
 			double sim = FFT::xcorr(sin, tin);
 #endif
-			xlist.push_back(make_pair<double, vector<double> >(sim, tin));
+			xlist.push_back(SearchRes(p[i].identity, sim, tin));
 			if(xlist.size() >= IN_MEMORY_NUM) {
 				//# merge
 				rlist.insert(rlist.end(), xlist.begin(), xlist.end());
-				sort(rlist.begin(), rlist.end(), comPair);
+				sort(rlist.begin(), rlist.end());
 				if(rlist.size() > IN_MEMORY_NUM) {
 					rlist.resize(IN_MEMORY_NUM);
 				}
@@ -157,7 +157,7 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > 
 	if(xlist.size() > 0) {
 		//# merge
 		rlist.insert(rlist.end(), xlist.begin(), xlist.end());
-		sort(rlist.begin(), rlist.end(), comPair);
+		sort(rlist.begin(), rlist.end());
 		if(rlist.size() > IN_MEMORY_NUM) {
 			rlist.resize(IN_MEMORY_NUM);
 		}
@@ -167,14 +167,17 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector< vector<double> > 
 	cout << "rlist.size() : " << rlist.size() << "-K: " << K << endl;
 
 
+	/* clear the result buffer. */
+	resig.clear();
 	for(u_int i = 0; i < rlist.size() && i < K; ++i) {
-		cout << "[" << i << "]: " << rlist[i].first << endl;
-		resig.push_back(rlist[i].second);
+		cout << "[" << i << "]: " << rlist[i].getSim() << " - id:" << rlist[i].getID() << endl;
+		resig.push_back(rlist[i]);
 	}
+	return tnum;
 }
 
-void
-LShashESE::naiveWaveletFind(const vector<double> &sin, vector< vector<double> > &resig) {
+int
+LShashESE::naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig) {
 	assert(sin.size() == DIMS);
 	Point q;
 	for(u_int i = 0; i < sin.size(); ++i)
@@ -213,12 +216,13 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector< vector<double> > 
 
 	vector<WSSimilar> &vwss = twe.find(sin);
 
+	resig.clear();
 	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
-		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].index << endl;
-		resig.push_back(vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig);
+		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
+		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
+	return tnum;
 }
-
 
 //# Read a point from external index file and insert into waveletEps obejct.
 bool

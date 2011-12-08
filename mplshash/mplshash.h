@@ -29,6 +29,7 @@ class MPLSHash {
 	float R;
 
 	FloatMatrix data;
+	bool loadIndex;
 
 	public:
 	MPLSHash();

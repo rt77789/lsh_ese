@@ -55,7 +55,7 @@ struct WaveletSignal {
 // WaveletSignal & Similar Structrue.
 struct WSSimilar {
 	WaveletSignal ws;
-	int index;
+	int id;
 	double sim;
 	
 	// Sort by sim, from high value to low.

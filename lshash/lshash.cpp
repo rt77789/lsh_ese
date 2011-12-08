@@ -1,8 +1,10 @@
 #include "lshash.h"
 #include <set>
+#include <map>
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 LShash::LShash() {
@@ -66,21 +68,27 @@ LShash::findNodes(const Point &q, vector<u_int> &eid) {
 	Point p = q;
 	//# p.d = q.d[] / R
 	Ghash::preComputeFields(p);
-	set<u_int> idSet;
+	map<u_int, u_int> idMap;
 
 	for(u_int i = 0; i < g.size(); ++i) {
 		vector<u_int> tid;
 		g[i].findNodes(p, tid);
 		for(u_int j = 0; j < tid.size(); ++j) {
-			if(idSet.find(tid[j]) == idSet.end()) {
-				idSet.insert(tid[j]);
-			}
+			++idMap[tid[j]];
 			// cout << "identity: " << ptr->identity << endl;
 		}
 	}
 
-	for(set<u_int>::iterator iter = idSet.begin(); iter != idSet.end(); ++iter) {
-		eid.push_back(*iter);
+	vector<pair<u_int, u_int> > vp;
+	for(map<u_int, u_int>::iterator iter = idMap.begin(); iter != idMap.end(); ++iter) {
+		//eid.push_back(*iter);
+		vp.push_back(make_pair<u_int, u_int>(iter->second, iter->first));
+	}
+	sort(vp.begin(), vp.end(), greater<pair<u_int, u_int> >());
+
+	for(u_int i = 0; i < vp.size(); ++i) {
+	//	cout << "vp.first: " << vp[i].first << " | vp.second: " << vp[i].second << endl;
+		eid.push_back(vp[i].second);
 	}
 }
 

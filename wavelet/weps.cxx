@@ -95,7 +95,7 @@ WaveletEps::addSignal(const vector<double> &sin, int _index) {
 	WSSimilar tmpWSSSig;
 	tmpWSSSig.ws = ws;
 	tmpWSSSig.sim = 0;
-	tmpWSSSig.index = _index;
+	tmpWSSSig.id = _index;
 	sigs.push_back(tmpWSSSig);
 }
 
@@ -227,7 +227,7 @@ WaveletEps::batch_push(const vector< vector<double> > &vsin, const vector<int> &
 
 			WSSimilar wss;
 			wss.ws = ws;
-			wss.index = index[vi];
+			wss.id = index[vi];
 			wss.sim = sim;
 			vwss.push_back(wss);
 		}catch(...) {
