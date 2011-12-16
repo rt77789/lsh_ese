@@ -1,0 +1,33 @@
+wavelet transform 3 cases time consume.
+# levelLimit[] = {1<<30, 1000, 100, 10};
+77175 / 5 = 15435 records.
+# 17 second each case cost.
+
+naive 3 cases time consume.
+30870 / 2 = 15435 records.
+# 09:21 - 07:31 = 110 second for first case cost.
+# 11:11 - 09:21 = 110 second for second case cost.
+# 13:01 - 11:11 = 110 second for third case cost.
+
+LSH=Locality Sensitive Hashing
+(Random projection)
+(Stable distributions)
+
+
+http://en.wikipedia.org/wiki/Locality-sensitive_hashing
+http://lshkit.sourceforge.net/
+http://liulixiang.info/tag/locality-sensitive-hashing/
+http://www.mit.edu/~andoni/LSH/
+
+http://phash.org/
+
+LSH主要思路：
+1. random projection from R^d to R^t. (optional)
+2. L hashing function g_i(q) = (h_i(1), h_i(2), ... h_i(k))q.
+3. build L hash tables according to g_i(q).
+4. for a query, compute L hashing functions g_i(q), and get the final buckets.
+5. calculate similarity (xcross) of p in final buckets and q that means query, and return top-K.
+
+
+Wavelet transform & window slide
+1. First P-wave arrival time detect.

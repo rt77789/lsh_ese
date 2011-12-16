@@ -1,13 +1,13 @@
 W = 10.0
-M = 20
-T = 40
-L = 30
+M = 10
+T = 30
+L = 40
 Q = 10
 K = 20
 R = 1000000
 H = 1017881
 dim = 4096 
 recall = 0.99
-load_index = true
+load_index = false
 dataset = mplshash/output_moment.raw.mpl.input
 index = mplshash/output_moment.raw.mpl.index

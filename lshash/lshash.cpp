@@ -1,21 +1,36 @@
 #include "lshash.h"
+
+#include "../utils/config.h"
+
 #include <set>
 #include <map>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+
 using namespace std;
 
 LShash::LShash() {
-	K = 10;
+	}
+
+LShash::~LShash() {
+}
+
+/* initializing. */
+void LShash::init() {
+/*K = 10;
 	prob = 0.99;
+	*/
+	K = Configer::get("lsh_K").toInt();
+	prob = Configer::get("lsh_prob").toDouble();
+
 	M = estimateParaM(K, prob);
+
 	cout << "M: " << M << endl;
 
 	//int L = M*(M-1) / 2;
 
-	Util::init();
 	Ghash::init(M, K);
 	
 	for(int i = 0; i < M; ++i) {
@@ -26,11 +41,8 @@ LShash::LShash() {
 			g.push_back(Ghash(uIndex));
 		}
 	}
-}
 
-LShash::~LShash() {
 }
-
 void
 LShash::tuneParameter() {
 
@@ -64,14 +76,14 @@ LShash::getMaxBuckLen() {
 }
 
 void
-LShash::findNodes(const Point &q, vector<u_int> &eid) {
+LShash::findNodes(const Point &q, std::vector<u_int> &eid) {
 	Point p = q;
 	//# p.d = q.d[] / R
 	Ghash::preComputeFields(p);
-	map<u_int, u_int> idMap;
+	std::map<u_int, u_int> idMap;
 
 	for(u_int i = 0; i < g.size(); ++i) {
-		vector<u_int> tid;
+		std::vector<u_int> tid;
 		g[i].findNodes(p, tid);
 		for(u_int j = 0; j < tid.size(); ++j) {
 			++idMap[tid[j]];
@@ -79,12 +91,12 @@ LShash::findNodes(const Point &q, vector<u_int> &eid) {
 		}
 	}
 
-	vector<pair<u_int, u_int> > vp;
-	for(map<u_int, u_int>::iterator iter = idMap.begin(); iter != idMap.end(); ++iter) {
+	std::vector<pair<u_int, u_int> > vp;
+	for(std::map<u_int, u_int>::iterator iter = idMap.begin(); iter != idMap.end(); ++iter) {
 		//eid.push_back(*iter);
 		vp.push_back(make_pair<u_int, u_int>(iter->second, iter->first));
 	}
-	sort(vp.begin(), vp.end(), greater<pair<u_int, u_int> >());
+	std::sort(vp.begin(), vp.end(), greater<pair<u_int, u_int> >());
 
 	for(u_int i = 0; i < vp.size(); ++i) {
 	//	cout << "vp.first: " << vp[i].first << " | vp.second: " << vp[i].second << endl;

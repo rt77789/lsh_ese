@@ -4,7 +4,7 @@ class TT {
 	MPLSHash mpl;
 	public:
 	void init() {
-		mpl.init("config");
+		mpl.init();
 	}
 };
 
@@ -12,7 +12,7 @@ class TT {
 int main() {
 
 	MPLSHash mpl;
-	mpl.init("config");
+	mpl.init();
 
 //	mpl.test(10);
 

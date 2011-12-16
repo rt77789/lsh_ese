@@ -35,15 +35,13 @@ class MPLSHash {
 	MPLSHash();
 	~MPLSHash();
 
-	void init(const std::string &_config); 
+	void init(); 
 
 	/* Load the dataset. */
 	void load_data(const std::string &_path);
 	/* Load index info. */
 	void load_index(const std::string &_path);
 
-	/* Load the config file. */
-	void config(const std::string &_path);
 	/* Store the index into file. */
 	bool store(const std::string &_path);
 	/* Restore the index from file. */

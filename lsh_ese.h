@@ -3,18 +3,20 @@
 #define LSH_ESE_LSH_ESE_H_XIAOE
 
 #include "mplshash/mplshash.h"
+#include "flann/flann_interface.h"
 
 #include <cstdio>
 #include <vector>
 
-#include "lshash/util.h"
-#include "lshash/point.h"
+#include "utils/util.h"
+
+#include "structs/point.h"
+
 #include "lshash/lshash.h"
 #include "lshash/ghash.h"
 
 #include "fft/fft.h"
 
-#include "wavelet/utils.h"
 #include "wavelet/weps.h"
 
 
@@ -53,8 +55,7 @@ class SearchRes {
 
 class LShashESE {
 	public:
-		LShashESE(const char *file);
-		LShashESE(const char *file, const char *_if);
+		LShashESE();
 
 		~LShashESE();
 
@@ -76,8 +77,8 @@ class LShashESE {
 		//# Restore lshash.
 		void restoreLShash(const char *_if);
 
-		//# Initiralize MPLSHash object.
-		void initMPL();
+		/* init. */
+		void init(const string &type);
 		
 		//# Random a dataset.
 		static void randomDataSet(const char *file, u_int _size);
@@ -103,8 +104,8 @@ class LShashESE {
 		LShash lsh;
 		WaveletEps wavelet;
 		MPLSHash mpl;
+		FlannInterface flann;
 
-		string indexFile;
 		FILE *fhandle;
 };
 #endif

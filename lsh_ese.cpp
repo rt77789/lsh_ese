@@ -3,18 +3,8 @@
 #include <fstream>
 #include <algorithm>
 
-LShashESE::LShashESE(const char *file):indexFile(file) {
-	fhandle = fopen(file, "rb");
-	assert(fhandle != NULL);
-	loadPoint();
+LShashESE::LShashESE():fhandle(0) {
 }
-
-LShashESE::LShashESE(const char *file, const char *_if):indexFile(file) {
-	fhandle = fopen(file, "rb");
-	assert(fhandle != NULL);
-	restoreLShash(_if);
-}
-
 
 LShashESE::~LShashESE() {
 	if(fhandle != NULL)
@@ -22,8 +12,48 @@ LShashESE::~LShashESE() {
 }
 
 void
-LShashESE::initMPL() {
-	mpl.init("mplshash/config");
+LShashESE::init(const string &type) {
+	if(type == "mpl") {
+		string dataset = Configer::get("lsh_dataset_path").toString();
+		fhandle = fopen(dataset.c_str(), "rb");
+		mpl.init();
+	}
+	else if(type == "lsh") {
+
+		bool doLoadIndex = Configer::get("lsh_load_index").toBool();
+		string dataset = Configer::get("lsh_dataset_path").toString();
+
+		fhandle = fopen(dataset.c_str(), "rb");
+		lsh.init();
+
+		if(!doLoadIndex) {
+			loadPoint();
+			cout << "load Point over." << endl;
+			bool doSave = Configer::get("lsh_do_save").toBool();
+			if(doSave) {
+				string indexPath = Configer::get("lsh_index_path").toString();
+				storeLShash(indexPath.c_str());
+			}
+		}
+		else {
+			string indexPath = Configer::get("lsh_index_path").toString();
+			restoreLShash(indexPath.c_str());
+		}
+	}
+	else if(type == "flann") {
+		string dataset = Configer::get("flann_dataset_path").toString();
+
+		fhandle = fopen(dataset.c_str(), "rb");
+		flann.init();
+	}
+	else if(type == "fft" || type == "wavelet") {
+		string dataset = Configer::get("naive_dataset_path").toString();
+		fhandle = fopen(dataset.c_str(), "rb");
+	}
+	else {
+		throw ;
+	}
+	assert(fhandle != NULL);
 }
 
 //# Load point from external file and add into lsh object.
@@ -62,9 +92,29 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 		if(fsin != NULL)
 		delete fsin;
 	}
-	else {
+	else if(_lshtype == "flann") {
+		cout << "flann find..." << endl;
+		float *fsin = new float[sin.size()];
+		for(u_int i = 0; i < sin.size(); ++i)
+			fsin[i] = sin[i];
+		flann.find(fsin, TOP_K, eid);
+		if(fsin != NULL)
+		delete fsin;
+	}
+	else if(_lshtype == "lsh") {
 		cout << "basic lsh find..." << endl;
 		findByLSH(sin, eid);
+	}
+	else if(_lshtype == "fft") {
+		cout << "fft find..." << endl;
+		return naiveFFTConvFind(sin, resig);
+	}
+	else if(_lshtype == "wavelet") {
+		cout << "wavelet naive find..." << endl;
+		return naiveWaveletFind(sin, resig);
+	}
+	else {
+		throw;
 	}
 
 	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
@@ -105,7 +155,7 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 	vector<WSSimilar> &vwss = twe.find(sin);
 
 	resig.clear();
-	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+	for(u_int i = 0; i < vwss.size() && i < TOP_K; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
 		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
@@ -164,12 +214,12 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig)
 	}
 
 	cout << "FFT total signals : " << tnum << endl;
-	cout << "rlist.size() : " << rlist.size() << "-K: " << K << endl;
+	cout << "rlist.size() : " << rlist.size() << "-K: " << TOP_K << endl;
 
 
 	/* clear the result buffer. */
 	resig.clear();
-	for(u_int i = 0; i < rlist.size() && i < K; ++i) {
+	for(u_int i = 0; i < rlist.size() && i < TOP_K; ++i) {
 		cout << "[" << i << "]: " << rlist[i].getSim() << " - id:" << rlist[i].getID() << endl;
 		resig.push_back(rlist[i]);
 	}
@@ -217,7 +267,7 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig)
 	vector<WSSimilar> &vwss = twe.find(sin);
 
 	resig.clear();
-	for(u_int i = 0; i < vwss.size() && i < K; ++i) {
+	for(u_int i = 0; i < vwss.size() && i < TOP_K; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
 		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
@@ -233,6 +283,7 @@ LShashESE::readPoint(u_int index, Point &p) {
 	assert(0 == fseek(fhandle, offset, SEEK_SET));
 
 	int rv = fread(&p, sizeof(Point), 1, fhandle);
+	assert(fhandle != NULL);
 	//assert(rv == 1);
 	return rv == 1;
 }

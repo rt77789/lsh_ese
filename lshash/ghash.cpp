@@ -1,9 +1,13 @@
 
 #include "ghash.h"
-#include "util.h"
+
+#include "../utils/config.h"
+
 #include <iostream>
 #include <cstring>
 #include <cmath>
+
+using namespace eoaix;
 
 //# Global u hash function points.
 vector< vector<Point> > Ghash::uPoints;
@@ -16,8 +20,8 @@ vector< vector<u64> > Ghash::projectValue;
 vector<u64> Ghash::h1Points;
 vector<u64> Ghash::h2Points;
 
-u_int Ghash::M;
-u_int Ghash::K;
+u_int Ghash::mm;
+u_int Ghash::kk;
 double Ghash::b;
 double Ghash::w;
 double Ghash::R;
@@ -25,10 +29,14 @@ double Ghash::R;
 //# initial Ghash static fields.
 void
 Ghash::init(u_int _M, u_int _K) {
-	M = _M, K = _K;
-	w = 4;
+	mm = _M, kk = _K;
+
+	//w = 2;
+	//R = 0.1;
+	w = Configer::get("lsh_W").toInt();
+	R = Configer::get("lsh_R").toDouble();
+
 	b = Util::randomByUniform(0.0, w);
-	R = 0.5;
 
 	uPoints.clear();
 	projectValue.clear();
@@ -38,9 +46,9 @@ Ghash::init(u_int _M, u_int _K) {
 	for(int i = 0; i < U_NUM_IN_G; ++i)
 		h1TimesU[i].clear(), h2TimesU[i].clear();
 
-	for(u_int i = 0; i < M; ++i) {
+	for(u_int i = 0; i < mm; ++i) {
 		vector<Point> u;
-		for(int j = (int)K / 2; j >= 0; --j) {
+		for(int j = (int)kk/ 2; j >= 0; --j) {
 			// std::cout << i << ' ' << j << std::endl;
 			Point p;
 			randomPoint(p);
@@ -48,17 +56,17 @@ Ghash::init(u_int _M, u_int _K) {
 		}
 		uPoints.push_back(u);
 		//# set projectValue : M * K.
-		projectValue.push_back(vector<u64>(K, 0));
+		projectValue.push_back(vector<u64>(kk, 0));
 	}
 
-	for(u_int i = 0; i < K; ++i) {
+	for(u_int i = 0; i < kk; ++i) {
 		h1Points.push_back(Util::randomU64(0, (u64)1LL<<63));
 		h2Points.push_back(Util::randomU64(0, (u64)1LL<<63));
 	}
 	
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
-		h1TimesU[i].resize(M, 0);
-		h2TimesU[i].resize(M, 0);
+		h1TimesU[i].resize(mm, 0);
+		h2TimesU[i].resize(mm, 0);
 	}
 }
 
@@ -129,8 +137,8 @@ Ghash::storeStaticFields(FILE *fh) {
 
 	//# M, K, b, w;
 
-	assert(1 == fwrite(&M, sizeof(u_int), 1, fh));
-	assert(1 == fwrite(&K, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&mm, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&kk, sizeof(u_int), 1, fh));
 	assert(1 == fwrite(&b, sizeof(double), 1, fh));
 	assert(1 == fwrite(&w, sizeof(double), 1, fh));
 	assert(1 == fwrite(&R, sizeof(double), 1, fh));
@@ -221,8 +229,8 @@ Ghash::restoreStaticFields(FILE *fh) {
 	}
 	//# M, K, b, w;
 
-	assert(1 == fread(&M, sizeof(u_int), 1, fh));
-	assert(1 == fread(&K, sizeof(u_int), 1, fh));
+	assert(1 == fread(&mm, sizeof(u_int), 1, fh));
+	assert(1 == fread(&kk, sizeof(u_int), 1, fh));
 	assert(1 == fread(&b, sizeof(double), 1, fh));
 	assert(1 == fread(&w, sizeof(double), 1, fh));
 	assert(1 == fread(&R, sizeof(double), 1, fh));
@@ -271,11 +279,11 @@ Ghash::preComputeFields(Point &q) {
 	}
 	
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
-		for(u_int j = 0; j < M; ++j) {
+		for(u_int j = 0; j < mm; ++j) {
 			h1TimesU[i][j] = h2TimesU[i][j] = 0;
-			for(u_int k = 0; k < (K/U_NUM_IN_G); ++k) {
-				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*(K/U_NUM_IN_G) + k] * h1Points[i *(K/U_NUM_IN_G) + k]) % HASH_PRIME ) % TABLE_PRIME;
-				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*(K/U_NUM_IN_G) + k] * h2Points[i *(K/U_NUM_IN_G) + k]) % HASH_PRIME;
+			for(u_int k = 0; k < (kk/U_NUM_IN_G); ++k) {
+				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*(kk/U_NUM_IN_G) + k] * h1Points[i *(kk/U_NUM_IN_G) + k]) % HASH_PRIME ) % TABLE_PRIME;
+				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*(kk/U_NUM_IN_G) + k] * h2Points[i *(kk/U_NUM_IN_G) + k]) % HASH_PRIME;
 			}
 		}
 	}

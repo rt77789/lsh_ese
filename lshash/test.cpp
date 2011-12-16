@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
-#include "util.h"
+#include "../utils/util.h"
 #include "ghash.h"
 #include "lshash.h"
 
@@ -10,7 +10,6 @@ using namespace std;
 
 void
 test_util() {
-	Util::init();
 	double x1 = Util::randomByUniform(0, 1LL<<32);
 	double x2 = Util::randomByGaussian();
 	u64 x3 = Util::randomU64(0, 1LL<<63);
@@ -21,7 +20,6 @@ test_util() {
 
 void
 test_ghash() {
-	Util::init();
 	Ghash::init(256, 256);
 
 	Point p;
@@ -31,7 +29,7 @@ test_ghash() {
 	uIndex[1] = 1;
 	Ghash ghash(uIndex);
 
-	Util::print_now();
+	print_now();
 	for(int i = 0; i < (100); ++i) {
 		Ghash::randomPoint(p);
 		p.identity = Util::randomByUniform(0, 1<<20);
@@ -56,7 +54,7 @@ test_ghash() {
 	}
 	cout << variance / DIMS << endl;
 	//# it's actully a normal(Gaussian) distribution.
-	Util::print_now();
+	print_now();
 
 	for(int i = 0; i < 10; ++i) {
 		Ghash::preComputeFields(p);
@@ -64,14 +62,14 @@ test_ghash() {
 		//# ptr->identity equals to the privous p.identity = 123.
 		cout << ptr->identity << endl;
 	}
-	Util::print_now();
+	print_now();
 }
 
 void
 test_lshash() {
 	LShash lsh;
 	Point p;
-	Util::print_now();
+	print_now();
 
 	u_int datasetSize = 100000;
 
@@ -89,7 +87,7 @@ test_lshash() {
 		fout << endl;
 	}
 
-	Util::print_now();
+	print_now();
 
 	ofstream ftest("query.rand");
 	assert(ftest.is_open());
@@ -109,7 +107,7 @@ test_lshash() {
 	}
 	ftest << endl;
 	ftest << "num: " << eid.size() << " - " << " total: " << datasetSize << " | " << (eid.size() * 1.0 / datasetSize) << endl;
-	Util::print_now();
+	print_now();
 
 	int maxlen = lsh.getMaxBuckLen();
 	cout << "maxlen: " << maxlen << endl;

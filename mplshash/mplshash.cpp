@@ -2,29 +2,12 @@
 #include <fstream>
 #include "mplshash.h"
 
+#include "../utils/config.h"
+
 /* Constructor. */
-MPLSHash::MPLSHash():loadIndex(false) {
-	scan = NULL;
-}
+MPLSHash::MPLSHash():scan(0), desire_recall(0.95), K(20), L(10), R(10000), loadIndex(false) {
 
-/* Deconstructor. */
-MPLSHash::~MPLSHash() {
-	if(scan != NULL) {
-		delete scan;
-	}
-}
-
-/* Initializer. */
-void MPLSHash::init(const std::string &_config) {
-	config(_config);
-}
-
-/* Load configuration. */
-void MPLSHash::config(const std::string &_path) {
-	string dataset_path, index_path;
-	u_int T, Q, M, H;
-	u_int dim;
-	float W;
+	/*
 	ifstream is(_path.c_str(), std::ios::binary);
 	po::options_description desc("Allowed options");
 	desc.add_options()
@@ -46,6 +29,36 @@ void MPLSHash::config(const std::string &_path) {
 	po::store(po::parse_config_file(is, desc, true), vm);
 	po::notify(vm);
 
+	*/
+
+}
+
+/* Deconstructor. */
+MPLSHash::~MPLSHash() {
+	if(scan != NULL) {
+		delete scan;
+	}
+}
+
+/* Initializer. */
+void MPLSHash::init() {
+
+	string dataset_path = Configer::get("mplsh_dataset_path").toString();
+	string index_path = Configer::get("mplsh_index").toString();
+	loadIndex = Configer::get("mplsh_load_index").toBool();
+
+	u_int T = Configer::get("mplsh_T").toInt();
+	u_int Q = Configer::get("mplsh_Q").toInt();
+	u_int M = Configer::get("mplsh_M").toInt();
+	u_int H = Configer::get("mplsh_H").toInt();
+	u_int dim = Configer::get("dims").toInt();
+
+	float W = Configer::get("mplsh_W").toFloat();
+
+	R = Configer::get("mplsh_R").toFloat();
+	desire_recall = Configer::get("mplsh_recall").toDouble();
+	K = Configer::get("mplsh_K").toInt();
+	L = Configer::get("mplsh_L").toInt();
 	/*
 	   cout << desc;
 	   cout << "W: " << W << endl;
@@ -66,7 +79,16 @@ void MPLSHash::config(const std::string &_path) {
 	param.range = H;
 	param.repeat = M;
 	param.dim = dim;
-
+/*
+	cout << "K: " << K << endl;
+	cout << "L: " << L << endl;
+	cout << "desire_recall: " << desire_recall << endl;
+	cout << "R: " << R << endl;
+	cout << "param.W: " << param.W << endl;
+	cout << "param.range: " << param.range << endl;
+	cout << "param.repeat: " << param.repeat << endl;
+	cout << "param.dim: " << param.dim << endl;
+*/
 	load_data(dataset_path);
 	load_index(index_path);
 }
@@ -74,6 +96,11 @@ void MPLSHash::config(const std::string &_path) {
 /* Load dataset. */
 void MPLSHash::load_data(const std::string &_path) {
 	data.load(_path);
+
+	/* Normalize dataset. */
+	for(int i = 0; i < data.getSize(); ++i) {
+		normalize(data[i]);
+	}
 
 	FloatMatrix::Accessor accessor(data);
 	metric::l2sqr<float> l2sqr(param.dim);
@@ -104,21 +131,21 @@ void MPLSHash::load_index(const std::string &_path) {
 
 	/* Try to restore the index file, if failed build a new index and store it.  */
 	cout << "Try to restore from index file..." << endl;
+
 	if(!loadIndex || !restore(_path)) {
 		cout << "restore failed..." << endl;
 		DefaultRng rng;	
-		index.init(this->param, rng, L);
+		index.init(param, rng, L);
 
 		boost::progress_display progress(data.getSize());
 		for(int i = 0; i < data.getSize(); ++i) {
 			/* normalizing. */
-			normalize(data[i]);
 			index.insert(i, data[i]);
 			++progress;
 		}
 
 		cout << "store the index file..." << endl;
-		store(_path);
+		assert(store(_path));
 	}
 }
 
@@ -142,18 +169,20 @@ void MPLSHash::test(u_int _topk) {
 /* Store the index into file. */
 bool MPLSHash::store(const std::string &_path) {
 	ofstream os(_path.c_str(), ios_base::binary);
-	if(!os.is_open()) return false;
+	if(!os) return false;
 	os.exceptions(ios_base::eofbit | ios_base::failbit | ios_base::badbit);
 	index.save(os);
+	os.close();
 	return true;
 }
 
 /* Restore the index from file. */
 bool MPLSHash::restore(const std::string &_path) {
 	ifstream is(_path.c_str(), ios_base::binary);
-	if(!is.is_open()) return false;
+	if(!is) return false;
 	is.exceptions(ios_base::eofbit | ios_base::failbit | ios_base::badbit);
 	index.load(is);
+	is.close();
 	return true;
 }
 

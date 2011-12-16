@@ -2,13 +2,13 @@
 
 TOPK=100
 
-if [[ $1 = "-test" ]]
+if [[ $1 = "-lsh" ]]
 then
 #	make
 	echo "Using test dataset..."
 	#./test -build dataset.input dataset.index
 	#./test -load dataset.input dataset.index dataset.test 10
-#	./test -build ${2} ${2}.index
+	./test -build ${2} ${2}.index
 	./test -load ${2} ${2}.index ${3} ${TOPK}
 elif [[ $1 = "-mpl" ]]
 then

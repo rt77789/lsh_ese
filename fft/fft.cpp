@@ -191,7 +191,7 @@ FFT::t0xcorr(const vector<double> &sa, const vector<double> &sb) {
 	double deta = 0;
 	double detb = 0;
 
-	for(int i = 0; i < len; ++i) {
+	for(size_t i = 0; i < len; ++i) {
 		deta += (sa[i] - ma) * (sa[i] - ma);
 		detb += (sb[i] - mb) * (sb[i] - mb);
 	}
