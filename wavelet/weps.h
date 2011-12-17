@@ -7,6 +7,10 @@
 #include <cassert>
 #include <cmath>
 
+#include "../utils/util.h"
+#include "../fft/fft.h"
+
+
 using namespace std;
 
 
@@ -55,7 +59,7 @@ struct WaveletSignal {
 // WaveletSignal & Similar Structrue.
 struct WSSimilar {
 	WaveletSignal ws;
-	int id;
+	u_int id;
 	double sim;
 	
 	// Sort by sim, from high value to low.
@@ -100,12 +104,12 @@ public:
 	vector<WSSimilar>& find(const vector<double> &sin);
 	
 	//# Insert a new signal into the waveletEps object.
-	void addSignal(const vector<double> &sin, int _index);
+	void addSignal(const vector<double> &sin, u_int _index);
 	//# Clear sigs.
 	void clear();
 	
 	//#
-	void batch_push(const vector< vector<double> > &sin, const vector<int> &index);
+	void batch_push(const vector< vector<double> > &sin, const vector<u_int> &index);
 
 
 	// Constructor.

@@ -14,7 +14,7 @@ LShashESE::~LShashESE() {
 void
 LShashESE::init(const string &type) {
 	if(type == "mpl") {
-		string dataset = Configer::get("lsh_dataset_path").toString();
+		string dataset = Configer::get("naive_dataset_path").toString();
 		fhandle = fopen(dataset.c_str(), "rb");
 		mpl.init();
 	}
@@ -124,10 +124,17 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 
 	//# sort eid, decreate disk move.
 	sort(eid.begin(), eid.end());
+	/*
+	cout << "eid[]: ";
+	for(size_t i = 0 ; i < eid.size(); ++i) {
+		cout << eid[i] << " " ;
+	}
+	cout << endl;
+	*/
 
 	WaveletEps twe(sin);
 	vector< vector<double> > vtin;
-	vector<int> iden;
+	vector<u_int> iden;
 
 	for(u_int i = 0; i < eid.size(); ++i) {
 		assert(true == readPoint(eid[i], p));
@@ -240,7 +247,7 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig)
 	int tnum = 0;
 
 	vector< vector<double> > vtin;
-	vector<int> iden;
+	vector<u_int> iden;
 	Point p[BATCH_READ_NUM];
 	int cpnum = 0;
 
@@ -279,11 +286,34 @@ bool
 LShashESE::readPoint(u_int index, Point &p) {
 	//int offset = sizeof(u_int) + DIMS * sizeof(double);
 	u64 offset = (u64)sizeof(Point) * index;
+	u64 blockSize = 10000000LL;
+	u64 seekTimes = offset / blockSize;
 
-	assert(0 == fseek(fhandle, offset, SEEK_SET));
+	for(u64 i = 0; i < seekTimes; ++i) {
+		if(i == 0) {
+			assert(0 == fseek(fhandle, blockSize, SEEK_SET));
+		}
+		else {
+			assert(0 == fseek(fhandle, blockSize, SEEK_CUR));
+		}
+	}
+
+	if(seekTimes == 0)
+		assert(0 == fseek(fhandle, offset % blockSize, SEEK_SET));
+	else
+	assert(0 == fseek(fhandle, offset % blockSize, SEEK_CUR));
 
 	int rv = fread(&p, sizeof(Point), 1, fhandle);
+	/*
+	cerr << "offset: " << offset << " | rv: " << rv << " | blockSize: " << blockSize << " | remain: " << offset % blockSize << endl;
+	*/
 	assert(fhandle != NULL);
+	if(rv > 0) {
+		/*
+		cout << "p.identity: " << p.identity << " | index: " << index << endl;
+		*/
+		assert(p.identity == index);
+	}
 	//assert(rv == 1);
 	return rv == 1;
 }
@@ -360,6 +390,7 @@ LShashESE::randomDataSet(const char *file, u_int _size) {
 		Ghash::randomPoint(p);
 
 		assert(fwrite(&p, sizeof(Point), 1, fh) == 1);
+
 	}
 	fclose(fh);
 }

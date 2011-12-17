@@ -7,9 +7,7 @@
 #include <algorithm>
 
 #include "weps.h"
-
 #include "../utils/util.h"
-#include "../fft/fft.h"
 
 WaveletEps::WaveletEps() {
 	// Initial the h[] & g[].
@@ -66,7 +64,7 @@ WaveletEps::WaveletEps(const char *file):fileName(file) {
 
 //# Insert a new signal into the waveletEps object.
 void
-WaveletEps::addSignal(const vector<double> &sin, int _index) {
+WaveletEps::addSignal(const vector<double> &sin, u_int _index) {
 	// Wavelet transforming: sin -> wsin.
 	vector<double> tmpSig(sin.begin(), sin.end());
 
@@ -194,7 +192,7 @@ WaveletEps::loadin(const WaveletSignal &sin) {
 
 //# Batch push into WaveletEps object.
 void
-WaveletEps::batch_push(const vector< vector<double> > &vsin, const vector<int> &index) {
+WaveletEps::batch_push(const vector< vector<double> > &vsin, const vector<u_int> &index) {
 	vector<WSSimilar> vwss;
 	for(size_t vi = 0; vi < vsin.size(); ++vi) {
 		vector<double> tmpSig(vsin[vi]);
