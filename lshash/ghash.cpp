@@ -382,11 +382,13 @@ Ghash::Ghash(u_int *puIndex) {
 	//# inital tables.
 	memset(tables, 0, sizeof(Gnode*) * TABLE_PRIME);
 
-	_randVector.resize(_K);
-	for(u_int i = 0; i < _K; ++i) {
-		Point p;
-		selectRandomVector(p);
-		_randVector[i] = p;
+	if(!_use_uhash) {
+		_randVector.resize(_K);
+		for(u_int i = 0; i < _K; ++i) {
+			Point p;
+			selectRandomVector(p);
+			_randVector[i] = p;
+		}
 	}
 }
 

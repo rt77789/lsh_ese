@@ -68,7 +68,11 @@ struct WSSimilar {
 	
 	// Sort by sim, from high value to low.
 	bool operator<(const WSSimilar &wss) const {
+#ifdef L2NORM
+		return sim < wss.sim;
+#else
 		return sim > wss.sim;
+#endif
 	}
 };
 

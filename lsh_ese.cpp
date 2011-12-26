@@ -1,4 +1,5 @@
 #include "lsh_ese.h"
+#include "structs/searcher.h"
 #include <sstream>
 #include <fstream>
 #include <algorithm>
@@ -166,12 +167,37 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 	}
 	cout << endl;
 	*/
+	queryDB(sin, eid, resig);
+	return eid.size();
+}
 
+void LShashESE::queryDB(const vector<double> &sin, const vector<u_int> &eid, vector<SearchRes> &resig) {
+
+#ifdef L2NORM
+	resig.clear();
+	for(u_int i = 0; i < eid.size(); ++i) {
+		Point p;
+		assert(true == readPoint(eid[i], p));
+		vector<double> tin(p.d, p.d + DIMS);
+		double sim = FFT::corr(tin, sin);
+
+		resig.push_back(SearchRes(p.identity, sim, tin));
+	}
+	sort(resig.begin(), resig.end());
+	if(resig.size() > TOP_K) {
+		resig.resize(TOP_K);
+	}
+	for(size_t i = 0; i < resig.size(); ++i) {
+		std::cout << "[" << i << "]: " << resig[i].getSim() << " - index: " << resig[i].getID() << endl;
+	}
+
+#else
 	WaveletEps twe(sin);
 	vector< vector<double> > vtin;
 	vector<u_int> iden;
 
 	for(u_int i = 0; i < eid.size(); ++i) {
+		Point p;
 		assert(true == readPoint(eid[i], p));
 		vector<double> tin(p.d, p.d + DIMS);
 
@@ -201,7 +227,7 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
 		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
-	return eid.size();
+#endif
 }
 
 int

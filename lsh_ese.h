@@ -11,6 +11,7 @@
 #include "utils/util.h"
 
 #include "structs/point.h"
+#include "structs/search_res.h"
 
 #include "lshash/lshash.h"
 #include "lshash/ghash.h"
@@ -23,35 +24,6 @@
 using namespace std;
 
 
-/* Search result class. */
-class SearchRes {
-	vector<double> signal;
-	double sim;
-	u_int id;
-
-	public:
-	SearchRes() {}
-	SearchRes(u_int _id, double _sim, const vector<double> &_signal):id(_id), sim(_sim) {
-		signal.assign(_signal.begin(), _signal.end());
-	}
-	~SearchRes() {}
-
-	u_int getID() const { return id; }
-	double getSim() const { return sim; }
-	vector<double>& getSignal() { return signal; }
-
-	void setID(u_int _id) { id = _id; }
-	void setSim(double _sim) { sim = _sim; }
-	void setSignal(const vector<double> &_signal) { 
-		signal.assign(_signal.begin(), _signal.end());
-	}
-
-	/* Compare function. */
-	bool operator<(const SearchRes &_sr) const {
-		return sim > _sr.sim;
-	}
-};
-
 
 class LShashESE {
 	public:
@@ -61,6 +33,9 @@ class LShashESE {
 
 		//# find the top-k index of most similar signal.
 		int findIndex(const vector<double> &sin, vector<SearchRes> &resig, const string &_lshtype);
+
+		/* Read point from db according to eid and compute the correlation(L2 or xcorr); then return the SearchRes. */
+		void queryDB(const vector<double> &sin, const vector<u_int> &eid, vector<SearchRes> &resig);
 
 		//#
 		void findByLSH(const vector<double> &sin, vector<u_int> &_index);

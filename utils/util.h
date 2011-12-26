@@ -28,9 +28,9 @@ namespace eoaix {
 //# switch t0.
 //#define T0XCORR
 
-#ifndef T0XCORR /* T0XCORR priority is higher than L2NORM. */
+//#ifndef T0XCORR /* T0XCORR priority is higher than L2NORM. */
 #define L2NORM /* L2 metric for correlation. */
-#endif
+//#endif
 
 /* Switch for normalize the input dataset and query or not. */
 //#define DATA_NORMALIZE

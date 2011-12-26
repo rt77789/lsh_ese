@@ -1,6 +1,7 @@
 
 #include "config.h"
 #include <fstream>
+#include <stdexcept>
 
 Configer::Configer() {
 }
@@ -12,7 +13,7 @@ ConfigerValue& Configer::get(const std::string &key) {
 	if(iter == instance()._kv.end()) {
 		std::cerr << "miss key: " << key << std::endl;
 		/* Logger::warn("no such key"); */
-		throw "Configer::get return NULL";
+		throw std::runtime_error("Configer::get return NULL");
 	}
 	return iter->second;
 }
@@ -46,6 +47,10 @@ void Configer::load(const std::string &path) {
 			std::string value = line.substr(delimit + 1, line.size() - delimit);
 			insert(key, value);
 		}
+	}
+	else {
+		std::cerr << "open config file: " << path << " failed." << std::endl;
+		throw std::runtime_error("open config file fail.");
 	}
 }
 

@@ -249,10 +249,22 @@ WaveletEps::mergeWSS(vector<WSSimilar> &tmpWSS) {
 	vector<WSSimilar> resWSS;
 
 	while(resWSS.size() < IN_MEMORY_NUM && (i < tmpWSS.size() || j < sigs.size()) ) {
-		if(j >= sigs.size() || (i < tmpWSS.size() && tmpWSS[i].sim > sigs[j].sim)) {
+		if(j >= sigs.size() || (i < tmpWSS.size() && tmpWSS[i].sim 
+#ifdef L2NORM
+					<  /* from low to high. */
+#else
+					> /* from high to low. */
+#endif
+					sigs[j].sim)) {
 				resWSS.push_back(tmpWSS[i++]);
 		}
-		else if (i >= tmpWSS.size() || (j < sigs.size() && sigs[j].sim >= tmpWSS[i].sim)) {
+		else if (i >= tmpWSS.size() || (j < sigs.size() && sigs[j].sim 
+#ifdef L2NORM
+					<=
+#else
+					>=
+#endif
+					tmpWSS[i].sim)) {
 			resWSS.push_back(sigs[j++]);
 		}
 		else {

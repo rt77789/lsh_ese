@@ -1,5 +1,6 @@
 
 #include "fft.h"
+#include "../utils/util.h"
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
@@ -102,12 +103,13 @@ FFT::lconvolve(const vector<Complex> &x, const vector<Complex> &y, vector<Comple
 }
 
 double FFT::corr(const vector<double> &x, const vector<double> &y) {
-#ifdef T0XCORR
-	return t0xcorr(x, y);
-#else
 
 #ifdef L2NORM
 	return l2norm(x, y);
+#else
+
+#ifdef T0XCORR
+	return t0xcorr(x, y);
 #else
 	return xcorr(x, y);
 #endif
