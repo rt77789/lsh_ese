@@ -391,17 +391,14 @@ public:
     template <typename RNG>
     void reset(const Parameter &param, RNG &rng)
     {
-		/* repeat = M, M is the hash function components. */
         assert(param.repeat > 0);
         lsh_.resize(param.repeat);
         for (unsigned i = 0; i < param.repeat; ++i)
         {
-			/* lsh_[i] hash fucntion initialize. */
             lsh_[i].reset(param, rng);
         }
         a_.resize(param.repeat);
 
-		/* a_[] is random? */
         for (unsigned i = 0; i < param.repeat; ++i) a_[i] = rng();
     }
 
@@ -416,7 +413,6 @@ public:
         return 0;
     }
 
-	/* Calculate g()={h1, h2, ..., hM} hash value, then mod H. */
     unsigned operator () (Domain obj) const
     {
         unsigned ret = 0;
@@ -427,7 +423,6 @@ public:
         return ret;
     }
 
-	/* Just restore from index. */
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
@@ -436,10 +431,9 @@ public:
         assert(a_.size() == lsh_.size());
     }
 protected:
-	/* M hash functions. */
     std::vector<Super> lsh_;
-	/* Random sequence used for hash g()={h1, ... hM}. */
     std::vector<unsigned> a_;
+
 };
 
 

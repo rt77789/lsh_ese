@@ -7,6 +7,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 
 using namespace std;
@@ -17,31 +18,79 @@ LShash::LShash() {
 LShash::~LShash() {
 }
 
-/* initializing. */
 void LShash::init() {
-/*K = 10;
-	prob = 0.99;
-	*/
-	K = Configer::get("lsh_K").toInt();
-	prob = Configer::get("lsh_prob").toDouble();
+	u_int K = Configer::get("lsh_K").toInt();
+	double prob = Configer::get("lsh_prob").toDouble();
+	double W = Configer::get("lsh_W").toDouble();
+	double R = Configer::get("lsh_R").toDouble();
 
-	M = estimateParaM(K, prob);
+	init(K, prob, W, R);
+}
 
-	cout << "M: " << M << endl;
+void LShash::init(u_int K, double prob, double W, double R) {
+	int M = Configer::get("lsh_M").toInt();
+	if(M == 0) {
+		M = estimateParaM(K, prob, W);
+	}
+	printf("K: %u - prob: %lf - W: %lf - R: %lf - M: %d\n", K, prob, W, R, M);
+	init(K, M, prob, W, R);
+}
 
-	//int L = M*(M-1) / 2;
+/* initializing. */
+void LShash::init(u_int K, int M, double prob, double W, double R) {
+	bool doLoadIndex = Configer::get("lsh_load_index").toBool();
 
-	Ghash::init(M, K);
-	
-	for(int i = 0; i < M; ++i) {
-		for(int j = 0; j < M; ++j) {
-			if(i == j) continue;
-			u_int *uIndex = new u_int[2];
-			uIndex[0] = i, uIndex[1] = j;
-			g.push_back(Ghash(uIndex));
+	_K = K, _prob = prob, _M = M, _W = W,_R = R;
+
+	printf("doLoadIndex before\n");
+	if(!doLoadIndex) {
+
+		Ghash::init(_M, _K, _W, _R);
+
+		u_int *uIndex = new u_int[2];
+		for(int i = 0; i < _M; ++i) {
+			for(int j = i+1; j < _M; ++j) {
+				uIndex[0] = i, uIndex[1] = j;
+				_g.push_back(Ghash(uIndex));
+			}
+		}
+		if(uIndex == NULL) {
+			delete[] uIndex;
+		}
+
+		buildIndex();
+		cout << "load Point over." << endl;
+		bool doSave = Configer::get("lsh_do_save").toBool();
+		if(doSave) {
+			string indexPath = Configer::get("lsh_index_path").toString();
+			storeGhash(indexPath.c_str());
 		}
 	}
+	else {
+		string indexPath = Configer::get("lsh_index_path").toString();
+		restoreGhash(indexPath.c_str());
+	}
+}
+/* Build index. */
+void LShash::buildIndex() {
+	std::string path = Configer::get("naive_dataset_path").toString();
 
+	std::ifstream in(path.c_str(), ios_base::binary);
+
+	if(!in.is_open()) {
+		std::clog << path + " open failed..." << std::endl;
+		throw path + " open failed...";
+	}
+
+	Point p;
+	int cur_row = 0;
+
+	while(in.read((char*)&p, sizeof(Point))) {
+		addNode(p);
+		++cur_row;
+	}
+
+	in.close();
 }
 void
 LShash::tuneParameter() {
@@ -49,13 +98,14 @@ LShash::tuneParameter() {
 }
 
 int
-LShash::estimateParaM(int k, double prob) {
-	//# k should be a even number.
-	assert((k & 1) == 0);
-	double w = 4, c = 1;
+LShash::estimateParaM(int K, double prob, double W) {
+	//# K should be a even number.
+	assert((K & 1) == 0);
+	double w = 4;
+	double c = 1;
 	double x = w / c;
 	double s = 1 - erfc(x / M_SQRT2) - M_2_SQRTPI / M_SQRT2 / x * (1 - exp((-x*x) / 2));
-	double mu = 1 - pow(s, k / 2);
+	double mu = 1 - pow(s, K / 2);
 	double p = prob;
 	double d = (1-mu)/(1-p)*1.0/log(1/mu) * pow(mu, -1/(1-mu));
 	double y = log(d);
@@ -68,27 +118,30 @@ LShash::estimateParaM(int k, double prob) {
 int
 LShash::getMaxBuckLen() {
 	int res = 0;
-	for(u_int i = 0; i < g.size(); ++i) {
-		int tmp = g[i].getMaxLen();
+	for(u_int i = 0; i < _g.size(); ++i) {
+		int tmp = _g[i].getMaxLen();
 		res = res > tmp ? res : tmp;
 	}
 	return res;
 }
 
 void
-LShash::findNodes(const Point &q, std::vector<u_int> &eid) {
+LShash::find(const Point &q, std::vector<u_int> &eid) {
 	Point p = q;
 	//# p.d = q.d[] / R
 	Ghash::preComputeFields(p);
 	std::map<u_int, u_int> idMap;
 
-	for(u_int i = 0; i < g.size(); ++i) {
+	u_int lsh_max_candidate = Configer::get("lsh_max_candidate").toInt();
+	for(u_int i = 0; i < _g.size(); ++i) {
 		std::vector<u_int> tid;
-		g[i].findNodes(p, tid);
+		_g[i].findNodes(p, tid);
 		for(u_int j = 0; j < tid.size(); ++j) {
 			++idMap[tid[j]];
 			// cout << "identity: " << ptr->identity << endl;
 		}
+		/* If the current map size is bigger than lsh_max_candidate, then exit the loop. */
+		if(idMap.size() >= lsh_max_candidate) break;
 	}
 
 	std::vector<pair<u_int, u_int> > vp;
@@ -109,8 +162,8 @@ LShash::addNode(const Point &q) {
 	Point p = q;
 	//# p.d = q.d[] / R
 	Ghash::preComputeFields(p);
-	for(u_int i = 0; i < g.size(); ++i)
-		g[i].addNode(p);
+	for(u_int i = 0; i < _g.size(); ++i)
+		_g[i].addNode(p);
 }
 
 void
@@ -119,15 +172,15 @@ LShash::storeGhash(const char *_file) {
 	assert(fh != NULL);
 	
 	//# 
-	assert(1 == fwrite(&K, sizeof(u_int), 1, fh));
-	assert(1 == fwrite(&M, sizeof(int), 1, fh));
-	assert(1 == fwrite(&prob, sizeof(double), 1, fh));
+	assert(1 == fwrite(&_K, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&_M, sizeof(int), 1, fh));
+	assert(1 == fwrite(&_prob, sizeof(double), 1, fh));
 
 	cout << "begin store static fileds" << endl;
 	Ghash::storeStaticFields(fh);
 
-	for(u_int i = 0; i < g.size(); ++i) {
-		g[i].storeObjectFields(fh);
+	for(u_int i = 0; i < _g.size(); ++i) {
+		_g[i].storeObjectFields(fh);
 	}
 
 	fclose(fh);
@@ -139,21 +192,24 @@ LShash::restoreGhash(const char *_file) {
 	FILE *fh = fopen(_file, "rb");
 	assert(fh != NULL);
 
-	assert(1 == fread(&K, sizeof(u_int), 1, fh));
-	assert(1 == fread(&M, sizeof(int), 1, fh));
-	assert(1 == fread(&prob, sizeof(double), 1, fh));
+	assert(1 == fread(&_K, sizeof(u_int), 1, fh));
+	assert(1 == fread(&_M, sizeof(int), 1, fh));
+	assert(1 == fread(&_prob, sizeof(double), 1, fh));
 
 	Ghash::restoreStaticFields(fh);
 
-	g.clear();
-	int L = M*(M-1) / 2;
+	_g.clear();
+	int L = _M*(_M-1) / 2;
 	u_int *uIndex = new u_int[U_NUM_IN_G];
 
 	//# resize(c, obj), obj is NULL then throws exception.
-	g.resize(L, Ghash(uIndex));
+	_g.resize(L, Ghash(uIndex));
 
 	for(int i = 0; i < L; ++i) {
-		g[i].restoreObjectFields(fh);
+		_g[i].restoreObjectFields(fh);
+	}
+	if(uIndex == NULL) {
+		delete[] uIndex;
 	}
 
 	fclose(fh);

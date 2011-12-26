@@ -15,7 +15,7 @@ PSac::PSac(const char *sfname) {
 		perror("read_sac fail.");
 		exit(0);
 	}
-	cout << header.npts << endl;
+	// cout << header.npts << endl;
 	/*
 	
 	for(int i = 0; i < header.npts; ++i) {

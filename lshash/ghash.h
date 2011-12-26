@@ -14,6 +14,7 @@
 
 using namespace std;
 class Ghash {
+	typedef vector<Point> PointVector;
 
 	public:
 	Ghash(u_int *_uIndex);
@@ -31,22 +32,31 @@ class Ghash {
 
 	//# static functions.
 	//# initial all the fields.
-	static void init(u_int _M, u_int _K);
+	static void init(u_int M, u_int K, double W, double R);
 	//# Random a point and store it in _p.
-	static void randomPoint(Point &_p);
+	static void randomPoint(Point &p);
 	//# Pre-compute fields used in next step(addNode & findNode).
 	static void preComputeFields(Point &q);
 	//# Store static fields.
 	static void storeStaticFields(FILE *fh);
 	//# Restore static fields.
 	static void restoreStaticFields(FILE *fh);
+	/* Load testset sample. */
+	static void loadTestSample(const string &path);
+	/* Evaluate the random vector using testset sample path. */
+	static double evaluateVector(const Point &p);
+	/**/
+	static void selectRandomVector(Point &cp);
+
 
 	//# store object fields.
 	void storeObjectFields(FILE *fh);
 	//# Restore object fields.
 	void restoreObjectFields(FILE *fh);
-
 	private:
+	/* Testset sample. */
+	static PointVector testSample;
+	static void normalize(Point &p);
 	//# cal h1 & h2 mask.
 	pair<u64, u64> calh1Andh2(const Point &q);
 
@@ -56,7 +66,7 @@ class Ghash {
 	u_int uIndex[U_NUM_IN_G];
 
 	//# Global u hash function points.
-	static vector< vector<Point> > uPoints;
+	static vector<PointVector> uPoints;
 	//# h1 & h2 hash function times uPoints tables with respect to current query q.
 	static vector< u64 > h1TimesU[U_NUM_IN_G];
 	static vector< u64 > h2TimesU[U_NUM_IN_G];
@@ -68,10 +78,15 @@ class Ghash {
 	static vector<u64> h2Points;
 
 	//# All parameters used in Ghash.
-	static u_int mm;
-	static u_int kk;
-	static double b;
-	static double w;
-	static double R;
+	static u_int _M; /* U hash function number. */
+	static u_int _K; /* Normal hash fucntion number, size of g(). */
+	static double _b;/* offset of projection. */
+	static double _W;/* interval length of projection. */
+	static double _R;/* Radius. */
+
+	static bool _use_uhash;
+
+	/* Random vector whose element is selected from Gaussian distribution. */
+	PointVector _randVector; /* Random vectors of current hash tables, totally #_K. */
 };
 #endif

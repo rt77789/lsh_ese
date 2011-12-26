@@ -43,7 +43,7 @@
 namespace lshkit
 {
 
-/* A Posteriori Multi-Probe LSH indexing. */
+
 struct APostLsh
 {
     unsigned dim;
@@ -64,10 +64,10 @@ struct APostLsh
      */
     struct Parameter {
 
-        unsigned dim;		/*  = dim */
-        unsigned repeat; 	/*  = M */
-		unsigned range; 	/*  = H */
-        float W;			/*  = W */
+        unsigned dim;
+        unsigned repeat;
+        unsigned range;
+        float W;
     };
 
     APostLsh () {}
@@ -80,9 +80,7 @@ struct APostLsh
         W = param.W;
         H = param.range;
 
-		/* gaussian distribution sampler. */
         boost::variate_generator<RNG &, Gaussian> gaussian(rng, Gaussian());
-		/* uniform distribution sampler. */
         boost::variate_generator<RNG &, Uniform> uniform(rng, Uniform(0,W));
 
         a.resize(M);
@@ -93,15 +91,12 @@ struct APostLsh
 
         for (unsigned i = 0; i < M; i++) {
             a[i].resize(dim);
-			/* umin[i] initialized by max of float. */
             umin[i] = std::numeric_limits<float>::max();
-			/* umax[i] initialized by min of float. */
             umax[i] = std::numeric_limits<float>::min();
             for (unsigned j = 0; j < dim; j++) {
                 a[i][j] = gaussian();
             }
             b[i] = uniform();
-			/* random sampler. */
             c[i] = rng();
         }
     }
@@ -302,7 +297,6 @@ public:
     {
         Super::load(ar);
         ar & model;
-		//# 和assert(ar)类似.
         BOOST_VERIFY(ar);
     }
 

@@ -25,11 +25,12 @@ class FlannInterface {
 
 	/* initialize. */
 	void init();
+	void init(int trees, int leaf_max_size, int checks);
 
 	/* Load dataset . */
 	void load(const std::string &path);
 	/* Set parameter. */
-	void setParam(int trees, int leaf_max_size);
+	void setParam(int trees, int leaf_max_size, int checks);
 	/* Build index. */
 	void buildIndex();
 	/* save index. */

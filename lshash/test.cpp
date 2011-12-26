@@ -20,7 +20,8 @@ test_util() {
 
 void
 test_ghash() {
-	Ghash::init(256, 256);
+	/* M, K, W, R. */
+	Ghash::init(256, 256, 4, 100);
 
 	Point p;
 
@@ -100,7 +101,7 @@ test_lshash() {
 	ftest << endl;
 
 	vector<u_int> eid;
-	lsh.findNodes(p, eid);
+	lsh.find(p, eid);
 
 	for(u_int i = 0; i < eid.size(); ++i) {
 		ftest << eid[i] << ' ' ;

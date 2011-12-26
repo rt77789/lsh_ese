@@ -2,6 +2,7 @@
 #include "fft.h"
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 using namespace std;
 
 //# FFT.
@@ -98,6 +99,33 @@ FFT::lconvolve(const vector<Complex> &x, const vector<Complex> &y, vector<Comple
 	for(size_t i = x.size(); i < len; ++i) nx[i] = ny[i] = Complex(0, 0);
 
 	cconvolve(nx, ny, res);
+}
+
+double FFT::corr(const vector<double> &x, const vector<double> &y) {
+#ifdef T0XCORR
+	return t0xcorr(x, y);
+#else
+
+#ifdef L2NORM
+	return l2norm(x, y);
+#else
+	return xcorr(x, y);
+#endif
+
+#endif
+	throw logic_error("corr logic error.");
+}
+
+/* Return distance of x and y in L2 norm metric. */
+double FFT::l2norm(const vector<double> &x, const vector<double> &y) {
+	if(x.size() != y.size() || x.size() == 0) {
+		throw logic_error("in l2norm: x.size != y.size or x.size == 0");
+	}
+	double dis = 0;
+	for(size_t i = 0; i < x.size(); ++i) {
+		dis += (x.at(i) - y.at(i)) * (x.at(i) - y.at(i));
+	}
+	return dis < 0 ? 0 : std::sqrt(dis);
 }
 
 //# cross-correlation.

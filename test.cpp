@@ -74,6 +74,12 @@ test_by_type(const string &type) {
 
 #ifdef T0XCORR
 		cout << "T0 cross-correlation computing..." << endl;
+#else
+#ifdef L2NORM
+		std::cout << "L2 norm distance computing..." << std::endl;
+#else
+		std::cout << "cross correlation computing..." << std::endl;
+#endif
 #endif
 		int candi = lsese.findIndex(sin, resig, type);
 
@@ -228,7 +234,11 @@ main(int argc , char **args) {
 		test_build_index();
 	}
 	else if(argc >= 2  && strcmp(args[1], "-lsh") == 0) {
+		try {
 		test_by_type("lsh");
+		} catch(exception e) {
+			std::cout << "exception: " << e.what() << std::endl;
+		}
 	}
 	else if(argc >= 2 && strcmp(args[1], "-flann") == 0) {
 		test_by_type("flann");
@@ -242,6 +252,12 @@ main(int argc , char **args) {
 	else if(argc >= 2 && strcmp(args[1], "-fft") == 0) {
 		test_by_type("fft");
 	}
+	else if(argc >= 2 && strcmp(args[1], "-kdmpl") == 0) {
+		test_by_type("kdmpl");
+			}
+	else if(argc >= 2 && strcmp(args[1], "-kdlsh") == 0) {
+		test_by_type("kdlsh");
+	}
 	else {
 		perror("usage: \n\
 				./test (-build | -lsh | -mpl | -flann | -wavelet | -fft) \n\
@@ -250,7 +266,9 @@ main(int argc , char **args) {
 				\t-mpl\n\
 				\t-flann\n\
 				\t-fft\n\
-				\t-wavelet\n");
+				\t-wavelet\n\
+				\t-kdmpl\n\
+				\t-kdlsh\n");
 		exit(0);
 	}
 	//test_lshese(args[1], queryNum);

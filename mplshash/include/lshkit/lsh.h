@@ -111,8 +111,6 @@ public:
 template <typename DIST>
 class StableDistLsh
 {
-	/* This is a hash function. */
-	/* random vector. */
     std::vector<float> a_;
     float b_;
     float W_;
@@ -142,7 +140,6 @@ public:
         W_ = param.W;
         dim_ = param.dim;
 
-		/* build random vector v & random number b. */
         boost::variate_generator<RNG &, DIST> gen(rng, DIST());
 
         for (unsigned i = 0; i < dim_; ++i) a_[i] = gen();
@@ -162,7 +159,6 @@ public:
         return 0;
     }
 
-	/* inner product, and return the slot(interval) number. */
     unsigned operator () (Domain obj) const
     {
         float ret = b_;
@@ -183,12 +179,10 @@ public:
         ret /= W_;
 
         float flr =  std::floor(ret);
-		/* distance to the left boudary. */
         *delta = ret - flr;
         return unsigned(int(flr));
     }
 
-	/* restore from index. */
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {

@@ -122,7 +122,6 @@ public:
         topks_.clear();
         for (;;) {
             unsigned q, k;
-			//# query number.
             is >> q;
             if (!is) break;
             queries_.push_back(q);

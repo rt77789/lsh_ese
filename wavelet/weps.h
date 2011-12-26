@@ -19,6 +19,10 @@ struct Signal {
 	vector<double> sig;
 	int ppos;
 	
+	Signal(const vector<double> &s) {
+		sig.assign(s.begin(), s.end());
+	}
+	Signal() {}
 	void calPPos() {
 		double squareSum = 0, linearSum = 0;
 		

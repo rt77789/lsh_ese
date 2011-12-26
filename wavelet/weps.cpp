@@ -218,11 +218,7 @@ WaveletEps::batch_push(const vector< vector<double> > &vsin, const vector<u_int>
 		}
 
 		try {
-#ifdef T0XCORR
-			double sim = FFT::t0xcorr(ws.wsig[0].sig, queryWS.wsig[0].sig);
-#else
-			double sim = FFT::xcorr(ws.wsig[0].sig, queryWS.wsig[0].sig);
-#endif
+			double sim = FFT::corr(ws.wsig[0].sig, queryWS.wsig[0].sig);
 
 			WSSimilar wss;
 			wss.ws = ws;
@@ -361,13 +357,10 @@ WaveletEps::findByLayer(const WaveletSignal &sin, int layer) {
 	
 	for(size_t i = 0; i < upper; ++i) {
 		//pair<double, int> p = cross_correlation(sigs[i].ws.wsig[layer], sin.wsig[layer]);
-#ifdef T0XCORR
-		double sim  = FFT::t0xcorr(sigs[i].ws.wsig[layer].sig, sin.wsig[layer].sig);
-#else
-		double sim  = FFT::xcorr(sigs[i].ws.wsig[layer].sig, sin.wsig[layer].sig);
-#endif
+		double sim  = FFT::corr(sigs[i].ws.wsig[layer].sig, sin.wsig[layer].sig);
 		sigs[i].sim = sim;
 	}
+	//cout << layer << " | " << eoaix::levelLimit[layer] << endl;
 	sort(sigs.begin(), (size_t)eoaix::levelLimit[layer] < sigs.size() ? (sigs.begin() + eoaix::levelLimit[layer]) : sigs.end());
 	// Erase/delete/clean the useless data.
 	//assert(levelLimit[layer] < sigs.size());

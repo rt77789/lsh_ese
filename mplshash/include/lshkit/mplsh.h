@@ -191,7 +191,6 @@ extern ProbeSequenceTemplates __probeSequenceTemplates;
 /// Multi-Probe LSH class.
 class MultiProbeLsh: public RepeatHash<GaussianLsh> 
 {
-	/* hash table size, use the default value. */
     unsigned H_;
 public:
     typedef RepeatHash<GaussianLsh> Super;
@@ -296,8 +295,6 @@ public:
         param_ = param;
         // we are going to normalize the distance by window size, so here we pass W = 1.0.
         // We tune adaptive probing for KNN distance range [0.0001W, 20W].
-		/* MAX_T = 200, MAX_M = 64. */
-		/* L, W = 1, M = repeat, T = 200*/
         recall_.reset(MultiProbeLshModel(Super::lshs_.size(), 1.0, param_.repeat, Probe::MAX_T), 200, 0.0001, 20.0);
     }
 

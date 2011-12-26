@@ -48,8 +48,6 @@
 
 namespace lshkit {
 
-	//## 重载(i|o)stream对象的&操作符.
-
 static inline std::ostream &operator & (std::ostream &os, int i) {
     return os.write((const char *)&i, sizeof(i));
 }

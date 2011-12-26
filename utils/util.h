@@ -25,8 +25,15 @@ namespace eoaix {
 #define DIMS 4096
 #define FREQUENT 100
 
-	//# switch t0.
-#define T0XCORR
+//# switch t0.
+//#define T0XCORR
+
+#ifndef T0XCORR /* T0XCORR priority is higher than L2NORM. */
+#define L2NORM /* L2 metric for correlation. */
+#endif
+
+/* Switch for normalize the input dataset and query or not. */
+//#define DATA_NORMALIZE
 #define INF 1<<31
 
 #define TABLE_PRIME ((1LL<<13) - 1)
@@ -38,7 +45,7 @@ namespace eoaix {
 
 
 	// The array for limit the top-k at different level.
-	const int levelLimit[] = {1<<30, 8, 8, 8};
+	const int levelLimit[] = {1<<30, 10, 10, 10};
 
 	void getSacPath(const char *dir, std::vector<std::string> &sacs);
 	void print_now();

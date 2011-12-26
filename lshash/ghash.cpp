@@ -4,13 +4,17 @@
 #include "../utils/config.h"
 
 #include <iostream>
+#include <fstream>
+#include <stdexcept>
 #include <cstring>
 #include <cmath>
 
 using namespace eoaix;
 
 //# Global u hash function points.
-vector< vector<Point> > Ghash::uPoints;
+vector<Ghash::PointVector> Ghash::uPoints;
+/* Random vector whose element is selected from Gaussian distribution. */
+//vector<Ghash::PointVector> Ghash::_randVector;
 //# h1 & h2 hash function times uPoints tables with respect to current query q.
 vector< u64 > Ghash::h1TimesU[U_NUM_IN_G];
 vector< u64 > Ghash::h2TimesU[U_NUM_IN_G];
@@ -20,23 +24,26 @@ vector< vector<u64> > Ghash::projectValue;
 vector<u64> Ghash::h1Points;
 vector<u64> Ghash::h2Points;
 
-u_int Ghash::mm;
-u_int Ghash::kk;
-double Ghash::b;
-double Ghash::w;
-double Ghash::R;
+Ghash::PointVector Ghash::testSample;
+
+u_int Ghash::_M;
+u_int Ghash::_K;
+double Ghash::_b;
+double Ghash::_W;
+double Ghash::_R;
+bool Ghash::_use_uhash;
 
 //# initial Ghash static fields.
 void
-Ghash::init(u_int _M, u_int _K) {
-	mm = _M, kk = _K;
+Ghash::init(u_int M, u_int K, double W, double R) {
+	_M = M, _K = K, _W = W, _R = R;
 
-	//w = 2;
-	//R = 0.1;
-	w = Configer::get("lsh_W").toInt();
-	R = Configer::get("lsh_R").toDouble();
+	string testset_sample_path = Configer::get("testset_sample_path").toString();
+	_use_uhash = Configer::get("lsh_use_uhash").toBool();
 
-	b = Util::randomByUniform(0.0, w);
+	loadTestSample(testset_sample_path);
+
+	_b = Util::randomByUniform(0.0, _W);
 
 	uPoints.clear();
 	projectValue.clear();
@@ -45,29 +52,106 @@ Ghash::init(u_int _M, u_int _K) {
 
 	for(int i = 0; i < U_NUM_IN_G; ++i)
 		h1TimesU[i].clear(), h2TimesU[i].clear();
-
-	for(u_int i = 0; i < mm; ++i) {
+	
+	for(u_int i = 0; i < _M; ++i) {
 		vector<Point> u;
-		for(int j = (int)kk/ 2; j >= 0; --j) {
-			// std::cout << i << ' ' << j << std::endl;
-			Point p;
-			randomPoint(p);
-			u.push_back(p);
+		for(int j = (int)_K/ 2; j >= 0; --j) {
+			Point cp;
+			selectRandomVector(cp);
+			u.push_back(cp);
 		}
 		uPoints.push_back(u);
 		//# set projectValue : M * K.
-		projectValue.push_back(vector<u64>(kk, 0));
+		projectValue.push_back(vector<u64>(_K, 0));
 	}
 
-	for(u_int i = 0; i < kk; ++i) {
+	for(u_int i = 0; i < _K; ++i) {
 		h1Points.push_back(Util::randomU64(0, (u64)1LL<<63));
 		h2Points.push_back(Util::randomU64(0, (u64)1LL<<63));
 	}
 	
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
-		h1TimesU[i].resize(mm, 0);
-		h2TimesU[i].resize(mm, 0);
+		h1TimesU[i].resize(_M, 0);
+		h2TimesU[i].resize(_M, 0);
 	}
+}
+
+/* Select a best random vector with predefined equation. */
+void Ghash::selectRandomVector(Point &cp) {
+	/* try vk times, and select the best random vector with minimize score. */
+	int vk = Configer::get("lsh_random_vector_try").toInt();
+	double minScore = 1e100;
+	while(vk--) {
+		Point p;	
+		randomPoint(p);
+		double score = evaluateVector(p);
+		if(score < minScore) {
+			cp = p;
+			minScore = score;
+		}
+		//std::cout << "score: " << score << std::endl;
+	}
+}
+/* Evaluate the random vector using testset_sample_path. */
+double Ghash::evaluateVector(const Point &p) {
+	/* for each node, average of the distance. */
+	typedef map<u64, vector<size_t> > BlockMap;
+	BlockMap bm;
+	for(size_t i = 0; i < testSample.size(); ++i) {
+		u64 offset = (u64)((testSample[i] * p + _b ) / _W);
+		BlockMap::iterator iter = bm.find(offset);
+		if(iter == bm.end()) {
+			vector<size_t> block;
+			block.push_back(i);
+			bm[offset] = block;
+		}
+		else {
+			iter->second.push_back(i);
+		}
+	}
+
+	double disAve = 0;
+	for(BlockMap::iterator iter	= bm.begin(); iter != bm.end(); ++iter) {
+		double disSum = 0;
+		int edgeNum = 0;
+		for(size_t i = 0; i < iter->second.size(); ++i) {
+			for(size_t j = i + 1; j < iter->second.size(); ++j) {
+				double disTmp = (iter->second)[i] % (iter->second)[j];
+				if(disTmp > disSum) disSum = disTmp;
+				//disSum += (iter->second)[i] % (iter->second)[j];
+				++edgeNum;
+			}
+		}
+		if(edgeNum > 0 && disSum > disAve) {
+			disAve = disSum;
+		}
+		/*
+		if(edgeNum > 0) {
+			//disAve += disSum / edgeNum;
+		}
+		else {
+			std::cout << "iter->second.size(): " << iter->second.size() << std::endl;
+		}
+		*/
+	}
+	return disAve;
+}
+
+/* Load testset sample. */
+void Ghash::loadTestSample(const string &path) {
+	ifstream in(path.c_str(), ios_base::binary);
+	if(!in.is_open()) {
+		clog << path + " open fail." << endl;
+		throw runtime_error(path + " open fail.");
+	}
+	Point p;
+	while(in.read((char*)&p, sizeof(Point))) {
+#ifdef DATA_NORMALIZE
+		normalize(p);
+#endif
+		testSample.push_back(p);
+	}
+	in.close();
 }
 
 //# Store all static fields into into external index file.
@@ -137,11 +221,11 @@ Ghash::storeStaticFields(FILE *fh) {
 
 	//# M, K, b, w;
 
-	assert(1 == fwrite(&mm, sizeof(u_int), 1, fh));
-	assert(1 == fwrite(&kk, sizeof(u_int), 1, fh));
-	assert(1 == fwrite(&b, sizeof(double), 1, fh));
-	assert(1 == fwrite(&w, sizeof(double), 1, fh));
-	assert(1 == fwrite(&R, sizeof(double), 1, fh));
+	assert(1 == fwrite(&_M, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&_K, sizeof(u_int), 1, fh));
+	assert(1 == fwrite(&_b, sizeof(double), 1, fh));
+	assert(1 == fwrite(&_W, sizeof(double), 1, fh));
+	assert(1 == fwrite(&_R, sizeof(double), 1, fh));
 }
 
 //# Just the restore the static fields info.
@@ -229,72 +313,81 @@ Ghash::restoreStaticFields(FILE *fh) {
 	}
 	//# M, K, b, w;
 
-	assert(1 == fread(&mm, sizeof(u_int), 1, fh));
-	assert(1 == fread(&kk, sizeof(u_int), 1, fh));
-	assert(1 == fread(&b, sizeof(double), 1, fh));
-	assert(1 == fread(&w, sizeof(double), 1, fh));
-	assert(1 == fread(&R, sizeof(double), 1, fh));
+	assert(1 == fread(&_M, sizeof(u_int), 1, fh));
+	assert(1 == fread(&_K, sizeof(u_int), 1, fh));
+	assert(1 == fread(&_b, sizeof(double), 1, fh));
+	assert(1 == fread(&_W, sizeof(double), 1, fh));
+	assert(1 == fread(&_R, sizeof(double), 1, fh));
 }
 
 //# random generate a point.
 void
-Ghash::randomPoint(Point &_p) {
+Ghash::randomPoint(Point &p) {
 	for(u_int i = 0; i < DIMS; ++i) {
-		_p.d[i] = Util::randomByUniform(-5,5);
+		p.d[i] = Util::randomByUniform(-5,5);
 	}
 }
 
-//#
-void
-Ghash::preComputeFields(Point &q) {
-	//# normalize.
+/* Normalize the point p, minus the mean and divide the square variance. */
+void Ghash::normalize(Point &p) {
 	double maxd = 0;
-	const double eps = 1e-32;
 	//# Normalize the initial signal, point[] / max{ point[] }.
 	//for(int i = 0; i < DIMS; ++i)
-	//	maxd = maxd > q.d[i] ? maxd : q.d[i];
+	//	maxd = maxd > p.d[i] ? maxd : p.d[i];
 	for(int i = 0; i < DIMS; ++i)
-		maxd += q.d[i];
+		maxd += p.d[i];
 	maxd /= DIMS;
 
 	for(int i = 0; i < DIMS; ++i)
-		q.d[i] -= maxd;
+		p.d[i] -= maxd;
 	double ts = 0;
 	for(int i = 0; i < DIMS; ++i)
-		ts += q.d[i] * q.d[i];
+		ts += p.d[i] * p.d[i];
 	ts = sqrt(ts);
 
-	//# ??
-	//assert(fabs(maxd) >= eps);
-
 	for(int i = 0; i < DIMS; ++i)
-		q.d[i] = q.d[i] / ts / R;
-		//q.d[i] = q.d[i] / maxd / R;
-
+		p.d[i] = p.d[i] / ts;
+	//p.d[i] = p.d[i] / maxd / _R;
+}
+//#
+void
+Ghash::preComputeFields(Point &q) {
+#ifdef DATA_NORMALIZE
+	//# normalize.
+	normalize(q);
+#endif
 	//# Projection.
 	for(u_int i = 0; i < uPoints.size(); ++i) {
 		for(u_int j = 0; j < uPoints[i].size(); ++j) {
-			projectValue[i][j] = (u64)(((uPoints[i][j] * q) + b)/w);
+			//std::cout << "projectValue[i][j]: " << projectValue[i][j] << " | p*q: " << uPoints[i][j] * q << std::endl;
+			projectValue[i][j] = (u64)((uPoints[i][j] * q + _b)/_W);
 		}
 	}
 	
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
-		for(u_int j = 0; j < mm; ++j) {
+		for(u_int j = 0; j < _M; ++j) {
 			h1TimesU[i][j] = h2TimesU[i][j] = 0;
-			for(u_int k = 0; k < (kk/U_NUM_IN_G); ++k) {
-				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*(kk/U_NUM_IN_G) + k] * h1Points[i *(kk/U_NUM_IN_G) + k]) % HASH_PRIME ) % TABLE_PRIME;
-				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*(kk/U_NUM_IN_G) + k] * h2Points[i *(kk/U_NUM_IN_G) + k]) % HASH_PRIME;
+			for(u_int k = 0; k < (_K/U_NUM_IN_G); ++k) {
+				h1TimesU[i][j] = ((h1TimesU[i][j] + projectValue[j][i*(_K/U_NUM_IN_G) + k] * h1Points[i *(_K/U_NUM_IN_G) + k]) % HASH_PRIME ) % TABLE_PRIME;
+				h2TimesU[i][j] = (h2TimesU[i][j] + projectValue[j][i*(_K/U_NUM_IN_G) + k] * h2Points[i *(_K/U_NUM_IN_G) + k]) % HASH_PRIME;
 			}
 		}
 	}
 }
 
-Ghash::Ghash(u_int *_uIndex) {
+Ghash::Ghash(u_int *puIndex) {
 	for(u_int i = 0; i < U_NUM_IN_G; ++i)
-		uIndex[i] = _uIndex[i];
+		uIndex[i] = puIndex[i];
 	memset(counter, 0, sizeof(u_int) * TABLE_PRIME);
 	//# inital tables.
 	memset(tables, 0, sizeof(Gnode*) * TABLE_PRIME);
+
+	_randVector.resize(_K);
+	for(u_int i = 0; i < _K; ++i) {
+		Point p;
+		selectRandomVector(p);
+		_randVector[i] = p;
+	}
 }
 
 Ghash::~Ghash() {
@@ -374,9 +467,18 @@ pair<u64, u64>
 Ghash::calh1Andh2(const Point &q) {
 	u64 h1mask = 0, h2mask = 0;
 
-	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
-		h1mask = ((h1mask + h1TimesU[i][ uIndex[i] ]) % HASH_PRIME) % TABLE_PRIME;
-		h2mask += (h2mask + h2TimesU[i][ uIndex[i] ]) % HASH_PRIME;
+	if(_use_uhash) {
+		for(u_int i = 0; i < U_NUM_IN_G; ++i) {
+			h1mask = ((h1mask + h1TimesU[i][ uIndex[i] ]) % HASH_PRIME) % TABLE_PRIME;
+			h2mask = (h2mask + h2TimesU[i][ uIndex[i] ]) % HASH_PRIME;
+		}
+	}
+	else {
+		for(u_int i = 0; i < _K; ++i) {
+			u64 hv = (u64) ( (_randVector[i] * q + _b) / _W );
+			h1mask = ( (h1mask + hv) % HASH_PRIME ) % TABLE_PRIME;
+			h2mask = (h2mask + hv) % HASH_PRIME;
+		}
 	}
 	return make_pair<u64, u64>(h1mask, h2mask);
 }

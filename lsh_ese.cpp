@@ -3,70 +3,47 @@
 #include <fstream>
 #include <algorithm>
 
-LShashESE::LShashESE():fhandle(0) {
+LShashESE::LShashESE() {
+	string dataset = Configer::get("naive_dataset_path").toString();
+	fhandle.open(dataset.c_str(), ios::binary);
+	if(!fhandle) {
+		throw;
+	}
 }
 
 LShashESE::~LShashESE() {
-	if(fhandle != NULL)
-		fclose(fhandle);
+	if(fhandle)
+		fhandle.close();
 }
 
 void
 LShashESE::init(const string &type) {
 	if(type == "mpl") {
-		string dataset = Configer::get("naive_dataset_path").toString();
-		fhandle = fopen(dataset.c_str(), "rb");
 		mpl.init();
 	}
 	else if(type == "lsh") {
-
-		bool doLoadIndex = Configer::get("lsh_load_index").toBool();
-		string dataset = Configer::get("lsh_dataset_path").toString();
-
-		fhandle = fopen(dataset.c_str(), "rb");
 		lsh.init();
-
-		if(!doLoadIndex) {
-			loadPoint();
-			cout << "load Point over." << endl;
-			bool doSave = Configer::get("lsh_do_save").toBool();
-			if(doSave) {
-				string indexPath = Configer::get("lsh_index_path").toString();
-				storeLShash(indexPath.c_str());
-			}
-		}
-		else {
-			string indexPath = Configer::get("lsh_index_path").toString();
-			restoreLShash(indexPath.c_str());
-		}
 	}
 	else if(type == "flann") {
-		string dataset = Configer::get("flann_dataset_path").toString();
-
-		fhandle = fopen(dataset.c_str(), "rb");
 		flann.init();
 	}
 	else if(type == "fft" || type == "wavelet") {
-		string dataset = Configer::get("naive_dataset_path").toString();
-		fhandle = fopen(dataset.c_str(), "rb");
+	}
+	else if(type == "kdmpl") {
+		mpl.init();
+		flann.init();
+	}
+	else if(type == "kdlsh") {
+		lsh.init();
+		flann.init();
 	}
 	else {
 		throw ;
 	}
-	assert(fhandle != NULL);
 }
 
 //# Load point from external file and add into lsh object.
-void
-LShashESE::loadPoint() {
-	assert(fhandle != NULL);
-	Point p;
-	for(u_int i = 0; readPoint(i, p) ; ++i) {
-		//# sort p.d[].
-		lsh.addNode(p);
-	}
-}
-
+/*
 void
 LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
 	assert(sin.size() == DIMS);
@@ -77,7 +54,7 @@ LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
 
 	lsh.findNodes(q, _index);
 }
-
+*/
 int
 LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const string &_lshtype) {
 	
@@ -97,13 +74,18 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 		float *fsin = new float[sin.size()];
 		for(u_int i = 0; i < sin.size(); ++i)
 			fsin[i] = sin[i];
-		flann.find(fsin, TOP_K, eid);
+		int checks = Configer::get("flann_kdtree_checks").toInt();
+		flann.find(fsin, checks, eid);
 		if(fsin != NULL)
 		delete fsin;
 	}
 	else if(_lshtype == "lsh") {
 		cout << "basic lsh find..." << endl;
-		findByLSH(sin, eid);
+		Point p;
+		for(size_t i = 0; i < sin.size(); ++i) {
+			p.d[i] = sin[i];
+		}
+		lsh.find(p, eid);
 	}
 	else if(_lshtype == "fft") {
 		cout << "fft find..." << endl;
@@ -113,11 +95,64 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 		cout << "wavelet naive find..." << endl;
 		return naiveWaveletFind(sin, resig);
 	}
+	else if(_lshtype == "kdmpl") {
+		cout << "kdmpl(mpl & flann) find..." << endl;
+		float *fsin = new float[sin.size()];
+		for(u_int i = 0; i < sin.size(); ++i)
+			fsin[i] = sin[i];
+		int checks = Configer::get("flann_kdtree_checks").toInt();
+		flann.find(fsin, checks, eid);
+
+		vector<u_int> teid;
+		mpl.query(fsin, sin.size(), teid);
+
+		set<u_int> tmps;
+		for(size_t i = 0; i < teid.size(); ++i) {
+			tmps.insert(teid[i]);
+		}
+		for(size_t i = 0; i < eid.size(); ++i)
+			tmps.insert(eid[i]);
+		eid.clear();
+		for(std::set<u_int>::iterator iter = tmps.begin(); iter != tmps.end(); ++iter) {
+			eid.push_back(*iter);
+		}
+		if(fsin != NULL)
+		delete fsin;
+	}
+	else if(_lshtype == "kdlsh") {
+		cout << "kdlsh(lsh & flann) find..." << endl;
+		float *fsin = new float[sin.size()];
+		for(u_int i = 0; i < sin.size(); ++i)
+			fsin[i] = sin[i];
+		int checks = Configer::get("flann_kdtree_checks").toInt();
+		flann.find(fsin, checks, eid);
+
+		Point p;
+		for(size_t i = 0; i < sin.size(); ++i) {
+			p.d[i] = sin[i];
+		}
+		lsh.find(p, eid);
+		vector<u_int> teid;
+		lsh.find(p, teid);
+
+		set<u_int> tmps;
+		for(size_t i = 0; i < teid.size(); ++i) {
+			tmps.insert(teid[i]);
+		}
+		for(size_t i = 0; i < eid.size(); ++i)
+			tmps.insert(eid[i]);
+		eid.clear();
+		for(std::set<u_int>::iterator iter = tmps.begin(); iter != tmps.end(); ++iter) {
+			eid.push_back(*iter);
+		}
+		if(fsin != NULL)
+		delete fsin;
+	}
 	else {
 		throw;
 	}
 
-	cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
+	cout << "lsh.find returns: eid.size() == " << eid.size() << endl;
 
 	Point p;
 	vector<pair<double, u_int> > xlist;
@@ -180,7 +215,14 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig)
 	vector<u_int> eid;
 	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
 
-	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
+	//assert(0 == fseek(fhandle, 0LL, SEEK_SET));
+	/* Clear the ifstream before use it. */
+	fhandle.clear();
+	fhandle.seekg(0LL, ios_base::beg);
+	if(fhandle.fail() || fhandle.bad() || fhandle.eof()) {
+		throw;
+	}
+
 	vector<SearchRes> xlist, rlist;
 
 	int tnum = 0;
@@ -189,15 +231,16 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig)
 
 	int cpnum = 0;	
 
-	while((cpnum = fread(p, sizeof(Point), BATCH_READ_NUM, fhandle)) > 0) {
+	//while((cpnum = fread(p, sizeof(Point), BATCH_READ_NUM, fhandle)) > 0) {
+	while(!fhandle.fail() && !fhandle.eof()) {
+		fhandle.read((char*)p, sizeof(Point) * BATCH_READ_NUM);
+		cpnum = fhandle.gcount() / sizeof(Point);
+		/* gcount must a multiply of sizeof(Point). */
+		assert(fhandle.gcount() % sizeof(Point) == 0);
 		for(int i = 0; i < cpnum; ++i) {
 			vector<double> tin(p[i].d, p[i].d + DIMS);
 			//cout << "p.identity: " << p.identity << endl;
-#ifdef T0XCORR
-			double sim = FFT::t0xcorr(sin, tin);
-#else
-			double sim = FFT::xcorr(sin, tin);
-#endif
+			double sim = FFT::corr(sin, tin);
 			xlist.push_back(SearchRes(p[i].identity, sim, tin));
 			if(xlist.size() >= IN_MEMORY_NUM) {
 				//# merge
@@ -241,8 +284,9 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig)
 		q.d[i] = sin[i];
 
 	WaveletEps twe(sin);
-
-	assert(0 == fseek(fhandle, 0LL, SEEK_SET));
+	fhandle.clear();
+	fhandle.seekg(0LL, ios_base::beg);
+	//assert(0 == fseek(fhandle, 0LL, SEEK_SET));
 
 	int tnum = 0;
 
@@ -251,7 +295,11 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig)
 	Point p[BATCH_READ_NUM];
 	int cpnum = 0;
 
-	while((cpnum = fread(&p, sizeof(Point), 1, fhandle)) > 0) {
+	//while((cpnum = fread(&p, sizeof(Point), 1, fhandle)) > 0) {
+	while(!fhandle.fail() && !fhandle.eof()) {
+		fhandle.read((char*)p, sizeof(Point) * BATCH_READ_NUM);
+		cpnum = fhandle.gcount() / sizeof(Point);
+		assert(fhandle.gcount() % sizeof(Point) == 0);
 		for(int i = 0; i < cpnum; ++i) {
 			vector<double> tin(p[i].d, p[i].d + DIMS);
 			//# Can't load all dataset in memory.
@@ -286,38 +334,22 @@ bool
 LShashESE::readPoint(u_int index, Point &p) {
 	//int offset = sizeof(u_int) + DIMS * sizeof(double);
 	u64 offset = (u64)sizeof(Point) * index;
-	u64 blockSize = 10000000LL;
-	u64 seekTimes = offset / blockSize;
+	fhandle.clear();
+/*
+	fhandle.seekg(0LL, ios::end);
+	assert(!(fhandle.fail() && fhandle.bad()));
+	long long length = fhandle.tellg();
 
-	for(u64 i = 0; i < seekTimes; ++i) {
-		if(i == 0) {
-			assert(0 == fseek(fhandle, blockSize, SEEK_SET));
-		}
-		else {
-			assert(0 == fseek(fhandle, blockSize, SEEK_CUR));
-		}
-	}
-
-	if(seekTimes == 0)
-		assert(0 == fseek(fhandle, offset % blockSize, SEEK_SET));
-	else
-	assert(0 == fseek(fhandle, offset % blockSize, SEEK_CUR));
-
-	int rv = fread(&p, sizeof(Point), 1, fhandle);
-	/*
-	cerr << "offset: " << offset << " | rv: " << rv << " | blockSize: " << blockSize << " | remain: " << offset % blockSize << endl;
+	clog << "offset: " << offset << " | length: " << length << endl;
 	*/
-	assert(fhandle != NULL);
-	if(rv > 0) {
-		/*
-		cout << "p.identity: " << p.identity << " | index: " << index << endl;
-		*/
-		assert(p.identity == index);
-	}
-	//assert(rv == 1);
-	return rv == 1;
+	fhandle.seekg(offset, ios_base::beg);
+	assert(!(fhandle.fail() && fhandle.bad()));
+	fhandle.read((char*)&p, sizeof(Point));
+	//int rv = fread(&p, sizeof(Point), 1, fhandle);
+	//clog << "p.identity: " << p.identity << " | index: " << index << endl;
+	assert(p.identity == index);
+	return !(fhandle.fail() || fhandle.eof() || fhandle.bad());
 }
-
 
 //# Transform dataset into binary format.
 void

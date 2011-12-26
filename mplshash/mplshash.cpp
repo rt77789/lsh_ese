@@ -40,57 +40,53 @@ MPLSHash::~MPLSHash() {
 	}
 }
 
-/* Initializer. */
-void MPLSHash::init() {
 
+void MPLSHash::init(float W_, u_int M_, u_int T_, u_int L_, u_int Q_, u_int K_, float R_, u_int H_, float recall, u_int dims) {
+	string testset_sample_path = Configer::get("testset_sample_path").toString();
+	
 	string dataset_path = Configer::get("mplsh_dataset_path").toString();
 	string index_path = Configer::get("mplsh_index").toString();
 	loadIndex = Configer::get("mplsh_load_index").toBool();
 
-	u_int T = Configer::get("mplsh_T").toInt();
-	u_int Q = Configer::get("mplsh_Q").toInt();
-	u_int M = Configer::get("mplsh_M").toInt();
-	u_int H = Configer::get("mplsh_H").toInt();
-	u_int dim = Configer::get("dims").toInt();
+	u_int T = T_;
+	u_int Q = Q_;
+	u_int M = M_;
+	u_int H = H_;
+	u_int dim = dims;
 
-	float W = Configer::get("mplsh_W").toFloat();
+	float W = W_;
 
-	R = Configer::get("mplsh_R").toFloat();
-	desire_recall = Configer::get("mplsh_recall").toDouble();
-	K = Configer::get("mplsh_K").toInt();
-	L = Configer::get("mplsh_L").toInt();
-	/*
-	   cout << desc;
-	   cout << "W: " << W << endl;
-	   cout << "M: " << M << endl;
-	   cout << "T: " << T << endl;
-	   cout << "L: " << L << endl;
-	   cout << "Q: " << Q << endl;
-	   cout << "K: " << K << endl;
-	   cout << "R: " << R << endl;
-	   cout << "H: " << H << endl;
-	   cout << "desire_recall: " << desire_recall<< endl;
-	   cout << "dataset : " << dataset_path << endl;
-	   cout << "index: " << index_path << endl;
-	 */
+	R = R_;
+	desire_recall = recall;
+	K = K_;
+	L = L_;
+	
 	cout << "loadIndex: " << loadIndex << endl;
 
 	param.W = W;
 	param.range = H;
 	param.repeat = M;
 	param.dim = dim;
-/*
-	cout << "K: " << K << endl;
-	cout << "L: " << L << endl;
-	cout << "desire_recall: " << desire_recall << endl;
-	cout << "R: " << R << endl;
-	cout << "param.W: " << param.W << endl;
-	cout << "param.range: " << param.range << endl;
-	cout << "param.repeat: " << param.repeat << endl;
-	cout << "param.dim: " << param.dim << endl;
-*/
+
 	load_data(dataset_path);
 	load_index(index_path);
+}
+
+/* Initializer. */
+void MPLSHash::init() {
+	u_int T_ = Configer::get("mplsh_T").toInt();
+	u_int Q_ = Configer::get("mplsh_Q").toInt();
+	u_int M_ = Configer::get("mplsh_M").toInt();
+	u_int H_ = Configer::get("mplsh_H").toInt();
+	u_int dims = Configer::get("dims").toInt();
+
+	float W_ = Configer::get("mplsh_W").toFloat();
+
+	float R_ = Configer::get("mplsh_R").toFloat();
+	float recall = Configer::get("mplsh_recall").toDouble();
+	u_int K_ = Configer::get("mplsh_K").toInt();
+	u_int L_ = Configer::get("mplsh_L").toInt();
+	init(W_, M_, T_, L_, Q_, K_, R_, H_, recall, dims);
 }
 
 /* Load dataset. */
@@ -197,8 +193,11 @@ void MPLSHash::query(float *_point, u_int _len, vector<u_int> &_res) {
 	// Key is unsigned.
 	Topk<unsigned> topk = scan->topk();
 
+	std::cout << "mplsh candidates number: " << scan->cnt() << std::endl;
+
 	_res.clear();
-	for(typename std::vector<TopkEntry<u_int> >::const_iterator jj = topk.begin(); jj != topk.end(); ++jj) {
+	unsigned i = 0;
+	for(typename std::vector<TopkEntry<u_int> >::const_iterator jj = topk.begin(); jj != topk.end() && i < scan->cnt(); ++jj, ++i) {
 		_res.push_back(jj->key);
 	}
 }

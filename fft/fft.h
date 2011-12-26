@@ -21,6 +21,9 @@ class FFT {
 		static double xcorr(const double *x, const double *y, size_t len);
 
 		static double t0xcorr(const vector<double> &sa, const vector<double> &sb);
+
+		static double corr(const vector<double> &x, const vector<double> &y);
+		static double l2norm(const vector<double> &x, const vector<double> &y);
 };
 
 #endif

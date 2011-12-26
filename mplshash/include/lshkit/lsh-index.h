@@ -54,9 +54,7 @@ public:
 protected:
     typedef std::vector<Key> Bin;
 
-	/* hash function tables. */
     std::vector<LSH> lshs_;
-	/* Real hash tables storing id of points, vector< vector< vector<unsigned> > > tables_. */
     std::vector<std::vector<Bin> > tables_;
 
 public:
@@ -76,9 +74,7 @@ public:
     {
         BOOST_VERIFY(lshs_.size() == 0);
         BOOST_VERIFY(tables_.size() == 0);
-		/* L hash functions. */
         lshs_.resize(L);
-		/* L hash tables. */
         tables_.resize(L);
 
         for (unsigned i = 0; i < L; ++i) {
@@ -86,7 +82,6 @@ public:
             if (lshs_[i].getRange() == 0) {
                 throw std::logic_error("LSH with unlimited range should not be used to construct an LSH index.  Use lshkit::Tail<> to wrapp the LSH.");
             }
-			/* range is H, H is the TableModNumber. */
             tables_[i].resize(lshs_[i].getRange());
         }
     }
@@ -96,11 +91,9 @@ public:
     void load (std::istream &ar)
     {
         unsigned L;
-		//# L.
         ar & L;
         lshs_.resize(L);
         tables_.resize(L);
-		//# L hash tables.
         for (unsigned i = 0; i < L; ++i) {
             lshs_[i].serialize(ar, 0);
             unsigned l;
@@ -123,7 +116,6 @@ public:
     {
         unsigned L;
         L = lshs_.size();
-		//# archive.h 中重载&，ar.read((char*) &L, sizeof(L));
         ar & L;
         for (unsigned i = 0; i < L; ++i) {
             lshs_[i].serialize(ar, 0);

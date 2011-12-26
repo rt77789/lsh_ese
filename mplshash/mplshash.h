@@ -7,6 +7,7 @@
 #include <boost/format.hpp>
 #include <boost/timer.hpp>
 #include <lshkit.h>
+#include <lshkit/eoaix.h>
 
 using namespace std;
 using namespace lshkit;
@@ -36,6 +37,8 @@ class MPLSHash {
 	~MPLSHash();
 
 	void init(); 
+
+	void init(float W_, u_int M_, u_int T_, u_int L_, u_int Q_, u_int K_, float R_, u_int H_, float recall, u_int dims);
 
 	/* Load the dataset. */
 	void load_data(const std::string &_path);

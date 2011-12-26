@@ -164,7 +164,6 @@ class MultiProbeLshRecallTable
     unsigned step_;
     double min_, max_;
     double lmin_, lmax_;
-	/* Data matrix, N_some_data * dim_some_data. */
     Matrix<float> table_;
 
 public:
@@ -185,7 +184,6 @@ public:
         table_.save(os);
     }
 
-	/* d_step = 200, d_min = 0.0001, d_max = 20.0 */
     void reset (MultiProbeLshModel model, unsigned d_step, double d_min, double d_max)
     {
         if (d_min <= 0 || d_max <= 0) {
@@ -198,18 +196,15 @@ public:
         max_ = d_max;
         lmin_ = log(d_min);
         lmax_ = log(d_max);
-		/* dim = d_step, N = model.getT(). */
         table_.reset(d_step, model.getT());
 
         unsigned T = model.getT();
         double delta = (lmax_ - lmin_) / step_;
         for (unsigned t = 0; t < T; ++t)
         {
-			/* ??? */
             model.setT(t+1);
             for (unsigned d = 0; d < step_; ++d)
             {
-				/* ??? */
                 table_[t][d] = model.recall(exp(lmin_ + delta * d));
             }
         }

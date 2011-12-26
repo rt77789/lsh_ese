@@ -17,6 +17,33 @@ vector<double> qsin[4];
 vector<WSSimilar> qsout[4];
 WaveletEps we[4];
 
+void read_from_sac(const char *path) {
+	PSac ps(path);
+
+	vector<double> sin;
+	ps.data2vector(sin);
+
+	Signal sig(sin);
+	sig.calPPos();
+
+	int base = sig.ppos;
+	sin.clear();
+	for(int i = 0; i < DIMS; ++i) {
+		if(base >= DIMS) {
+			base %= DIMS;
+		}
+		sin.push_back(sig.sig[base++]);	
+	}
+	//cout << "[";
+	for(size_t i = 0; i < sin.size(); ++i) {
+		cout << sin[i];
+		if(i + 1 < sin.size()) cout << " ";
+	}
+
+	cout << endl;
+	//cout << "]\n";
+	cerr << "dims: " << sin.size() << endl;
+}
 
 void
 deal_data() {
@@ -173,7 +200,9 @@ int
 main(int argc, char **args) {
 
 	if(argc < 2) {
-		perror("usage: -pre or -test");
+		perror("usage: -pre\n\
+				-test\n\
+				-trans sacfile.sac\n");
 		exit(0);
 	}
 
@@ -186,6 +215,9 @@ main(int argc, char **args) {
 		eoaix::print_now();
 		//loadConfig("config");
 		test();
+	}
+	else if(argc >= 3 && strcmp(args[1], "-trans") == 0) {
+		read_from_sac(args[2]);
 	}
 	else {
 		perror("ill option");

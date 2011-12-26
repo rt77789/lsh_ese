@@ -106,6 +106,7 @@ class LShashESE {
 		MPLSHash mpl;
 		FlannInterface flann;
 
-		FILE *fhandle;
+		ifstream fhandle;
+		//FILE *fhandle;
 };
 #endif

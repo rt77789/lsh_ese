@@ -47,6 +47,10 @@ class TestUtil {
 			cout << "randomByGaussian: " << Util::randomByGaussian() << endl;
 			cout << "print_now: ";
 			print_now();
+			cout << "randomU64: " << Util::randomU64(0, 1LL<<40) << endl;
+			cout << "randomByUniform: " << Util::randomByUniform(0, 256.123) << endl;
+			cout << "randomByGaussian: " << Util::randomByGaussian() << endl;
+			cout << "print_now: ";
 
 			string sci("-1e5");
 			equalAssert(-1e5, sci2double(sci));

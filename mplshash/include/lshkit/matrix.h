@@ -135,7 +135,6 @@ public:
     class Accessor
     {
         const Matrix &matrix_;
-		//# flags is a bitmap.
         boost::dynamic_bitset<> flags_;
     public:
         typedef unsigned Key;
