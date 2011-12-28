@@ -58,8 +58,13 @@ class Candidate {
 		assert(!(_in.fail() && _in.bad()));
 
 		Point p;
+		u_int rows = Configer::get("rows").toInt();
 
 		for(size_t i = 0; i < index.size(); ++i) {
+			if(index[i] >= rows) {
+				std::cout << "[Attention]: index[i] >= rows - " << index[i] << " >= " << rows << std::endl;
+				continue;
+			}
 			u64 offset = (u64)sizeof(Point) * index[i];
 			if(i > 0) offset -= sizeof(Point);
 

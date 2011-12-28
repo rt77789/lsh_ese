@@ -5,7 +5,7 @@ CFLAGS=-Wall -O -g -pthread
 
 UTILS=../utils
 
-OBJ=${UTILS}/util.o weps.o sac_prep.o
+OBJ=${UTILS}/util.o ${UTILS}/config.o weps.o sac_prep.o
 
 .PHONY : clean
 

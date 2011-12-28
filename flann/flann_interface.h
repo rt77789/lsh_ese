@@ -2,6 +2,7 @@
 #ifndef LSH_ESE_FLANN_INTERFACE_H_XIAOE
 #define LSH_ESE_FLANN_INTERFACE_H_XIAOE
 
+#include "../utils/util.h"
 #include "../utils/config.h"
 
 #include <flann/flann.h>

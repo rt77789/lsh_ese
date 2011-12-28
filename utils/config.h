@@ -9,19 +9,18 @@
 
 /* Value Object of configer. */
 class ConfigerValue {
-	const std::string _value;
+	std::string _value;
 	public:
 		ConfigerValue(const std::string &value):_value(value) {
 		}
 		ConfigerValue(const ConfigerValue &cv):_value(cv._value) {
 		}
-		/*
+
 		ConfigerValue& operator=(const ConfigerValue &cv) {
-			_value = cv.value;
-			Con
+			_value = cv._value;
 			return *this;
 		}
-		*/
+
 		~ConfigerValue() {
 		}
 		int toInt() const {
@@ -62,6 +61,7 @@ class Configer {
 
 	public:
 	static ConfigerValue& get(const std::string &key);
+	static void set(const std::string &key, const std::string &value);
 	static void init(const std::string &path);
 };
 

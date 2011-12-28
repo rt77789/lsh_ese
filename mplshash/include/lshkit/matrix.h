@@ -123,6 +123,9 @@ public:
     void load (std::istream &is);
     void save (std::ostream &os);
 
+    void load (std::istream &is, int N, int dim); /* N & dim added by me.*/
+    void load (const std::string &path, int N, int dim);
+
 #ifdef MATRIX_MMAP
     void map (const std::string &path);
     void unmap ();

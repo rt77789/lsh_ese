@@ -10,6 +10,7 @@
 #include "sac_prep.h"
 /* Other directory include files. */
 #include "../utils/util.h"
+#include "../utils/config.h"
 
 using namespace std;
 
@@ -115,8 +116,9 @@ find_similar_signal(void *ptr) {
 
 	vector<WSSimilar> &vwss = we[i].find(qsin[i]);
 	// cout << "vwss.size(): " << vwss.size() << endl;
+	size_t top_k = Configer::get("project_top_k").toInt();
 
-	for(size_t j = 0; j < vwss.size() && j < TOP_K; ++j)
+	for(size_t j = 0; j < vwss.size() && j < top_k; ++j)
 		qsout[i].push_back(vwss[j]);
 	// cout << "qsout: "<< i << " - " << qsout[i].size() << endl;
 	return (void*)0;
@@ -178,7 +180,8 @@ test() {
 
 		fout << "res: ";
 
-		for(size_t j = 0; j < ans.size() && j < TOP_K; ++j) {
+		size_t top_k = Configer::get("project_top_k").toInt();
+		for(size_t j = 0; j < ans.size() && j < top_k; ++j) {
 			fout << "[" << j << "]: " << endl;
 			vector<double> &sig = ans[j].ws.wsig[ans[j].ws.wsig.size()-1].sig;
 			for(size_t i = 0; i < sig.size(); ++i) {

@@ -92,6 +92,22 @@ namespace eoaix {
 		}
 	}
 
+	std::string itoa(int num, int base) {
+		std::string res = num < 0 ? "-" : "";
+		num = abs(num);
+		std::string tc;
+		while(num) {
+			tc += num % base + '0';	
+			num /= base;
+		}
+		for(size_t i = 0; i < tc.size(); ++i) {
+			res.push_back(tc[tc.size() - i - 1]);
+		}
+		if(res.size() == 0) {
+			res = "0";
+		}
+		return res;
+	}
 	// Science number denoting -> double.
 	double sci2double(std::string sci) {
 		size_t i = sci.find('e');
@@ -113,6 +129,35 @@ namespace eoaix {
 
 		return res;
 	}
+
+	/* Normalize the Point, maximum amplute set to 1. */
+	void normalize(Point &p) {
+		
+		double max = 0;
+		const static double eps = 1e-10;
+		for(int i = 0; i < DIMS; ++i) {
+			max = fabs(p.d[i]) > max ? fabs(p.d[i]) : max;
+		}
+		if(fabs(max) > eps) {
+			for(int i = 0; i < DIMS; ++i) {
+				p.d[i] /= max;
+			}
+		}
+	}
+	void normalize(float *p) {
+		
+		double max = 0;
+		const static double eps = 1e-10;
+		for(int i = 0; i < DIMS; ++i) {
+			max = fabs(p[i]) > max ? fabs(p[i]) : max;
+		}
+		if(fabs(max) > eps) {
+			for(int i = 0; i < DIMS; ++i) {
+				p[i] /= max;
+			}
+		}
+	}
+
 	// Recursive list all file names in the directory dir.
 	void getSacPath(const char *dir, std::vector<std::string> &sacs) {
 		listFiles(sacs, dir, 1);

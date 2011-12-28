@@ -9,9 +9,10 @@ class TestFlann {
 	public:
 		static void test() {
 			/* Init the config. */
-			Configer::init("all.config");
+			Configer::init("../all.config");
 			FlannInterface flann;
 			flann.init();
+			size_t top_k = Configer::get("project_top_k").toInt();
 			//flann.findTest(TOP_K);
 			//vector<int> result;
 			//flann.find(NULL, TOP_K, result);
@@ -23,11 +24,11 @@ class TestFlann {
 				float* testset = new float[dims];
 				memcpy(testset, dataset + i*dims, dims*sizeof(float));
 				vector<unsigned> result;
-				flann.find(testset, TOP_K, result);
+				flann.find(testset, top_k, result);
 				if(testset != NULL) {
 					delete[] testset;
 				}
-				for(size_t j = 0; j < TOP_K && j < result.size(); ++j) {
+				for(size_t j = 0; j < top_k && j < result.size(); ++j) {
 					cout << "TestFlann find result[" << j << "]: " << result[j] << endl;
 				}
 				cout << string(80, '-') << endl;

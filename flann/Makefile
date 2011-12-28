@@ -8,6 +8,8 @@ STRUCTS=../structs
 ## self-definition utils.
 UTILS=../utils
 
+FFT=../fft
+
 prefix=/usr/local
 libdir=${prefix}/lib64
 includedir=${prefix}/include
@@ -26,11 +28,15 @@ CFLAGS= -Wall -O -g -I${includedir} -I${flann_includedir}
 INCLUDE=-I${includedir} -I${flann_includedir}
 
 
-OBJ=${UTILS}/util.o ${UTILS}/config.o flann_interface.o
+OBJ=${UTILS}/util.o ${UTILS}/config.o flann_interface.o ${FFT}/fft.o ${FFT}/complex.o 
+DEPEND=${STRUCTS}/searcher.h ${STRUCTS}/candidate.h ${STRUCTS}/bench.h ${UTILS}/util.h
 
-all: test_case
+all: test_case main
 
-test_case: ${OBJ} test_case.cpp
+main: ${OBJ} ${DEPEND} main.cpp
+	${CPP} ${CFLAGS} ${INCLUDE} ${LIB_OPTION} ${OBJ} main.cpp -o main
+
+test_case: ${OBJ} ${DEPEND} test_case.cpp
 	${CPP} ${CFLAGS} ${INCLUDE} ${LIB_OPTION} ${OBJ} test_case.cpp -o test_case
 
 flann_interface.o: flann_interface.h flann_interface.cpp
@@ -38,4 +44,4 @@ flann_interface.o: flann_interface.h flann_interface.cpp
 
 
 clean:
-	rm -rf *.o test_case
+	rm -rf *.o test_case main

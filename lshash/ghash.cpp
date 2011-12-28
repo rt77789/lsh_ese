@@ -38,7 +38,7 @@ void
 Ghash::init(u_int M, u_int K, double W, double R) {
 	_M = M, _K = K, _W = W, _R = R;
 
-	string testset_sample_path = Configer::get("testset_sample_path").toString();
+	string testset_sample_path = Configer::get("project_dir").toString() + Configer::get("testset_sample_path").toString();
 	_use_uhash = Configer::get("lsh_use_uhash").toBool();
 
 	loadTestSample(testset_sample_path);
@@ -145,10 +145,10 @@ void Ghash::loadTestSample(const string &path) {
 		throw runtime_error(path + " open fail.");
 	}
 	Point p;
-	while(in.read((char*)&p, sizeof(Point))) {
-#ifdef DATA_NORMALIZE
-		normalize(p);
-#endif
+	int num = 0;
+	int rows = Configer::get("testset_sample_rows").toInt();
+	while(num++ < rows && in.read((char*)&p, sizeof(Point))) {
+		eoaix::normalize(p);
 		testSample.push_back(p);
 	}
 	in.close();
@@ -324,38 +324,14 @@ Ghash::restoreStaticFields(FILE *fh) {
 void
 Ghash::randomPoint(Point &p) {
 	for(u_int i = 0; i < DIMS; ++i) {
-		p.d[i] = Util::randomByUniform(-5,5);
+		p.d[i] = Util::randomByGaussian();
 	}
-}
-
-/* Normalize the point p, minus the mean and divide the square variance. */
-void Ghash::normalize(Point &p) {
-	double maxd = 0;
-	//# Normalize the initial signal, point[] / max{ point[] }.
-	//for(int i = 0; i < DIMS; ++i)
-	//	maxd = maxd > p.d[i] ? maxd : p.d[i];
-	for(int i = 0; i < DIMS; ++i)
-		maxd += p.d[i];
-	maxd /= DIMS;
-
-	for(int i = 0; i < DIMS; ++i)
-		p.d[i] -= maxd;
-	double ts = 0;
-	for(int i = 0; i < DIMS; ++i)
-		ts += p.d[i] * p.d[i];
-	ts = sqrt(ts);
-
-	for(int i = 0; i < DIMS; ++i)
-		p.d[i] = p.d[i] / ts;
-	//p.d[i] = p.d[i] / maxd / _R;
 }
 //#
 void
 Ghash::preComputeFields(Point &q) {
-#ifdef DATA_NORMALIZE
 	//# normalize.
-	normalize(q);
-#endif
+	eoaix::normalize(q);
 	//# Projection.
 	for(u_int i = 0; i < uPoints.size(); ++i) {
 		for(u_int j = 0; j < uPoints[i].size(); ++j) {

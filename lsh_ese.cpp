@@ -1,11 +1,12 @@
 #include "lsh_ese.h"
 #include "structs/searcher.h"
+
 #include <sstream>
 #include <fstream>
 #include <algorithm>
 
 LShashESE::LShashESE() {
-	string dataset = Configer::get("naive_dataset_path").toString();
+	string dataset = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
 	fhandle.open(dataset.c_str(), ios::binary);
 	if(!fhandle) {
 		throw;
@@ -43,19 +44,6 @@ LShashESE::init(const string &type) {
 	}
 }
 
-//# Load point from external file and add into lsh object.
-/*
-void
-LShashESE::findByLSH(const vector<double> &sin, vector<u_int> &_index) {
-	assert(sin.size() == DIMS);
-
-	Point q;
-	for(u_int i = 0; i < sin.size(); ++i)
-		q.d[i] = sin[i];
-
-	lsh.findNodes(q, _index);
-}
-*/
 int
 LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const string &_lshtype) {
 	
@@ -155,19 +143,12 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 
 	cout << "lsh.find returns: eid.size() == " << eid.size() << endl;
 
-	Point p;
-	vector<pair<double, u_int> > xlist;
+	//# sort eid, decreate disk move. Make sure sort eid[] in Searcher.
+	// sort(eid.begin(), eid.end());
+	vector<SearchRes> res;
+	res.swap(Searcher::search(eid, sin));
+	resig.swap(res);
 
-	//# sort eid, decreate disk move.
-	sort(eid.begin(), eid.end());
-	/*
-	cout << "eid[]: ";
-	for(size_t i = 0 ; i < eid.size(); ++i) {
-		cout << eid[i] << " " ;
-	}
-	cout << endl;
-	*/
-	queryDB(sin, eid, resig);
 	return eid.size();
 }
 
@@ -184,8 +165,9 @@ void LShashESE::queryDB(const vector<double> &sin, const vector<u_int> &eid, vec
 		resig.push_back(SearchRes(p.identity, sim, tin));
 	}
 	sort(resig.begin(), resig.end());
-	if(resig.size() > TOP_K) {
-		resig.resize(TOP_K);
+	u_int top_k = Configer::get("project_top_k").toInt();
+	if(resig.size() > top_k) {
+		resig.resize(top_k);
 	}
 	for(size_t i = 0; i < resig.size(); ++i) {
 		std::cout << "[" << i << "]: " << resig[i].getSim() << " - index: " << resig[i].getID() << endl;
@@ -223,7 +205,8 @@ void LShashESE::queryDB(const vector<double> &sin, const vector<u_int> &eid, vec
 	vector<WSSimilar> &vwss = twe.find(sin);
 
 	resig.clear();
-	for(u_int i = 0; i < vwss.size() && i < TOP_K; ++i) {
+	u_int top_k = Configer::get("project_top_k").toInt();
+	for(u_int i = 0; i < vwss.size() && i < top_k; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
 		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
@@ -289,13 +272,15 @@ LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig)
 		}
 	}
 
+	u_int top_k = Configer::get("project_top_k").toInt();
+
 	cout << "FFT total signals : " << tnum << endl;
-	cout << "rlist.size() : " << rlist.size() << "-K: " << TOP_K << endl;
+	cout << "rlist.size() : " << rlist.size() << "-K: " << top_k << endl;
 
 
 	/* clear the result buffer. */
 	resig.clear();
-	for(u_int i = 0; i < rlist.size() && i < TOP_K; ++i) {
+	for(u_int i = 0; i < rlist.size() && i < top_k; ++i) {
 		cout << "[" << i << "]: " << rlist[i].getSim() << " - id:" << rlist[i].getID() << endl;
 		resig.push_back(rlist[i]);
 	}
@@ -348,7 +333,8 @@ LShashESE::naiveWaveletFind(const vector<double> &sin, vector<SearchRes> &resig)
 	vector<WSSimilar> &vwss = twe.find(sin);
 
 	resig.clear();
-	for(u_int i = 0; i < vwss.size() && i < TOP_K; ++i) {
+	u_int top_k = Configer::get("project_top_k").toInt();
+	for(u_int i = 0; i < vwss.size() && i < top_k; ++i) {
 		cout << "[" << i << "]: " << vwss[i].sim << " - index: " << vwss[i].id << endl;
 		resig.push_back(SearchRes(vwss[i].id, vwss[i].sim, vwss[i].ws.wsig[vwss[i].ws.wsig.size()-1].sig));
 	}
@@ -397,7 +383,7 @@ LShashESE::transformDataSet(const char *_fin, const char *_fout) {
 		string sd;
 		while(iss >> sd) {
 			try {
-				p.d[j++] = sci2double(sd);	
+				p.d[j++] = eoaix::sci2double(sd);	
 			}catch(...) {
 				cerr << "sci2double exception." << endl;
 				throw;
@@ -460,7 +446,8 @@ LShashESE::readDataSet(const char *file) {
 	assert(fh != NULL);
 	Point p;
 	int num = 0;
-	while(fread(&p, sizeof(Point), 1, fh) == 1) {
+	int rows = Configer::get("rows").toInt();
+	while(num < rows && fread(&p, sizeof(Point), 1, fh) == 1) {
 		++num;
 		cout << "[" << p.identity << "]: ";
 		for(int i = 0; i < DIMS; ++i) {

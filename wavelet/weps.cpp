@@ -8,6 +8,7 @@
 
 #include "weps.h"
 #include "../utils/util.h"
+#include "../utils/config.h"
 
 WaveletEps::WaveletEps() {
 	// Initial the h[] & g[].
@@ -150,6 +151,8 @@ WaveletEps::loadin(const WaveletSignal &sin) {
 	ifstream fin(fileName.c_str());
 	assert(fin.is_open() == true);
 	
+	size_t top_k = Configer::get("project_top_k").toInt();
+
 	vector<WSSimilar> tmpSigs;
 
 	string line;
@@ -178,7 +181,7 @@ WaveletEps::loadin(const WaveletSignal &sin) {
 		tmpSig.ws = ws;
 		tmpSig.sim = p.first;
 		tmpSigs.push_back(tmpSig);
-		if(tmpSigs.size() >= TOP_K) {
+		if(tmpSigs.size() >= top_k) {
 			mergeWSS(tmpSigs);
 			tmpSigs.clear();
 		}
@@ -365,7 +368,7 @@ void
 WaveletEps::findByLayer(const WaveletSignal &sin, int layer) {
 	// Compute the cross-correlation of sin & every sigs at layer 'layer'.
 	size_t upper = sigs.size();
-	upper = upper < (size_t)eoaix::levelLimit[layer] ? upper : (size_t)eoaix::levelLimit[layer];
+	upper = upper < (size_t)levelLimit[layer] ? upper : (size_t)levelLimit[layer];
 	
 	for(size_t i = 0; i < upper; ++i) {
 		//pair<double, int> p = cross_correlation(sigs[i].ws.wsig[layer], sin.wsig[layer]);
@@ -373,7 +376,7 @@ WaveletEps::findByLayer(const WaveletSignal &sin, int layer) {
 		sigs[i].sim = sim;
 	}
 	//cout << layer << " | " << eoaix::levelLimit[layer] << endl;
-	sort(sigs.begin(), (size_t)eoaix::levelLimit[layer] < sigs.size() ? (sigs.begin() + eoaix::levelLimit[layer]) : sigs.end());
+	sort(sigs.begin(), (size_t)levelLimit[layer] < sigs.size() ? (sigs.begin() + levelLimit[layer]) : sigs.end());
 	// Erase/delete/clean the useless data.
 	//assert(levelLimit[layer] < sigs.size());
 	//if( levelLimit[layer] < (int)sigs.size())

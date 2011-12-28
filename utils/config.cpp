@@ -18,6 +18,10 @@ ConfigerValue& Configer::get(const std::string &key) {
 	return iter->second;
 }
 
+void Configer::set(const std::string &key, const std::string &value) {
+	instance().insert(key, value);	
+}
+
 Configer& Configer::instance() {
 	static Configer configer;
 	return configer;
@@ -76,13 +80,14 @@ void Configer::insert(const std::string &key, const std::string &value) {
 		// Logger::warn: throw "configer line format should be: key=value, key and value not empty.";
 		return ;
 	}
-
-	if(_kv.find(_key) == _kv.end()) {
+	std::map<std::string, ConfigerValue>::iterator iter = _kv.find(_key);
+	if(iter != _kv.end()) {
+		iter->second = ConfigerValue(_value);
 		//_kv[_key] = ConfigerValue(_value);
-		_kv.insert(std::make_pair<std::string, ConfigerValue>(_key, _value));
+		/* Logger::warn() if key is exist now. */
 	}
 	else {
-		/* Logger::warn() if key is exist now. */
+		_kv.insert(std::make_pair<std::string, ConfigerValue>(_key, _value));
 	}
 }
 

@@ -4,6 +4,8 @@
 #include "utils/util.h"
 #include "utils/config.h"
 
+#include "structs/bench.h"
+
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -31,7 +33,7 @@ test_bench(const vector<SearchRes> &bench, const vector<SearchRes> &diff) {
 void
 test_build_index() {
 	cout << "lsese constructing... | ";
-	print_now();
+	eoaix::print_now();
 
 	LShashESE lsese;
 	cout << "begin store index..." << endl;
@@ -41,17 +43,75 @@ test_build_index() {
 
 void
 test_by_type(const string &type) {
-	cout << "restore from index file... | ";
-	print_now();
+	cout << "restore from index file... | " << std::endl;
+	eoaix::print_now();
 
 	LShashESE lsese;
 	lsese.init(type);
 
-	print_now();
+	eoaix::print_now();
 
 	vector<Point> p;
 
-	string testset = Configer::get("testset_path").toString();
+	string testset = Configer::get("project_dir").toString() + Configer::get("testset_path").toString();
+	u_int queryNum = Configer::get("testset_query_num").toInt();
+
+	cout << "readDataSet-#queryNum=" << queryNum << " | " << std::endl;
+	
+
+	LShashESE::readDataSet(testset.c_str(), p, queryNum);
+
+	cout << "start querying... | ";
+	eoaix::print_now();
+
+	double cost = 0;
+	double totalRows = Configer::get("rows").toDouble();
+	bool doBenchmark = Configer::get("do_benchmark").toBool();
+	vector< vector<u_int> > apro(p.size());
+
+	for(u_int x = 0; x < p.size(); ++x) {
+		vector<double> sin(p[x].d, p[x].d + DIMS);
+		vector<SearchRes> resig;
+		int candi = lsese.findIndex(sin, resig, type);
+		cost += candi * 1.0 / totalRows;
+
+		for(size_t i = 0; i < resig.size(); ++i) {
+			apro[x].push_back(resig[i].getID());
+		}
+
+		for(u_int i = 0; i < resig.size(); ++i) {
+			for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
+				cerr << resig[i].getSignal()[j] << " ";
+			}
+			cerr << endl;
+		}
+	}
+	if(doBenchmark) {
+		Bench bench;
+		bench.init();
+		double recall = bench.recall(apro);
+		cout << "recall: " << recall << endl;
+		cout << "cost: " << cost / p.size() << endl;
+	}
+	//fout.close();
+	cout << "end... | ";
+	eoaix::print_now();
+}
+
+
+void
+test_by_type_old(const string &type) {
+	cout << "restore from index file... | ";
+	eoaix::print_now();
+
+	LShashESE lsese;
+	lsese.init(type);
+
+	eoaix::print_now();
+
+	vector<Point> p;
+
+	string testset = Configer::get("project_dir").toString() + Configer::get("testset_path").toString();
 	u_int queryNum = Configer::get("testset_query_num").toInt();
 
 	cout << "readDataSet-#queryNum=" << queryNum << " | ";
@@ -60,7 +120,7 @@ test_by_type(const string &type) {
 	LShashESE::readDataSet(testset.c_str(), p, queryNum);
 
 	cout << "start querying... | ";
-	print_now();
+	eoaix::print_now();
 
 	//ofstream fout(tmpOut);
 	//assert(fout.is_open());
@@ -103,7 +163,7 @@ test_by_type(const string &type) {
 	}
 	//fout.close();
 	cout << "end... | ";
-	print_now();
+	eoaix::print_now();
 }
 
 int

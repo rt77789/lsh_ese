@@ -56,7 +56,7 @@ class Ghash {
 	private:
 	/* Testset sample. */
 	static PointVector testSample;
-	static void normalize(Point &p);
+	//static void normalize(Point &p);
 	//# cal h1 & h2 mask.
 	pair<u64, u64> calh1Andh2(const Point &q);
 

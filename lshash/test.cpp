@@ -7,7 +7,7 @@
 
 
 using namespace std;
-
+using namespace eoaix;
 void
 test_util() {
 	double x1 = Util::randomByUniform(0, 1LL<<32);

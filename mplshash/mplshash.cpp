@@ -42,10 +42,10 @@ MPLSHash::~MPLSHash() {
 
 
 void MPLSHash::init(float W_, u_int M_, u_int T_, u_int L_, u_int Q_, u_int K_, float R_, u_int H_, float recall, u_int dims) {
-	string testset_sample_path = Configer::get("testset_sample_path").toString();
+	string testset_sample_path = Configer::get("project_dir").toString() + Configer::get("testset_sample_path").toString();
 	
-	string dataset_path = Configer::get("mplsh_dataset_path").toString();
-	string index_path = Configer::get("mplsh_index").toString();
+	string dataset_path = Configer::get("project_dir").toString() + Configer::get("mplsh_dataset_path").toString();
+	string index_path = Configer::get("project_dir").toString() + Configer::get("mplsh_index").toString();
 	loadIndex = Configer::get("mplsh_load_index").toBool();
 
 	u_int T = T_;
@@ -91,11 +91,14 @@ void MPLSHash::init() {
 
 /* Load dataset. */
 void MPLSHash::load_data(const std::string &_path) {
-	data.load(_path);
+	int dims = Configer::get("dims").toInt();
+	int rows = Configer::get("rows").toInt();
+
+	data.load(_path, rows, dims);
 
 	/* Normalize dataset. */
 	for(int i = 0; i < data.getSize(); ++i) {
-		normalize(data[i]);
+		eoaix::normalize(data[i]);
 	}
 
 	FloatMatrix::Accessor accessor(data);
@@ -105,6 +108,7 @@ void MPLSHash::load_data(const std::string &_path) {
 }
 
 /* Normalize a point. */
+/*
 void MPLSHash::normalize(float *_point) {
 	float maxd = 0;
 	for(u_int i = 0; i < param.dim; ++i) {
@@ -121,6 +125,7 @@ void MPLSHash::normalize(float *_point) {
 	for(u_int i = 0; i < param.dim; ++i)
 		_point[i] /= ts;
 }
+*/
 
 /* Load index file, if failed build new index and save. */
 void MPLSHash::load_index(const std::string &_path) {
@@ -139,9 +144,11 @@ void MPLSHash::load_index(const std::string &_path) {
 			index.insert(i, data[i]);
 			++progress;
 		}
+		if(Configer::get("mplsh_save_index").toBool()) {
 
-		cout << "store the index file..." << endl;
-		assert(store(_path));
+			cout << "store the index file..." << endl;
+			assert(store(_path));
+		}
 	}
 }
 
@@ -188,12 +195,12 @@ void MPLSHash::query(float *_point, u_int _len, vector<u_int> &_res) {
 	assert(scan != NULL);
 	scan->reset(_point);
 
-	normalize(_point);
+	eoaix::normalize(_point);
 	index.query_recall(_point, desire_recall, *scan);
 	// Key is unsigned.
 	Topk<unsigned> topk = scan->topk();
 
-	std::cout << "mplsh candidates number: " << scan->cnt() << std::endl;
+	//std::cout << "mplsh candidates number: " << scan->cnt() << std::endl;
 
 	_res.clear();
 	unsigned i = 0;

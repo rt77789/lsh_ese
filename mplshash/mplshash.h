@@ -7,7 +7,7 @@
 #include <boost/format.hpp>
 #include <boost/timer.hpp>
 #include <lshkit.h>
-#include <lshkit/eoaix.h>
+#include "../utils/util.h"
 
 using namespace std;
 using namespace lshkit;
@@ -54,7 +54,7 @@ class MPLSHash {
 	/* Random sample test. */
 	void test(u_int _topk);
 	/* Normalize a point. */
-	void normalize(float *_point);
+	//void normalize(float *_point);
 };
 
 

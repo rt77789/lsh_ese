@@ -18,13 +18,15 @@ class TestSearcher {
 			for(int i = 99; i >= 0; --i) {
 				eid.push_back(i);
 			}
-			vector<Point>& points = Candidate::get(eid);
+			vector<Point> points;
+			points.swap(Candidate::get(eid));
 
 			cout << "candidate get over" << endl;
 
 			for(size_t i = 0; i < points.size(); ++i) {
 				vector<double> sin(points[i].d, points[i].d + DIMS);
-				vector<SearchRes>& res = Searcher::search(eid, sin);
+				vector<SearchRes> res;
+				res.swap(Searcher::search(eid, sin));
 				for(size_t j = 0; j < res.size(); ++j) {
 					cout << "[" << j << "]: " << res[j].getSim() << " - index: " << res[j].getID() << endl;
 				}

@@ -3,9 +3,9 @@
 #define LSH_ESE_POINT_H_XIAOE
 
 #include <cmath>
-#include "../utils/util.h"
+#include "../utils/define.h"
 
-using namespace eoaix;
+//using namespace eoaix;
 
 struct Point {
 	//# identity to the external index id.

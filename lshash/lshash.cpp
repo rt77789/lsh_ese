@@ -29,7 +29,7 @@ void LShash::init() {
 
 void LShash::init(u_int K, double prob, double W, double R) {
 	int M = Configer::get("lsh_M").toInt();
-	if(M == 0) {
+	if(M == 0 && Configer::get("lsh_use_uhash").toBool()) {
 		M = estimateParaM(K, prob, W);
 	}
 	printf("K: %u - prob: %lf - W: %lf - R: %lf - M: %d\n", K, prob, W, R, M);
@@ -38,19 +38,29 @@ void LShash::init(u_int K, double prob, double W, double R) {
 
 /* initializing. */
 void LShash::init(u_int K, int M, double prob, double W, double R) {
-	bool doLoadIndex = Configer::get("lsh_load_index").toBool();
+	bool load_index = Configer::get("lsh_load_index").toBool();
 
 	_K = K, _prob = prob, _M = M, _W = W,_R = R;
 
-	printf("doLoadIndex before\n");
-	if(!doLoadIndex) {
+	std::cout << "load_index before" << std::endl;
+	if(!load_index) {
 
 		Ghash::init(_M, _K, _W, _R);
 
 		u_int *uIndex = new u_int[2];
-		for(int i = 0; i < _M; ++i) {
-			for(int j = i+1; j < _M; ++j) {
-				uIndex[0] = i, uIndex[1] = j;
+		if(Configer::get("lsh_use_uhash").toBool()) {
+			/* Using u hash. */
+			for(int i = 0; i < _M; ++i) {
+				for(int j = i+1; j < _M; ++j) {
+					uIndex[0] = i, uIndex[1] = j;
+					_g.push_back(Ghash(uIndex));
+				}
+			}
+		}
+		else {
+			/* Using L random vectors. */
+			uIndex[0] = uIndex[1] = 0;
+			for(int i = Configer::get("lsh_L").toInt(); i > 0; --i) {
 				_g.push_back(Ghash(uIndex));
 			}
 		}
@@ -58,22 +68,23 @@ void LShash::init(u_int K, int M, double prob, double W, double R) {
 			delete[] uIndex;
 		}
 
+		std::cout << "before buildIndex" << std::endl;
 		buildIndex();
 		cout << "load Point over." << endl;
 		bool doSave = Configer::get("lsh_do_save").toBool();
 		if(doSave) {
-			string indexPath = Configer::get("lsh_index_path").toString();
+			string indexPath = Configer::get("project_dir").toString() + Configer::get("lsh_index_path").toString();
 			storeGhash(indexPath.c_str());
 		}
 	}
 	else {
-		string indexPath = Configer::get("lsh_index_path").toString();
+		string indexPath = Configer::get("project_dir").toString() + Configer::get("lsh_index_path").toString();
 		restoreGhash(indexPath.c_str());
 	}
 }
 /* Build index. */
 void LShash::buildIndex() {
-	std::string path = Configer::get("naive_dataset_path").toString();
+	std::string path = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
 
 	std::ifstream in(path.c_str(), ios_base::binary);
 
@@ -84,8 +95,10 @@ void LShash::buildIndex() {
 
 	Point p;
 	int cur_row = 0;
+	int rows = Configer::get("rows").toInt();
+	//std::cout << "buildIndex(lsh), rows: " << rows << std::endl;
 
-	while(in.read((char*)&p, sizeof(Point))) {
+	while(cur_row < rows && in.read((char*)&p, sizeof(Point))) {
 		addNode(p);
 		++cur_row;
 	}

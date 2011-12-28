@@ -29,9 +29,10 @@ void FlannInterface::init(int trees, int leaf_max_size, int checks) {
 
 	_dims = Configer::get("dims").toInt();
 	_rows = Configer::get("rows").toInt();
+	std::cout << "in flann init, rows: " << _rows << std::endl;
 
-	std::string indexPath = Configer::get("flann_index_path").toString();
-	std::string dataPath = Configer::get("naive_dataset_path").toString();
+	std::string indexPath = Configer::get("project_dir").toString() + Configer::get("flann_index_path").toString();
+	std::string dataPath = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
 
 	bool doSave = Configer::get("flann_do_save").toBool();
 	bool doIndex = Configer::get("flann_do_index").toBool();
@@ -65,6 +66,8 @@ void FlannInterface::load(const std::string &path) {
 	int cur_row = 0;
 
 	while(in.read((char*)&p, sizeof(Point)) && cur_row < _rows) {
+		/* Normalizing the point. */
+		eoaix::normalize(p);
 		for(int i = 0; i < _dims; ++i)
 			_dataset[cur_row * _dims + i] = p.d[i];
 		++cur_row;
@@ -118,6 +121,8 @@ void FlannInterface::restoreIndex(const std::string &path) {
 void FlannInterface::find(float *query, int K, std::vector<u_int> &result) {
 	float *dists = new float[K];
 	int *res = new int[K];
+	/* Normalizing the query point. */
+	eoaix::normalize(query);
 
 	flann_find_nearest_neighbors_index(_index_id, query, 1, res, dists, K, &_param);
 

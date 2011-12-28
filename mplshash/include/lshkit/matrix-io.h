@@ -55,6 +55,17 @@ void Matrix<T>::peek (const std::string &path, int *elem_size, int *size, int *d
 }
 
 template <class T>
+void Matrix<T>::load (std::istream &is, int N, int dim)
+{
+    BOOST_VERIFY(is);
+    reset(dim, N);
+    size_t sz = sizeof(T) * dim * N;
+    is.read((char *)dims, sz);
+    BOOST_VERIFY(is);
+}
+
+
+template <class T>
 void Matrix<T>::load (std::istream &is)
 {
     unsigned header[3]; /* entry size, row, col */
@@ -87,6 +98,13 @@ void Matrix<T>::load (const std::string &path)
 {
     std::ifstream is(path.c_str(), std::ios::binary);
     load(is);
+}
+
+template <class T>
+void Matrix<T>::load (const std::string &path, int N, int dim)
+{
+    std::ifstream is(path.c_str(), std::ios::binary);
+    load(is, N, dim);
 }
 
 template <class T>
