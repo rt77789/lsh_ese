@@ -13,8 +13,7 @@
 namespace eoaix {
 
 	template<> void equalAssert(double a, double b) {
-			double eps = 1e-30;
-			if(fabs(a - b) > eps) {
+			if(fabs(a - b) > zero_eps) {
 				std::cerr << a << " != " << b << std::endl;
 				throw ;
 			}
@@ -132,30 +131,32 @@ namespace eoaix {
 
 	/* Normalize the Point, maximum amplute set to 1. */
 	void normalize(Point &p) {
-		
+#ifdef NORMALIZE
 		double max = 0;
-		const static double eps = 1e-10;
 		for(int i = 0; i < DIMS; ++i) {
 			max = fabs(p.d[i]) > max ? fabs(p.d[i]) : max;
 		}
-		if(fabs(max) > eps) {
+		//std::cout << "max: " << max << std::endl;
+		if(fabs(max) > zero_eps) {
 			for(int i = 0; i < DIMS; ++i) {
 				p.d[i] /= max;
 			}
 		}
+#endif
 	}
 	void normalize(float *p) {
-		
+#ifdef NORMALIZE	
 		double max = 0;
-		const static double eps = 1e-10;
 		for(int i = 0; i < DIMS; ++i) {
 			max = fabs(p[i]) > max ? fabs(p[i]) : max;
 		}
-		if(fabs(max) > eps) {
+		//std::cout << "max: " << max << std::endl;
+		if(fabs(max) > zero_eps) {
 			for(int i = 0; i < DIMS; ++i) {
 				p[i] /= max;
 			}
 		}
+#endif
 	}
 
 	// Recursive list all file names in the directory dir.

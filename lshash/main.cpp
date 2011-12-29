@@ -9,6 +9,7 @@
 
 class LSHTuner {
 	vector< float* > _points;
+	double _time;
 
 	pair<double, double> evaluate(LShash &lsh, Bench &bench) {
 		vector< vector<u_int> > apro(_points.size());
@@ -20,8 +21,10 @@ class LSHTuner {
 			Point p;
 			for(int j = 0; j < DIMS; ++j)
 				p.d[j] = _points[i][j];
+			eoaix::Timer t;
 
 			lsh.find(p, eid);
+			_time += t.elapsed();
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
@@ -77,6 +80,8 @@ class LSHTuner {
 				<< " | cost: " << res.second
 				<< std::endl;
 		}
+		/* Average the time elapse. */
+		_time /= retry;
 		recall /= retry;
 		cost /= retry;
 		return make_pair<double, double>(recall, cost);
@@ -88,6 +93,7 @@ class LSHTuner {
 		while(leftW + eps <= rightW)
 		{
 			param.W = (leftW + rightW) / 2;
+			//_time = 0;
 			pair<double, double> res = aveEval(param, bench);
 			std::cout << "left: " << leftW 
 				<< " | mid: " << param.W 
@@ -150,6 +156,7 @@ class LSHTuner {
 
 						for(double W = min_W; W <= max_W; W+=step_W) {
 							param.W = W;	
+							_time = 0;
 							pair<double, double> res = aveEval(param, bench);
 							std::cerr << "rows: " << sr << 
 								" | top_k: " << tk <<
@@ -159,7 +166,8 @@ class LSHTuner {
 								//" | checks: " << ck << 
 								" | prob: " << prob <<
 								" = recall: " << res.first << 
-								" - cost: " << res.second << std::endl;
+								" - cost: " << res.second <<
+								" - time: " << _time << std::endl;
 							//}
 
 					}
@@ -167,7 +175,6 @@ class LSHTuner {
 			}
 			/**/
 		}
-
 	}
 }
 

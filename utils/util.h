@@ -7,6 +7,7 @@
 #include <vector>
 #include "define.h"
 #include "../structs/point.h"
+#include <ctime>
 
 namespace eoaix {
 	
@@ -17,6 +18,8 @@ namespace eoaix {
 
 	void normalize(float *p); 
 	void normalize(Point &p); 
+
+
 	/* Template function used for check equal. */
 	template <typename T> void equalAssert(T a, T b) {
 		if(a != b) {
@@ -40,6 +43,25 @@ namespace eoaix {
 		//# random a float number by Gaussian distribution.
 		static double randomByGaussian();
 		static u64 randomU64(u64 left, u64 right);
+	};
+
+	/* Just a Timer class. */
+	class Timer {
+		std::clock_t _start;
+		std::clock_t _lapse;
+		public:
+			Timer() {
+				reset();
+			}
+
+			void reset() {
+				_lapse = 0;
+				_start = std::clock();
+			}
+
+			double elapsed() {
+				return double(std::clock() - _start) /CLOCKS_PER_SEC;	
+			}
 	};
 }
 

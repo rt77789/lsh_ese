@@ -9,6 +9,7 @@
 
 class FLANNTuner {
 	vector< float* > _points;
+	double _time;
 
 	pair<double, double> evaluate(int checks, FlannInterface &_flann, Bench &bench) {
 		int rows = Configer::get("rows").toInt();
@@ -17,7 +18,9 @@ class FLANNTuner {
 		double cost = 0;
 		for(size_t i = 0; i < _points.size(); ++i) {
 			vector<u_int> eid;
+			eoaix::Timer t;
 			_flann.find(_points[i], checks, eid);
+			_time += t.elapsed();
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
@@ -52,7 +55,6 @@ class FLANNTuner {
 		}
 	}
 
-
 	public:
 	void run() {
 		Configer::init("../all.config");
@@ -86,6 +88,7 @@ class FLANNTuner {
 							FlannInterface _flann;
 							_flann.init(i, j, k);
 							//cout << "flann init over" << endl;
+							_time = 0;
 							pair<double, double> res = evaluate(k, _flann, bench);
 							std::cerr << "rows: " << sr <<
 								" | top_k: " << tk <<
@@ -93,7 +96,8 @@ class FLANNTuner {
 								" | leafs: " << j <<
 								" | checks: " << k << 
 								" = recall: " << res.first << 
-								" - cost: " << res.second << std::endl;
+								" - cost: " << res.second << 
+								" - time: " << _time << std::endl;
 						}
 					}
 				}

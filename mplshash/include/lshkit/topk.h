@@ -99,6 +99,7 @@ class Topk: public std::vector<TopkEntry<KEY> >
     unsigned K;
     float R;
     float th;
+	int _realK;
 public:
     typedef TopkEntry<KEY> Element;
     typedef typename std::vector<TopkEntry<KEY> > Base;
@@ -114,6 +115,7 @@ public:
         K = k;
         this->resize(k);
         for (typename Base::iterator it = this->begin(); it != this->end(); ++it) it->reset();
+		_realK = 0;
     }
 
     void reset (unsigned k, KEY key, float r = std::numeric_limits<float>::max()) {
@@ -123,12 +125,14 @@ public:
         this->resize(k); for (typename
             Base::iterator it = this->begin(); it != this->end(); ++it) {
         it->reset(); it->key = key; }
+		_realK = 0;
     }
 
     void reset (float r) {
         K = 0;
         R = th = r;
         this->clear();
+		_realK = 0;
     }
 
     float threshold () const {
@@ -138,12 +142,20 @@ public:
     /// Insert a new element, update the heap.
     Topk &operator << (Element t)
     {
-        if (!(t.dist < th)) return *this;
+		if(_realK >= this->size()) {
+			throw std::logic_error("_realK >= this->size()");
+		}
+		this->at(_realK) = t;
+		++_realK;
+        //if (!(t.dist < th)) return *this;
+		/*
         if (K == 0) { // R-NN
             this->push_back(t);
             return *this;
         }
+		*/
         // K-NN
+		/*
         unsigned i = this->size() - 1;
         unsigned j;
         for (;;)
@@ -154,7 +166,6 @@ public:
             if (this->at(j) < t) break;
             i = j;
         }
-        /* i is the place to insert to */
 
         j = this->size() - 1;
         for (;;)
@@ -165,6 +176,7 @@ public:
         }
         this->at(i) = t;
         th = this->back().dist;
+		*/
         return *this;
     }
 
@@ -191,6 +203,9 @@ public:
     unsigned getK () const {
         return K;
     }
+	int getRealK() {
+		return _realK;
+	}
 };
 
 /// Top-K scanner.

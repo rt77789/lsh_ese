@@ -11,6 +11,7 @@
 /* Class used for tuning parameters of mplsh. */
 class MPLTuner {
 	vector< float* > _points;
+	double _time;
 
 	pair<double, double> evaluate(MPLSHash &mpl, u_int len, Bench &bench) {
 		vector< vector<u_int> > apro(_points.size());
@@ -19,7 +20,11 @@ class MPLTuner {
 		double cost = 0;
 		for(size_t i = 0; i < _points.size(); ++i) {
 			vector<u_int> eid;
+
+			eoaix::Timer t;
 			mpl.query(_points[i], len, eid);
+			_time += t.elapsed();
+
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
@@ -70,7 +75,7 @@ class MPLTuner {
 	};
 	
 	double tuneW(double tw, Parameter &param, Bench &bench) {
-		double leftW = 0.5;
+		double leftW = 0.0;
 		double rightW = 10;
 		const double eps = 1e-2;
 		while(leftW + eps <= rightW)
@@ -143,6 +148,7 @@ class MPLTuner {
 						//{
 							MPLSHash mpl;
 							mpl.init(W, M, T, L, Q, K, R, H, recall, dims);
+							_time = 0;
 							pair<double, double> res = evaluate(mpl, dims, bench);
 							std::cerr << "rows: " << sr << 
 								" | top_k: " << tk << 								" | M: " << M << 
@@ -150,7 +156,8 @@ class MPLTuner {
 								//" | checks: " << ck << 
 								" | prob: " << recall <<
 								" = recall: " << res.first << 
-								" - cost: " << res.second << std::endl;
+								" - cost: " << res.second <<
+								" - time: " << _time << std::endl;
 						//}
 						}
 					}

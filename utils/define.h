@@ -25,7 +25,7 @@ typedef unsigned long long u64;
 //#endif
 
 /* Switch for normalize the input dataset and query or not. */
-//#define DATA_NORMALIZE
+//#define NORMALIZE
 #define INF 1<<31
 
 #define TABLE_PRIME ((1LL<<13) - 1)
@@ -36,8 +36,9 @@ typedef unsigned long long u64;
 
 
 // The array for limit the top-k at different level.
-	const int levelLimit[] = {1<<30, 10, 10, 10};
+const int levelLimit[] = {1<<30, 10, 10, 10};
 
-
+/* EPS = 1e-32. */
+const double zero_eps = 1e-32;
 
 #endif

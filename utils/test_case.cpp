@@ -39,6 +39,9 @@ class TestConfiger {
 class TestUtil {
 	public:
 		static void test() {
+			Timer timer;
+			cout << "test Timer: " << timer.elapsed() << endl;
+
 			cout << "print_now: ";
 			print_now();
 
@@ -59,6 +62,11 @@ class TestUtil {
 			equalAssert("test", "test");
 			equalAssert(true, true);
 //			equalAssert(true, false);
+			for(int i = 0; i < 1<<30; ++i) {
+				for(int j = 0; j < 1<<4; ++j)
+				int a = (1<<30) % ((1<<10) - 1);
+			}
+			cout << "test Timer: " << timer.elapsed() << endl;
 		}
 };
 
