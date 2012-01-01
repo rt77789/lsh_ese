@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <stdexcept>
 #include <cstring>
 #include <cmath>
@@ -357,6 +358,7 @@ Ghash::Ghash(u_int *puIndex) {
 	memset(counter, 0, sizeof(u_int) * TABLE_PRIME);
 	//# inital tables.
 	memset(tables, 0, sizeof(Gnode*) * TABLE_PRIME);
+	_unempty = 0;
 
 	if(!_use_uhash) {
 		_randVector.resize(_K);
@@ -372,12 +374,66 @@ Ghash::~Ghash() {
 }
 
 u_int
-Ghash::getMaxLen() {
+Ghash::getMaxBucketLen() const {
 	u_int res = 0;
 	for(u_int i = 0; i < TABLE_PRIME; ++i) {
 		res = res > counter[i] ? res : counter[i];
 	}
 	return res;
+}
+
+double Ghash::getAveBucketLen() const {
+	double sum = getEntryNum();
+	return getUnemptyNum() == 0 ? 0 : sum / getUnemptyNum();	
+}
+
+u_int Ghash::getEntryNum() const {
+	u_int sum = 0;
+	for(size_t i = 0; i < TABLE_PRIME; ++i) {
+		sum += counter[i];
+	}
+	return sum;
+}
+
+u_int Ghash::getMedian() const {
+	int len = getMaxBucketLen();
+	int sum = getEntryNum();
+	int cc[len];
+	memset(cc, 0, sizeof(cc));
+	for(int i = 0; i <TABLE_PRIME; ++i)
+		++cc[counter[i]];
+	int me = 0;
+	for(int i = 1; i < len; ++i) {
+		if(cc[i] > 0) {
+			me += cc[i];
+			if(me * 2 >= sum) return i;
+		}
+	}
+	return 1;
+}
+
+std::string Ghash::showStat() {
+	u_int len = getMaxBucketLen();
+	u_int unemp = getUnemptyNum();
+	double ave = getAveBucketLen();
+	u_int sum = getEntryNum();
+	u_int med = getMedian();
+
+	std::stringbuf res;
+	ostream os(&res);
+	os << "sum: " << sum <<
+		" | median: " << med << 
+		" | xlen: " << len <<
+		" | alen: " << ave << 
+		" | unempty: " << unemp <<
+		std::endl;
+	std::string tres(res.str());
+	return tres;
+}
+
+/* Return the number of unempty table. */
+u_int Ghash::getUnemptyNum() const {
+	return _unempty;
 }
 
 void
@@ -393,6 +449,7 @@ Ghash::addNode(const Point &q) {
 		ptr->next = NULL;
 		tables[mask.first] = ptr;
 		counter[mask.first] = 1;
+		++_unempty;
 	}
 	else {
 		++counter[mask.first];
@@ -470,6 +527,8 @@ Ghash::storeObjectFields(FILE *fh) {
 	for(int i = 0; i < U_NUM_IN_G; ++i) {
 		assert(1 == fwrite(&uIndex[i], sizeof(u_int), 1, fh));
 	}
+
+	assert(1 == fwrite(&_unempty, sizeof(u_int), 1, fh));
 	//# counter & tables.
 	len = TABLE_PRIME;
 	assert(1 == fwrite(&len, sizeof(u_int), 1, fh));
@@ -506,6 +565,7 @@ Ghash::restoreObjectFields(FILE *fh) {
 	for(int i = 0; i < U_NUM_IN_G; ++i) {
 		assert(1 == fread(&uIndex[i], sizeof(u_int), 1, fh));
 	}
+	assert(1 == fread(&_unempty, sizeof(u_int), 1, fh));
 	//# counter & tables.
 	len = 0;
 	assert(1 == fread(&len, sizeof(u_int), 1, fh));

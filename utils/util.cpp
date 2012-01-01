@@ -185,7 +185,10 @@ namespace eoaix {
 			r1 = randomByUniform(0.0, 1.0);
 		} while(r1 == 0);
 		r2 = randomByUniform(0.0, 1.0);
-		double res = sqrt(-2.0 * log(r1)) * cos(2.0 * acos(-1.0) * r2);
+		//double res = sqrt(-2.0 * log(r1)) * cos(2.0 * acos(-1.0) * r2);
+		double res = sqrt(-2.0 * log(r1) / r1) * cos(2.0 * acos(-1.0) * r2);
+		/* // Box-Muller transform 
+		   return sigma * y * sqrt (-2.0 * log (r2) / r2); */
 		return res;
 	}
 

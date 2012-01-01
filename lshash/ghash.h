@@ -28,7 +28,14 @@ class Ghash {
 	void findNodes(const Point &q, vector<u_int> &eid);
 
 	//# Get the maximal length of buckets in current Ghash object.
-	u_int getMaxLen();
+	u_int getMaxBucketLen() const;
+	/**/
+	u_int getUnemptyNum() const;
+	double getAveBucketLen() const;
+	u_int getEntryNum() const;
+	u_int getMedian() const;
+
+	std::string showStat();
 
 	//# static functions.
 	//# initial all the fields.
@@ -62,7 +69,8 @@ class Ghash {
 
 	//# tables[x] is the head of some chain.
 	Gnode* tables[TABLE_PRIME];
-	u_int counter[TABLE_PRIME];
+	u_int _unempty; /* Unempty table number. */
+	u_int counter[TABLE_PRIME]; /* Buckuts number of each table. */
 	u_int uIndex[U_NUM_IN_G];
 
 	//# Global u hash function points.

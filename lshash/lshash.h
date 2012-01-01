@@ -20,6 +20,8 @@ class LShash {
 		int getMaxBuckLen();
 		//# Auto self tune the parameters, K & M.
 		void tuneParameter();
+		/**/
+		void showStat();
 
 		//# Store ghashes into file.
 		void storeGhash(const char *_file);

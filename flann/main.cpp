@@ -67,17 +67,17 @@ class FLANNTuner {
 		int _dataset_rows = Configer::get("rows").toInt();
 		int min_rows = 100, max_rows = 100, step_rows = 1;
 		for(int r = min_rows; r <= max_rows; r += step_rows) {
-			int min_checks = r / 10, max_checks = r, step_checks = min_checks;
+			int min_checks = r / 100, max_checks = r, step_checks = min_checks;
 
 			std::string sr = eoaix::itoa(r, 10);
 			Configer::set("rows", sr);
 			cout << "begin bench init()" << endl;
-			Bench bench;
-			bench.init();
 			cout << "end bench init()" << endl;
 			for(int tk = min_top_k; tk <= max_top_k; tk += step_top_k) {
 				string stk = eoaix::itoa(tk, 10);
 				Configer::set("project_top_k", stk);
+				Bench bench;
+				bench.init();
 
 				cout << "tk(string): " << stk << " | " << "project_top_k: " << Configer::get("project_top_k").toString() << endl;
 				for(int i = min_trees; i <= max_trees; i+=step_trees) {

@@ -14,7 +14,7 @@ typedef unsigned long long u64;
 //# Batch fread Points at one time.
 #define BATCH_READ_NUM 4
 
-#define DIMS 4096
+#define DIMS 2000
 #define FREQUENT 100
 
 //# switch t0.
@@ -28,7 +28,7 @@ typedef unsigned long long u64;
 //#define NORMALIZE
 #define INF 1<<31
 
-#define TABLE_PRIME ((1LL<<13) - 1)
+#define TABLE_PRIME 17681 //((1LL<<13) - 1)
 #define HASH_PRIME ((1LL<<32) - 5)
 
 #define U_NUM_IN_G 2

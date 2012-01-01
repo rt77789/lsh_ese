@@ -314,7 +314,10 @@ private:
         /* Compute mean values.  Only the first SAMPLE_MEAN values need to be
             sampled to get a good estimate.
          */
-        int cnt = std::min((int)SAMPLE_MEAN+1, count);
+		/* 只是前SAMPLE_MEAN or count 个数据用来计算均值和方差.*/
+        //int cnt = std::min((int)SAMPLE_MEAN+1, count);
+		/* 用所有数据来算方差. SAMPLE_MEAN = 100 */
+		int cnt = count;
         for (int j = 0; j < cnt; ++j) {
             ElementType* v = dataset_[ind[j]];
             for (size_t k=0; k<veclen_; ++k) {
@@ -331,8 +334,33 @@ private:
             for (size_t k=0; k<veclen_; ++k) {
                 DistanceType dist = v[k] - mean_[k];
                 var_[k] += dist * dist;
+				/*
+				std::cout << 
+					"dist: " << dist << 
+					" | var_[k]: " << var_[k] << 
+					" | mean_[k]: " << mean_[k] << 
+					std::endl;
+					*/
             }
         }
+		/* Display the variances, eoaix added. */
+		/*
+		DistanceType* tvar_ = new DistanceType[veclen_];
+		
+		for(size_t j = 0; j < veclen_; ++j) {
+			tvar_[j] = var_[j];
+		}
+		std::sort(tvar_, tvar_ + veclen_);
+		for(size_t j = 0; j < veclen_; ++j) {
+			std::cout << "[" << j << "]" <<
+				" : " << tvar_[j] << std::endl;
+		}
+		if(tvar_ != NULL) 
+		{
+			delete[] tvar_;
+		}
+	*/	
+		/* end */
         /* Select one of the highest variance indices at random. */
         cutfeat = selectDivision(var_);
         cutval = mean_[cutfeat];
@@ -591,7 +619,7 @@ private:
     IndexParams index_params_;
 
     size_t size_;
-    size_t veclen_;
+    size_t veclen_; /* column number. */
 
 
     DistanceType* mean_;

@@ -49,6 +49,7 @@ void LShash::init(u_int K, int M, double prob, double W, double R) {
 
 		u_int *uIndex = new u_int[2];
 		if(Configer::get("lsh_use_uhash").toBool()) {
+			std::cout << "using u hash. " << std::endl;
 			/* Using u hash. */
 			for(int i = 0; i < _M; ++i) {
 				for(int j = i+1; j < _M; ++j) {
@@ -60,7 +61,9 @@ void LShash::init(u_int K, int M, double prob, double W, double R) {
 		else {
 			/* Using L random vectors. */
 			uIndex[0] = uIndex[1] = 0;
-			for(int i = Configer::get("lsh_L").toInt(); i > 0; --i) {
+			int L = Configer::get("lsh_L").toInt();
+			std::cout << "L: " << L << std::endl;
+			for(int i = L; i > 0; --i) {
 				_g.push_back(Ghash(uIndex));
 			}
 		}
@@ -132,10 +135,16 @@ int
 LShash::getMaxBuckLen() {
 	int res = 0;
 	for(u_int i = 0; i < _g.size(); ++i) {
-		int tmp = _g[i].getMaxLen();
+		int tmp = _g[i].getMaxBucketLen();
 		res = res > tmp ? res : tmp;
 	}
 	return res;
+}
+
+void LShash::showStat() {
+	for(size_t i = 0; i < _g.size(); ++i) {
+		cout << "Table[" << i << "]:" << _g[i].showStat();	
+	}
 }
 
 void
