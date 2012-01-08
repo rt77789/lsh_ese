@@ -20,13 +20,15 @@ class FLANNTuner {
 			vector<u_int> eid;
 			eoaix::Timer t;
 			_flann.find(_points[i], checks, eid);
-			_time += t.elapsed();
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
 			res.swap(Searcher::search(eid, _points[i]));
-			for(size_t j = 0; j < res.size(); ++j)
+			_time += t.elapsed();
+			for(size_t j = 0; j < res.size(); ++j) {
 				apro[i].push_back(res[j].getID());
+				std::cout << "j: " << j << " | sim: " << res[j].getSim() << std::endl;
+			}
 		}
 
 		double recall = bench.recall(apro);
@@ -37,12 +39,10 @@ class FLANNTuner {
 
 	void loadData() {
 		int query_num = Configer::get("testset_query_num").toInt();
-		//cout << "rows & testset_query_num: " << rows << " | " << rows << endl;
-		vector<u_int> eid;
-		for(int i = 0; i < query_num; ++i) 
-			eid.push_back(i);
+		cout << "testset_query_num: " << query_num << endl;
 		std::vector<Point> points;
-		points.swap(Candidate::get(eid));
+		//points.swap(Candidate::get(eid));
+		eoaix::readTest(points);
 		assert(points.size() == (u_int)query_num);
 
 		//cout << "candidate get over" << endl;
@@ -60,14 +60,14 @@ class FLANNTuner {
 		Configer::init("../all.config");
 		int min_trees = 4, max_trees = 4, step_trees = 1;
 		int min_leafs = 4, max_leafs = 4, step_leafs = 1;
-		int min_top_k = 3, max_top_k = 10, step_top_k = 1;
+		int min_top_k = Configer::get("project_top_k").toInt(), max_top_k = min_top_k, step_top_k = 1;
 
 		//cout << "begin loadData()" << endl;
 		loadData();
 		int _dataset_rows = Configer::get("rows").toInt();
-		int min_rows = 100, max_rows = 100, step_rows = 1;
+		int min_rows = _dataset_rows / 10, max_rows = _dataset_rows, step_rows = min_rows;
 		for(int r = min_rows; r <= max_rows; r += step_rows) {
-			int min_checks = r / 100, max_checks = r, step_checks = min_checks;
+			int min_checks = r / 100, max_checks = min_checks, step_checks = min_checks;
 
 			std::string sr = eoaix::itoa(r, 10);
 			Configer::set("rows", sr);
@@ -76,19 +76,28 @@ class FLANNTuner {
 			for(int tk = min_top_k; tk <= max_top_k; tk += step_top_k) {
 				string stk = eoaix::itoa(tk, 10);
 				Configer::set("project_top_k", stk);
+				cout << "before bench.init(): ";
+				eoaix::print_now();
 				Bench bench;
 				bench.init();
+				eoaix::print_now();
 
 				cout << "tk(string): " << stk << " | " << "project_top_k: " << Configer::get("project_top_k").toString() << endl;
 				for(int i = min_trees; i <= max_trees; i+=step_trees) {
 					for(int j = min_leafs; j <= max_leafs; j += step_leafs) {
-						for(int k = min_checks; k <= max_checks && k <= r; k += step_checks) 
+						int ck = 1;
+						for(int k = min_checks; k <= max_checks && k <= r; k += step_checks * ck) 
 						{
+							++ck;
 
+							cout << "before flann.init(): ";
+							eoaix::print_now();
 							FlannInterface _flann;
 							_flann.init(i, j, k);
 							//cout << "flann init over" << endl;
 							_time = 0;
+							cout << "before evaluate: ";
+							eoaix::print_now();
 							pair<double, double> res = evaluate(k, _flann, bench);
 							std::cerr << "rows: " << sr <<
 								" | top_k: " << tk <<
@@ -98,6 +107,7 @@ class FLANNTuner {
 								" = recall: " << res.first << 
 								" - cost: " << res.second << 
 								" - time: " << _time << std::endl;
+							eoaix::print_now();
 						}
 					}
 				}

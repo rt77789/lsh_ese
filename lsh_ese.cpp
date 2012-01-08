@@ -148,6 +148,8 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 	vector<SearchRes> res;
 	res.swap(Searcher::search(eid, sin));
 	resig.swap(res);
+	int topk = Configer::get("project_top_k").toInt();
+	if(resig.size() > topk) resig.resize(topk);
 
 	return eid.size();
 }
@@ -215,76 +217,9 @@ void LShashESE::queryDB(const vector<double> &sin, const vector<u_int> &eid, vec
 
 int
 LShashESE::naiveFFTConvFind(const vector<double> &sin, vector<SearchRes> &resig) {
-	assert(sin.size() == DIMS);
-
-	Point q;
-	for(u_int i = 0; i < sin.size(); ++i)
-		q.d[i] = sin[i];
-
-	vector<u_int> eid;
-	//cout << "lsh.findNodes returns: eid.size() == " << eid.size() << endl;
-
-	//assert(0 == fseek(fhandle, 0LL, SEEK_SET));
-	/* Clear the ifstream before use it. */
-	fhandle.clear();
-	fhandle.seekg(0LL, ios_base::beg);
-	if(fhandle.fail() || fhandle.bad() || fhandle.eof()) {
-		throw;
-	}
-
-	vector<SearchRes> xlist, rlist;
-
-	int tnum = 0;
-
-	Point p[BATCH_READ_NUM];
-
-	int cpnum = 0;	
-
-	//while((cpnum = fread(p, sizeof(Point), BATCH_READ_NUM, fhandle)) > 0) {
-	while(!fhandle.fail() && !fhandle.eof()) {
-		fhandle.read((char*)p, sizeof(Point) * BATCH_READ_NUM);
-		cpnum = fhandle.gcount() / sizeof(Point);
-		/* gcount must a multiply of sizeof(Point). */
-		assert(fhandle.gcount() % sizeof(Point) == 0);
-		for(int i = 0; i < cpnum; ++i) {
-			vector<double> tin(p[i].d, p[i].d + DIMS);
-			//cout << "p.identity: " << p.identity << endl;
-			double sim = FFT::corr(sin, tin);
-			xlist.push_back(SearchRes(p[i].identity, sim, tin));
-			if(xlist.size() >= IN_MEMORY_NUM) {
-				//# merge
-				rlist.insert(rlist.end(), xlist.begin(), xlist.end());
-				sort(rlist.begin(), rlist.end());
-				if(rlist.size() > IN_MEMORY_NUM) {
-					rlist.resize(IN_MEMORY_NUM);
-				}
-				xlist.clear();
-			}
-		}
-		tnum += cpnum;
-	}
-	if(xlist.size() > 0) {
-		//# merge
-		rlist.insert(rlist.end(), xlist.begin(), xlist.end());
-		sort(rlist.begin(), rlist.end());
-		if(rlist.size() > IN_MEMORY_NUM) {
-			rlist.resize(IN_MEMORY_NUM);
-		}
-	}
-
-	u_int top_k = Configer::get("project_top_k").toInt();
-
-	cout << "FFT total signals : " << tnum << endl;
-	cout << "rlist.size() : " << rlist.size() << "-K: " << top_k << endl;
-
-
-	/* clear the result buffer. */
-	resig.clear();
-	for(u_int i = 0; i < rlist.size() && i < top_k; ++i) {
-		cout << "[" << i << "]: " << rlist[i].getSim() << " - id:" << rlist[i].getID() << endl;
-		resig.push_back(rlist[i]);
-	}
-	return tnum;
+	resig.swap(Searcher::search(sin));
+	int rows = Configer::get("rows").toInt();
+	return rows;
 }
 
 int
@@ -420,7 +355,6 @@ LShashESE::iTransformDataSet(const char *_fin, const char *_fout) {
 	out.close();
 	fclose(fh);
 }
-
 
 //# Random a dataset of size = _size, and write into the 'file'.
 void

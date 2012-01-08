@@ -42,7 +42,7 @@ FLANN_LIB_OPTION=-L${libdir} -L${flann_libdir} -L${libs} -lflann -lhdf5
 RDANAMIC = -rdynamic ${LIBLSHKIT}/liblshkit.a -Wl,-Bstatic -lboost_program_options-mt -Wl,-Bdynamic -L/usr/local/lib -lgsl -lgslcblas -lm
 
 OBJ=${FLANN}/flann_interface.o ${UTILS}/util.o ${UTILS}/config.o $(LSH)/ghash.o $(LSH)/lshash.o $(WAVE)/weps.o\
-	${FFT}/fft.o ${FFT}/complex.o ${MPLSH}/mplshash.o lsh_ese.o
+	${FFT}/fft.o ${FFT}/complex.o ${MPLSH}/mplshash.o lsh_ese.o ${WAVE}/sacio.o ${WAVE}/sac_prep.o
 
 LSH_ESE_DEP=${FLANN}/flann_interface.h ${STRUCTS}/point.h ${LSH}/lshash.h ${WAVE}/weps.h ${UTILS}/util.h ${MPLSH}/mplshash.h lsh_ese.h lsh_ese.cpp
 

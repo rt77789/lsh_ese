@@ -12,9 +12,9 @@ typedef unsigned long long u64;
 //# Maximum number of Points in memory.
 #define IN_MEMORY_NUM 10000
 //# Batch fread Points at one time.
-#define BATCH_READ_NUM 4
+#define BATCH_READ_NUM 1
 
-#define DIMS 2000
+#define DIMS 2048
 #define FREQUENT 100
 
 //# switch t0.

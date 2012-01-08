@@ -19,6 +19,7 @@ namespace eoaix {
 	void normalize(float *p); 
 	void normalize(Point &p); 
 
+	void readTest(std::vector<Point> &points); 
 
 	/* Template function used for check equal. */
 	template <typename T> void equalAssert(T a, T b) {

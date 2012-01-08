@@ -23,12 +23,12 @@ class MPLTuner {
 
 			eoaix::Timer t;
 			mpl.query(_points[i], len, eid);
-			_time += t.elapsed();
 
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
 			res.swap(Searcher::search(eid, _points[i]));
+			_time += t.elapsed();
 			for(size_t j = 0; j < res.size(); ++j) {
 				apro[i].push_back(res[j].getID());
 			}
@@ -41,11 +41,9 @@ class MPLTuner {
 	void loadData() {
 		int query_num = Configer::get("testset_query_num").toInt();
 		//cout << "rows & testset_query_num: " << _dataset_rows << " | " << rows << endl;
-		vector<u_int> eid;
-		for(int i = 0; i < query_num; ++i) 
-			eid.push_back(i);
 		std::vector<Point> points;
-		points.swap(Candidate::get(eid));
+		//points.swap(Candidate::get(eid));
+		eoaix::readTest(points);
 		assert(points.size() == (u_int)query_num);
 
 		//cout << "candidate get over" << endl;

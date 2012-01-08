@@ -35,7 +35,7 @@ elif [[ $1 = "-build" ]]
 then
 	#perl build_data.pl < filt3.wavelet.3.0 >  dataset.test.raw
 	./main -trans ${2} ${2}.input
-	./mplshash/txt2bin ${2} mplshash/${2}.mpl.input
+	#./mplshash/txt2bin ${2} mplshash/${2}.mpl.input
 else
 	echo -e "usage: \n\
 		-test : binary_input_file binary_test_file # use dataset.test for basic lsh testing.\n\

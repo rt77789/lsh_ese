@@ -3,6 +3,7 @@
 
 #include "utils/util.h"
 #include "utils/config.h"
+#include "wavelet/sac_prep.h"
 
 #include "structs/bench.h"
 
@@ -68,15 +69,20 @@ test_by_type(const string &type) {
 	double totalRows = Configer::get("rows").toDouble();
 	bool doBenchmark = Configer::get("do_benchmark").toBool();
 	vector< vector<u_int> > apro(p.size());
+	vector< vector<double> > epro(p.size());
+	double time = 0;
 
 	for(u_int x = 0; x < p.size(); ++x) {
 		vector<double> sin(p[x].d, p[x].d + DIMS);
 		vector<SearchRes> resig;
+		eoaix::Timer t;
 		int candi = lsese.findIndex(sin, resig, type);
 		cost += candi * 1.0 / totalRows;
+		time += t.elapsed();
 
 		for(size_t i = 0; i < resig.size(); ++i) {
 			apro[x].push_back(resig[i].getID());
+			epro[x].push_back(resig[i].getSim());
 		}
 
 		for(u_int i = 0; i < resig.size(); ++i) {
@@ -90,8 +96,11 @@ test_by_type(const string &type) {
 		Bench bench;
 		bench.init();
 		double recall = bench.recall(apro);
+		double e = bench.recall(epro);
 		cout << "recall: " << recall << endl;
 		cout << "cost: " << cost / p.size() << endl;
+		cout << "E: " << e << endl;
+		cout << "time: " << time << endl;
 	}
 	//fout.close();
 	cout << "end... | ";
@@ -166,6 +175,57 @@ test_by_type_old(const string &type) {
 	eoaix::print_now();
 }
 
+void test_demo(const char *path, const string &type) {
+	/* sac file to raw file. */
+	vector<double> sin;
+
+	PSac ps(path);
+	ps.data2vector(sin);
+
+	LShashESE lsese;
+	lsese.init(type);
+	eoaix::print_now();
+	vector<SearchRes> resig;
+
+	ifstream in("sacname.map");
+	assert(in.is_open());
+
+	map<int, string> sacname;
+	int id;
+	string name;
+	while(in >> id >> name) {
+		sacname[id] = name;
+	}
+
+	int cansize = lsese.findIndex(sin, resig, type);
+	std::cout << "candidate size: " << cansize << std::endl;
+
+	u_int topk = Configer::get("project_top_k").toInt();
+
+	for(size_t i = 0; i < sin.size(); ++i) {
+		cerr << sin[i] << " ";
+	}
+	cerr << endl;
+
+	for(u_int i = 0; i < resig.size() && i < topk; ++i) {
+		assert(sacname.find(resig[i].getID()) != sacname.end());
+		string sac = sacname.find(resig[i].getID())->second;
+
+		cout << "[" << i << "]: " <<
+				" dis = " << resig[i].getSim() <<
+				" | id = " << resig[i].getID() <<
+				" | sac = <font color=\"red\">" << sac << "</font>" << 
+				std::endl;
+
+		for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
+			cerr << resig[i].getSignal()[j] << " ";
+
+					}
+		cerr << endl;
+	}
+	eoaix::print_now();
+}
+
 int
 main(int argc , char **args) {
 	Configer::init("all.config");
@@ -186,17 +246,26 @@ main(int argc , char **args) {
 	else if(argc >= 2 && strcmp(args[1], "-mpl") == 0) {
 		test_by_type("mpl");
 	}
-	else if(argc >= 2 && strcmp(args[1], "-wavelet") == 0) {
-		test_by_type("wavelet");
-	}
 	else if(argc >= 2 && strcmp(args[1], "-fft") == 0) {
 		test_by_type("fft");
 	}
 	else if(argc >= 2 && strcmp(args[1], "-kdmpl") == 0) {
 		test_by_type("kdmpl");
-			}
+	}
 	else if(argc >= 2 && strcmp(args[1], "-kdlsh") == 0) {
 		test_by_type("kdlsh");
+	}
+	else if(argc >= 3 && strcmp(args[1], "-dfft") == 0) {
+		/* set testset file to upload file name. */
+		test_demo(args[2], "fft");
+	}
+	else if(argc >= 2 && strcmp(args[1], "-dlsh") == 0) {
+		/* set testset file to upload file name. */
+		test_demo(args[2], "lsh");
+	}
+	else if(argc >= 2 && strcmp(args[1], "-dkdtree") == 0) {
+		/* set testset file to upload file name. */
+		test_demo(args[2], "flann");
 	}
 	else {
 		perror("usage: \n\
@@ -208,7 +277,10 @@ main(int argc , char **args) {
 				\t-fft\n\
 				\t-wavelet\n\
 				\t-kdmpl\n\
-				\t-kdlsh\n");
+				\t-kdlsh\n\
+				\t-dfft\n\
+				\t-dlsh\n\
+				\t-dkdtree\n");
 		exit(0);
 	}
 	//test_lshese(args[1], queryNum);

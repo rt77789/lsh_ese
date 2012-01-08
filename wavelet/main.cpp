@@ -46,6 +46,33 @@ void read_from_sac(const char *path) {
 	cerr << "dims: " << sin.size() << endl;
 }
 
+void extract_sac_sample(const char *path, const char *opath) {
+
+	vector<string> sacs;
+	eoaix::getSacPath(path, sacs);
+
+	// Load Sac file one by one.
+
+	FILE *fout = fopen(opath, "wb");
+	assert(fout != NULL);
+
+	for(size_t i = 0; i < sacs.size(); ++i) {
+		PSac ps(sacs[i].c_str());
+
+		vector<double> sin;
+		ps.data2vector(sin);
+		string fn = sacs[i].substr(sacs[i].find_last_of("/") + 1);
+		cerr << i << " " << fn << endl;
+		printf("total: 1350000 - now: %d\r", i);
+		for(size_t j = 0; j < sin.size(); ++j) {
+			if(j > 0) fprintf(fout, " "); 
+			fprintf(fout, "%lf", sin[j]);
+		}
+		fprintf(fout, "\n");
+	}
+	fclose(fout);
+}
+
 void
 deal_data() {
 
@@ -205,7 +232,8 @@ main(int argc, char **args) {
 	if(argc < 2) {
 		perror("usage: -pre\n\
 				-test\n\
-				-trans sacfile.sac\n");
+				-trans sacfile.sac\n\
+				-sample\n");
 		exit(0);
 	}
 
@@ -221,6 +249,9 @@ main(int argc, char **args) {
 	}
 	else if(argc >= 3 && strcmp(args[1], "-trans") == 0) {
 		read_from_sac(args[2]);
+	}
+	else if(argc >= 4 && strcmp(args[1], "-sample") == 0) {
+		extract_sac_sample(args[2], args[3]);
 	}
 	else {
 		perror("ill option");

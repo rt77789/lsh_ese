@@ -5,7 +5,9 @@
 #include <string.h>
 
 #include "util.h"
+#include "config.h"
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <ctime>
 #include <cassert>
@@ -57,7 +59,7 @@ namespace eoaix {
 				}
 				else if(!isDir(temp)) {
 					int len = strlen(temp);	
-					if(strncmp(pdirent->d_name, "filt3", 5) == 0 && (strcmp(temp + len - 4, ".SAC") == 0 || strcmp(temp + len - 4, ".sac") == 0)) {
+					if((strcmp(temp + len - 4, ".SAC") == 0 || strcmp(temp + len - 4, ".sac") == 0) || strcmp(temp + len - 2, ".z") == 0 || strcmp(temp + len - 2, ".Z") == 0) {
 						printf("%s\n", temp);
 						v.push_back(temp);
 					}
@@ -90,6 +92,26 @@ namespace eoaix {
 			v.push_back(path);
 		}
 	}
+
+	void readTest(std::vector<Point> &points) {
+		int num = Configer::get("testset_query_num").toInt();
+		int rows = Configer::get("rows").toInt();
+		std::string path = Configer::get("project_dir").toString() + Configer::get("testset_path").toString();
+
+		num = num < rows ? num : rows;
+
+		std::ifstream in(path.c_str());
+		assert(in.is_open());
+
+		int i = 0;
+		Point p;
+		points.clear();
+		while(i++ < num && in.read((char*)&p, sizeof(Point))) {
+			points.push_back(p);	
+		}
+		in.close();
+	}
+
 
 	std::string itoa(int num, int base) {
 		std::string res = num < 0 ? "-" : "";

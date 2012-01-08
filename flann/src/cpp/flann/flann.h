@@ -32,6 +32,7 @@
 #define FLANN_H_
 
 #include "defines.h"
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -73,6 +74,36 @@ struct FLANNParameters
     enum flann_log_level_t log_level;    /* determines the verbosity of each flann function */
     long random_seed;            /* random seed to use */
 };
+class KDTreeConfiger {
+	char _path[64];
+	int _rows;
+	int _dims;
+	KDTreeConfiger() {}
+	~KDTreeConfiger() {}
+	static KDTreeConfiger& instance() {
+		static KDTreeConfiger kdconfiger;
+		return kdconfiger;
+	}
+
+	public:
+
+	static void init(const char* path, int rows, int dims) {
+		strcpy(instance()._path, path);
+		instance()._rows = rows;
+		instance()._dims = dims;
+	}
+	static const char* getPath() {
+		return instance()._path;
+	}
+	static int getRows() {
+		return instance()._rows;
+	}
+	static int getDims() {
+		return instance()._dims;
+	}
+};
+
+
 
 
 typedef void* FLANN_INDEX; /* deprecated */
@@ -459,6 +490,7 @@ FLANN_EXPORT int flann_compute_cluster_centers_int(int* dataset,
                                                    int clusters,
                                                    float* result,
                                                    struct FLANNParameters* flann_params);
+
 
 
 #ifdef __cplusplus

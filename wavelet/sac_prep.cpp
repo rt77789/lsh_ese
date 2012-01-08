@@ -25,6 +25,12 @@ PSac::PSac(const char *sfname) {
 	*/
 }
 
+PSac::~PSac() {
+	if(data != NULL) {
+		delete[] data;
+	}
+}
+
 void
 PSac::data2vector(vector<double> &v) {
 	for(int i = 0; i < header.npts; ++i) 

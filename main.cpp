@@ -2,11 +2,29 @@
 #include <cstdlib>
 #include <cstring>
 #include "lsh_ese.h"
+#include "structs/candidate.h"
+#include "utils/config.h"
 
 using namespace std;
 
+void test() {
+	Configer::init("all.config");
+	vector<u_int> eid;
+	eid.push_back(1310903);
+	vector<Point> res;
+	res.swap(Candidate::get(eid));
+
+	for(size_t i = 0; i < res.size(); ++i) {
+		for(int j = 0; j < DIMS; ++j) {
+		cout << res[i].d[j] << " ";
+		}
+		cout << endl;
+	}
+}
+
 int
 main(int argc, char **args) {
+	//test();
 	if(argc < 4) {
 		perror("usage: \n\t./main (-rand | -trans | -itrans)\n\t\t-rand #size_of_dataset output_file\n\t\t-trans input_file output_file\n\t\t-itrans input_file output_file");
 		exit(0);

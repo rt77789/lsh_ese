@@ -19,6 +19,7 @@ class PSac {
 	
 public:
 	PSac(const char *sfname);
+	~PSac();
 	void data2vector(vector<double> &v);
 };
 

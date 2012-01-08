@@ -9,20 +9,69 @@
 #include "../fft/fft.h"
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <cassert>
 
 class Searcher {
 	std::vector<SearchRes> _res;
 	Searcher() {}
 	~Searcher() {}
 
+	std::vector<SearchRes>& lsearch(const std::vector<double> &sin) {
+		std::string path = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
+		std::ifstream in(path.c_str(), std::ios_base::binary);	
+		assert(in.is_open());
+
+		Point p;
+
+		size_t cpnum = 0;	
+		size_t topk = Configer::get("project_top_k").toInt();
+		size_t rows = Configer::get("rows").toInt();
+
+		//while((cpnum = fread(p, sizeof(Point), BATCH_READ_NUM, fhandle)) > 0) {
+		while(!in.fail() && !in.eof() && cpnum < rows) {
+			in.read((char*)&p, sizeof(Point));
+			vector<double> tin(p.d, p.d + DIMS);
+			//cout << "p.identity: " << p.identity << endl;
+			double sim = FFT::corr(sin, tin);
+
+			_res.push_back(SearchRes(p.identity, sim, tin));
+			if(cpnum + 1 == topk) {
+				make_heap(_res.begin(), _res.end());
+			}
+			else if(cpnum > topk) {
+				pop_heap(_res.begin(), _res.end());
+				_res.pop_back();
+			}
+			else {
+			}
+			++cpnum;
+		}
+
+		std::sort(_res.begin(), _res.end());
+		in.close();
+		return _res;
+	}
+
 	std::vector<SearchRes>& lsearch(const std::vector<u_int> &eid, const std::vector<double> &sin) {
 		_res.clear();
 		std::vector<Point> points;
 		points.swap(Candidate::get(eid));
+		
+		size_t topk = Configer::get("project_top_k").toInt();
+
 		for(size_t i = 0; i < points.size(); ++i) {
 			std::vector<double> tin(points[i].d, points[i].d + DIMS);
 			double sim = FFT::corr(tin, sin);
 			_res.push_back(SearchRes(points[i].identity, sim, tin));
+			if(i + 1 == topk) {
+				make_heap(_res.begin(), _res.end());
+			}
+			else if(i > topk) {
+				pop_heap(_res.begin(), _res.end());
+				_res.pop_back();
+
+			}
 		}
 		/* Sort the SearchRes objects according to their sims/distance, from low to high. */
 		std::sort(_res.begin(), _res.end());
@@ -43,6 +92,14 @@ class Searcher {
 			vector<double> sin(in, in + DIMS);
 			return instance().lsearch(eid, sin);
 		}
+		static std::vector<SearchRes>& search(const std::vector<double> &sin) {
+			return instance().lsearch(sin);
+		}
+		static std::vector<SearchRes>& search(const float *in) {
+			vector<double> sin(in, in + DIMS);
+			return instance().lsearch(sin);
+		}
+
 };
 
 #endif
