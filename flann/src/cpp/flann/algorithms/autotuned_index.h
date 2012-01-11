@@ -102,9 +102,6 @@ public:
     virtual void buildIndex()
     {
         bestParams_ = estimateBuildParams();
-	//	Logger::setLevel(FLANN_LOG_INFO);
-	//	Logger::warn("buildIndex() warn..\n");
-
         Logger::info("----------------------------------------------------\n");
         Logger::info("Autotuned parameters:\n");
         print_params(bestParams_);

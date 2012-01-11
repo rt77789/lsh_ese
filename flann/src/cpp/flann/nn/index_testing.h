@@ -34,7 +34,6 @@
 #include <cstring>
 #include <cassert>
 #include <cmath>
-#include <limits>
 
 #include "flann/util/matrix.h"
 #include "flann/algorithms/nn_index.h"
@@ -186,7 +185,6 @@ float test_index_precision(NNIndex<Distance>& index, const Matrix<typename Dista
 //         p1 = p2;
         c2 *=2;
         p2 = search_with_ground_truth(index, inputData, testData, matches, nn, c2, time, dist, distance, skipMatches);
-		if(c2 > std::numeric_limits<int>::max() / 2) return time;
     }
 
     int cx;
@@ -198,7 +196,6 @@ float test_index_precision(NNIndex<Distance>& index, const Matrix<typename Dista
 
         cx = (c1+c2)/2;
         realPrecision = search_with_ground_truth(index, inputData, testData, matches, nn, cx, time, dist, distance, skipMatches);
-
         while (fabs(realPrecision-precision)>SEARCH_EPS) {
 
             if (realPrecision<precision) {

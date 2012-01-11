@@ -19,43 +19,45 @@ FlannInterface::~FlannInterface() {
 void FlannInterface::init() {
 	std::string dataPath = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
 
-	init(dataPath);
+	std::string indexPath = Configer::get("project_dir").toString() + Configer::get("flann_index_path").toString();
+	init(dataPath, indexPath);
 }
 
-void FlannInterface::init(const std::string &dataPath) {
+void FlannInterface::init(const std::string &dataPath, const std::string &indexPath) {
 	int trees = Configer::get("flann_kdtree_trees").toInt();
 	int leaf_max_size = Configer::get("flann_kdtree_leaf_max_size").toInt();
 	int checks = Configer::get("flann_kdtree_checks").toInt();
 
-	init(trees, leaf_max_size, checks, dataPath);
+	init(trees, leaf_max_size, checks, dataPath, indexPath);
 }
 
 void FlannInterface::init(int trees, int leaf_max_size, int checks) {
 	std::string dataPath = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
-	init(trees, leaf_max_size, checks, dataPath);
+	std::string indexPath = Configer::get("project_dir").toString() + Configer::get("flann_index_path").toString();
+	init(trees, leaf_max_size, checks, dataPath, indexPath);
 }
 
-void FlannInterface::init(int trees, int leaf_max_size, int checks, const std::string &dataPath) {
+void FlannInterface::init(int trees, int leaf_max_size, int checks, const std::string &dataPath, const std::string &indexPath) {
 
 	setParam(trees, leaf_max_size, checks);
 
 	_dims = Configer::get("dims").toInt();
-	_rows = Configer::get("rows").toInt();
+	_rows = Configer::get("multi_file_rows").toInt(); //Configer::get("rows").toInt();
 
 
 	std::cout << "in flann init, rows: " << _rows << std::endl;
 
-	std::string indexPath = Configer::get("project_dir").toString() + Configer::get("flann_index_path").toString();
+	//std::string indexPath = Configer::get("project_dir").toString() + Configer::get("flann_index_path").toString();
 
-	KDTreeConfiger::init(dataPath.c_str(), _rows, _dims);
+	//KDTreeConfiger::init(dataPath.c_str(), _rows, _dims);
 
 	bool doSave = Configer::get("flann_do_save").toBool();
 	bool doIndex = Configer::get("flann_do_index").toBool();
 
-	_dataset = NULL;//new float[_dims * _rows];
-	//assert(_dataset != NULL);
+	_dataset = new float[_dims * _rows];
+	assert(_dataset != NULL);
 
-	//load(dataPath);
+	load(dataPath);
 
 	std::cout << "load over." << std::endl;
 	if(doIndex) {

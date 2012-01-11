@@ -45,12 +45,6 @@
 #include "flann/util/allocator.h"
 #include "flann/util/random.h"
 #include "flann/util/saving.h"
-#include "flann/flann.h"
-
-
-#include <cassert>
-#include <fstream>
-#include <cmath>
 
 
 namespace flann
@@ -65,30 +59,7 @@ struct KDTreeIndexParams : public IndexParams
     }
 };
 
-struct KDTreePoint {
-#define DIMS 2048
-typedef unsigned int u_int;
 
-	//# identity to the external index id.
-	u_int identity;
-
-	double d[DIMS];
-
-	/* Inner product, return the projected value. */
-	double operator*(const KDTreePoint &_p) {
-		double res = 0;
-		for(u_int i = 0; i < DIMS; ++i)
-			res += _p.d[i] * d[i];
-		return res;
-	}
-	double operator%(const KDTreePoint &_p) {
-		double dis = 0;
-		for(size_t i = 0; i < DIMS; ++i) {
-			dis += std::pow(d[i] - _p.d[i], 2);
-		}
-		return std::sqrt(dis);
-	}
-};
 /**
  * Randomized kd-tree index
  *
@@ -113,21 +84,10 @@ public:
      */
     KDTreeIndex(const Matrix<ElementType>& inputData, const IndexParams& params = KDTreeIndexParams(),
                 Distance d = Distance() ) :
-        //dataset_(inputData), 
-		index_params_(params), distance_(d)
+        dataset_(inputData), index_params_(params), distance_(d)
     {
-		//in_.open("10wdata.raw.input", std::ios_base::binary);
-		const char* testset = KDTreeConfiger::getPath();
-		in_.open(testset, std::ios_base::binary);
-		assert(in_.is_open());
-
-        size_ = KDTreeConfiger::getRows();//Configer::get("rows").toInt();//dataset_.rows;
-        veclen_ = KDTreeConfiger::getDims();; //Configer::get("dims").toInt(); //dataset_.cols;
-
-
-		std::cout << "KDTreeIndex(testset): " << testset << 
-						" | size: " << size_ <<
-						" | veclen: " << veclen_ << std::endl;
+        size_ = dataset_.rows;
+        veclen_ = dataset_.cols;
 
         trees_ = get_param(index_params_,"trees",4);
         tree_roots_ = new NodePtr[trees_];
@@ -136,7 +96,7 @@ public:
         vind_.resize(size_);
         for (size_t i = 0; i < size_; ++i) {
             vind_[i] = int(i);
-       }
+        }
 
         mean_ = new DistanceType[veclen_];
         var_ = new DistanceType[veclen_];
@@ -163,8 +123,6 @@ public:
      */
     void buildIndex()
     {
-		//Logger::info("kd tree buildIndex()...\n");
-		printf("kd tree buildIndex()...\n");
         /* Construct the randomized trees. */
         for (int i = 0; i < trees_; i++) {
             /* Randomize the order of vectors to allow for unbiased sampling. */
@@ -227,7 +185,7 @@ public:
      */
     int usedMemory() const
     {
-        return 0;//int(pool_.usedMemory+pool_.wastedMemory+dataset_.rows*sizeof(int));  // pool memory and vind array memory
+        return int(pool_.usedMemory+pool_.wastedMemory+dataset_.rows*sizeof(int));  // pool memory and vind array memory
     }
 
     /**
@@ -354,89 +312,25 @@ private:
         /* Compute mean values.  Only the first SAMPLE_MEAN values need to be
             sampled to get a good estimate.
          */
-		/* 只是前SAMPLE_MEAN or count 个数据用来计算均值和方差.*/
         int cnt = std::min((int)SAMPLE_MEAN+1, count);
-		/* 用所有数据来算方差. SAMPLE_MEAN = 100 */
-		//int cnt = count;
-		KDTreePoint p;
-
-		int tnd[cnt];// = new int[cnt];
-
-		for(int j = 0; j < cnt; ++j) tnd[j] = ind[j];
-
-		std::sort(tnd, tnd + cnt);
-
-		unsigned long long base = 0;
-
-		in_.seekg(base, std::ios_base::beg);
-		assert(!(in_.fail() && in_.bad()));
-
-
         for (int j = 0; j < cnt; ++j) {
-            //ElementType* v = dataset_[ind[j]];
-         //   readByID(ind[j], &p); // dataset_[ind[j]];
-			
-			unsigned long long offset = (unsigned long long)sizeof(KDTreePoint) * tnd[j];
-			if(j > 0) offset -= sizeof(KDTreePoint);
-
-			in_.seekg(offset - base, std::ios_base::cur);
-			assert(!(in_.fail() && in_.bad()));
-			in_.read((char*)&p, sizeof(KDTreePoint));
-			base = (unsigned long long) sizeof(KDTreePoint) * tnd[j];
-
-            double* v = &p.d[0];
+            ElementType* v = dataset_[ind[j]];
             for (size_t k=0; k<veclen_; ++k) {
                 mean_[k] += v[k];
             }
         }
-
         for (size_t k=0; k<veclen_; ++k) {
             mean_[k] /= cnt;
         }
 
-		base = 0;
-		in_.seekg(base, std::ios_base::beg);
-		assert(!(in_.fail() && in_.bad()));
-
-
         /* Compute variances (no need to divide by count). */
         for (int j = 0; j < cnt; ++j) {
-   //         readByID(ind[j], &p); // dataset_[ind[j]];
-            //ElementType* v = dataset_[ind[j]];
-	
-			unsigned long long offset = (unsigned long long)sizeof(KDTreePoint) * tnd[j];
-			if(j > 0) offset -= sizeof(KDTreePoint);
-
-			in_.seekg(offset - base, std::ios_base::cur);
-			assert(!(in_.fail() && in_.bad()));
-			in_.read((char*)&p, sizeof(KDTreePoint));
-			base = (unsigned long long) sizeof(KDTreePoint) * tnd[j];
-
-
-            double* v = &p.d[0];
+            ElementType* v = dataset_[ind[j]];
             for (size_t k=0; k<veclen_; ++k) {
                 DistanceType dist = v[k] - mean_[k];
                 var_[k] += dist * dist;
-			}
+            }
         }
-		/* Display the variances, eoaix added. */
-		/*
-		DistanceType* tvar_ = new DistanceType[veclen_];
-		
-		for(size_t j = 0; j < veclen_; ++j) {
-			tvar_[j] = var_[j];
-		}
-		std::sort(tvar_, tvar_ + veclen_);
-		for(size_t j = 0; j < veclen_; ++j) {
-			std::cout << "[" << j << "]" <<
-				" : " << tvar_[j] << std::endl;
-		}
-		if(tvar_ != NULL) 
-		{
-			delete[] tvar_;
-		}
-	*/	
-		/* end */
         /* Select one of the highest variance indices at random. */
         cutfeat = selectDivision(var_);
         cutval = mean_[cutfeat];
@@ -461,7 +355,6 @@ private:
      */
     int selectDivision(DistanceType* v)
     {
-		/* If RAND_DIM is bigger, then this approch is uneffective. */
         int num = 0;
         size_t topind[RAND_DIM];
 
@@ -503,76 +396,18 @@ private:
         /* Move vector indices for left subtree to front of list. */
         int left = 0;
         int right = count-1;
-		double pnd[count];
-		//int tnd[count];
-		std::map<int, int> mnd;
-		KDTreePoint p;
-
-		for(int j = 0; j < count; ++j) mnd[ind[j]] = j;
-
-		unsigned long long base = 0;
-
-		in_.seekg(base, std::ios_base::beg);
-		assert(!(in_.fail() && in_.bad()));
-
-		
-		for(std::map<int, int>::iterator iter = mnd.begin(); iter != mnd.end(); ++iter) {
-			unsigned long long offset = (unsigned long long)sizeof(KDTreePoint) * iter->first;
-			if(iter != mnd.begin()) offset -= sizeof(KDTreePoint);
-
-			in_.seekg(offset - base, std::ios_base::cur);
-			assert(!(in_.fail() && in_.bad()));
-
-			in_.read((char*)&p, sizeof(KDTreePoint));
-			assert(p.identity == iter->first);
-
-			pnd[iter->second] = p.d[cutfeat];
-
-			base = (unsigned long long)sizeof(KDTreePoint) * iter->first;
-		}
-
-
-		/* read all p.d[cutfeat] into pnd[]. */
         for (;; ) {
-            //while (left<=right && dataset_[ind[left]][cutfeat]<cutval) ++left;
-            while (left<=right) {
-				//readByID(ind[left], &p); //dataset_[ind[left]][cutfeat]<cutval;
-				//if(p.d[cutfeat] >= cutval) break;
-				if(pnd[left] >= cutval) break;
-				++left;
-			}
-            //while (left<=right && dataset_[ind[right]][cutfeat]>=cutval) --right;
-            while (left<=right) {
-				//readByID(ind[right], &p);
-				//if(p.d[cutfeat] < cutval) break;
-				if(pnd[right] < cutval) break;
-				--right;
-			}
+            while (left<=right && dataset_[ind[left]][cutfeat]<cutval) ++left;
+            while (left<=right && dataset_[ind[right]][cutfeat]>=cutval) --right;
             if (left>right) break;
-			std::swap(pnd[left], pnd[right]);
             std::swap(ind[left], ind[right]); ++left; --right;
         }
         lim1 = left;
         right = count-1;
         for (;; ) {
-            //while (left<=right && dataset_[ind[left]][cutfeat]<=cutval) ++left;
-            //while (left<=right && dataset_[ind[right]][cutfeat]>cutval) --right;
-            while (left<=right) {
-				//readByID(ind[left], &p); //dataset_[ind[left]][cutfeat]<cutval;
-				//if(p.d[cutfeat] > cutval) break;
-				if(pnd[left] > cutval) break;
-				++left;
-			}
-            //while (left<=right && dataset_[ind[right]][cutfeat]>=cutval) --right;
-            while (left<=right) {
-				//readByID(ind[right], &p);
-				//if(p.d[cutfeat] <= cutval) break;
-				if(pnd[right] <= cutval) break;
-				--right;
-			}
-
+            while (left<=right && dataset_[ind[left]][cutfeat]<=cutval) ++left;
+            while (left<=right && dataset_[ind[right]][cutfeat]>cutval) --right;
             if (left>right) break;
-			std::swap(pnd[left], pnd[right]);
             std::swap(ind[left], ind[right]); ++left; --right;
         }
         lim2 = left;
@@ -647,11 +482,7 @@ private:
             checked.set(index);
             checkCount++;
 
-			KDTreePoint p;
-			readByID(index, &p);
-
-            DistanceType dist = distance_(&p.d[0], vec, veclen_);
-            //DistanceType dist = distance_(dataset_[index], vec, veclen_);
+            DistanceType dist = distance_(dataset_[index], vec, veclen_);
             result_set.addPoint(dist,index);
 
             return;
@@ -689,11 +520,7 @@ private:
         /* If this is a leaf node, then do check and return. */
         if ((node->child1 == NULL)&&(node->child2 == NULL)) {
             int index = node->divfeat;
-			
-			KDTreePoint p;
-			readByID(index, &p);
-
-            DistanceType dist = distance_(&p.d[0], vec, veclen_);
+            DistanceType dist = distance_(dataset_[index], vec, veclen_);
             result_set.addPoint(dist,index);
             return;
         }
@@ -723,20 +550,6 @@ private:
     }
 
 
-	void readByID(int index, KDTreePoint* p) {
-		/**/
-		unsigned long long offset = (unsigned long long)sizeof(KDTreePoint) * (unsigned long long)index;
-		//	std::cout << "index: " << index <<
-		//		" | sizeof(KDTreePoint): " << sizeof(KDTreePoint) <<
-		//									  " | offset: " << offset << std::endl;
-
-			in_.seekg(offset, std::ios_base::beg);
-			assert(!(in_.fail() && in_.bad()));
-
-			in_.read((char*)p, sizeof(KDTreePoint));
-			assert(!(in_.fail() && in_.bad()));
-	}
-
 private:
 
     enum
@@ -746,7 +559,7 @@ private:
          * compute the mean and variance at each level when building a tree.
          * A value of 100 seems to perform as well as using all values.
          */
-        SAMPLE_MEAN = 1000,
+        SAMPLE_MEAN = 200000,
         /**
          * Top random dimensions to consider
          *
@@ -757,7 +570,6 @@ private:
         RAND_DIM=5
     };
 
-	std::ifstream in_;
 
     /**
      * Number of randomized trees that are used
@@ -772,12 +584,12 @@ private:
     /**
      * The dataset used by this index
      */
-    //const Matrix<ElementType> dataset_;
+    const Matrix<ElementType> dataset_;
 
     IndexParams index_params_;
 
     size_t size_;
-    size_t veclen_; /* column number. */
+    size_t veclen_;
 
 
     DistanceType* mean_;

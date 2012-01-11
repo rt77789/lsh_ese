@@ -111,18 +111,11 @@ public:
         loaded_ = false;
 
         if (index_type == FLANN_INDEX_SAVED) {
-			/* load from saved index. */
             nnIndex_ = load_saved_index<Distance>(features, get_param<std::string>(params,"filename"), distance);
             loaded_ = true;
         }
         else {
             nnIndex_ = create_index_by_type<Distance>(features, params, distance);
-			if(nnIndex_ == NULL) {
-				Logger::info("nnIndex is NULL\n");
-			}
-			else {
-				Logger::info("nnIndex isn't NULL\n");
-			}
         }
     }
 

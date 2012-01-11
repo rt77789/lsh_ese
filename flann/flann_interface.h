@@ -26,9 +26,9 @@ class FlannInterface {
 
 	/* initialize. */
 	void init();
-	void init(const std::string &dataPath);
+	void init(const std::string &dataPath, const std::string &indexPath);
 	void init(int trees, int leaf_max_size, int checks);
-	void init(int trees, int leaf_max_size, int checks, const std::string &dataPath);
+	void init(int trees, int leaf_max_size, int checks, const std::string &dataPath, const std::string &indexPath);
 
 	/* Load dataset . */
 	void load(const std::string &path);

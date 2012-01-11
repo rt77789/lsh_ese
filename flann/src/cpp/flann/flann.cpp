@@ -97,9 +97,7 @@ flann::IndexParams create_parameters(FLANNParameters* p)
 void init_flann_parameters(FLANNParameters* p)
 {
     if (p != NULL) {
-		/* set log level. */
         flann_log_verbosity(p->log_level);
-		/* set random seed. */
         if (p->random_seed>0) {
             seed_random(p->random_seed);
         }
@@ -129,16 +127,12 @@ flann_index_t __flann_build_index(typename Distance::ElementType* dataset, int r
     typedef typename Distance::ElementType ElementType;
     try {
 
-		/* Initializing parameters. */
         init_flann_parameters(flann_params);
         if (flann_params == NULL) {
             throw FLANNException("The flann_params argument must be non-null");
         }
-		/* create parameters */
         IndexParams params = create_parameters(flann_params);
         Index<Distance>* index = new Index<Distance>(Matrix<ElementType>(dataset,rows,cols), params, d);
-		Logger::info("index->buildIndex().\n");
-		/* different type buildIndex(). */
         index->buildIndex();
         params = index->getParameters();
 
@@ -163,32 +157,24 @@ flann_index_t __flann_build_index(typename Distance::ElementType* dataset, int r
 template<typename T>
 flann_index_t _flann_build_index(T* dataset, int rows, int cols, float* speedup, FLANNParameters* flann_params)
 {
-	/* L2 distance. */
     if (flann_distance_type==FLANN_DIST_EUCLIDEAN) {
-		/* float, L2. */
         return __flann_build_index<L2<T> >(dataset, rows, cols, speedup, flann_params);
     }
-	/* L1 distance. */
     else if (flann_distance_type==FLANN_DIST_MANHATTAN) {
         return __flann_build_index<L1<T> >(dataset, rows, cols, speedup, flann_params);
     }
-	/* MINKOWSKI distance. */
     else if (flann_distance_type==FLANN_DIST_MINKOWSKI) {
         return __flann_build_index<MinkowskiDistance<T> >(dataset, rows, cols, speedup, flann_params, MinkowskiDistance<T>(flann_distance_order));
     }
-	/* Hist intersect. */
     else if (flann_distance_type==FLANN_DIST_HIST_INTERSECT) {
         return __flann_build_index<HistIntersectionDistance<T> >(dataset, rows, cols, speedup, flann_params);
     }
-	/* Hellinger. */
     else if (flann_distance_type==FLANN_DIST_HELLINGER) {
         return __flann_build_index<HellingerDistance<T> >(dataset, rows, cols, speedup, flann_params);
     }
-	/* Chi squre. */
     else if (flann_distance_type==FLANN_DIST_CHI_SQUARE) {
         return __flann_build_index<ChiSquareDistance<T> >(dataset, rows, cols, speedup, flann_params);
     }
-	/* Kullback leibler. */
     else if (flann_distance_type==FLANN_DIST_KULLBACK_LEIBLER) {
         return __flann_build_index<KL_Divergence<T> >(dataset, rows, cols, speedup, flann_params);
     }
@@ -198,13 +184,8 @@ flann_index_t _flann_build_index(T* dataset, int rows, int cols, float* speedup,
     }
 }
 
-/* build index function. */
 flann_index_t flann_build_index(float* dataset, int rows, int cols, float* speedup, FLANNParameters* flann_params)
 {
-	Logger::setLevel(FLANN_LOG_INFO);
-	Logger::info("flann_build_index in info...\n");
-	Logger::warn("flann_build_index in warn...\n");
-	Logger::error("flann_build_index in error...\n");
     return _flann_build_index<float>(dataset, rows, cols, speedup, flann_params);
 }
 

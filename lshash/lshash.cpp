@@ -155,12 +155,14 @@ LShash::find(const Point &q, std::vector<u_int> &eid) {
 	std::map<u_int, u_int> idMap;
 
 	u_int lsh_max_candidate = Configer::get("lsh_max_candidate").toInt();
+
 	for(u_int i = 0; i < _g.size(); ++i) {
 		std::vector<u_int> tid;
 		_g[i].findNodes(p, tid);
 		for(u_int j = 0; j < tid.size(); ++j) {
 			++idMap[tid[j]];
 			// cout << "identity: " << ptr->identity << endl;
+			if(idMap.size() >= lsh_max_candidate) break;
 		}
 		/* If the current map size is bigger than lsh_max_candidate, then exit the loop. */
 		if(idMap.size() >= lsh_max_candidate) break;

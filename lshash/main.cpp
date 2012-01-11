@@ -21,6 +21,7 @@ class LSHTuner {
 		size_t top_k = Configer::get("project_top_k").toInt();
 
 		double cost = 0;
+		double time = 0;
 		std::cout << "_points.size(): " << _points.size() << std::endl;
 		for(size_t i = 0; i < _points.size(); ++i) {
 			vector<u_int> eid;
@@ -35,7 +36,7 @@ class LSHTuner {
 			vector<SearchRes> res;
 			res.swap(Searcher::search(eid, _points[i]));
 
-			_time += t.elapsed();
+			time += t.elapsed();
 
 			for(size_t j = 0; j < res.size() && j < top_k; ++j) {
 				apro[i].push_back(res[j].getID());
@@ -46,6 +47,7 @@ class LSHTuner {
 			}
 			//std::cout << string('-', 80) << std::endl;
 		}
+		_time += time / _points.size();
 		double recall = bench.recall(apro);
 		cost = cost / _points.size();
 		return make_pair<double, double>(recall, cost);
@@ -85,9 +87,14 @@ class LSHTuner {
 		_time = 0;
 		for(int i = 0; i < retry; ++i) {
 			LShash lsh;
+			cout << "lsh.init begin: "; eoaix::print_now();
+
 			lsh.init(param.K, param.prob, param.W, param.R);
 			lsh.showStat();
+			cout << "lsh.init() end: "; eoaix::print_now();
 			pair<double, double> res = evaluate(lsh, bench);
+			cout << "evaluate end: "; eoaix::print_now();
+
 			recall += res.first;
 			cost += res.second;
 			std::cout << "aveEval[" << i << "]: "
@@ -180,16 +187,18 @@ class LSHTuner {
 		double R = Configer::get("lsh_R").toDouble();
 		double prob = Configer::get("lsh_prob").toDouble();
 
-		int min_top_k = 10, max_top_k = 10, step_top_k = 1;
+		int min_top_k = Configer::get("project_top_k").toInt(), max_top_k = min_top_k, step_top_k = 1;
 		//int min_M = 16, max_M = 20, step_M = 1;
 
+		int min_rows = Configer::get("multi_file_rows").toInt(), max_rows = Configer::get("rows").toInt(), step_rows = min_rows;
 
-		int min_rows = Configer::get("rows").toInt(), max_rows = min_rows, step_rows = 2;
 		loadData();
 
-		for(int r = min_rows; r <= max_rows; r *= step_rows) {
+		for(int r = min_rows; r <= max_rows; r += step_rows) {
+			cout << "one rows begin: "; eoaix::print_now();
 
-			int min_checks = max_rows, max_checks = r, step_checks = min_checks;
+			int min_checks = Configer::get("lsh_max_candidate").toInt(), max_checks = min_checks, step_checks = min_checks;
+
 			std::string sr = eoaix::itoa(r, 10);
 			Configer::set("rows", sr);
 			for(int tk = min_top_k; tk <= max_top_k; tk+=step_top_k) {
@@ -199,6 +208,7 @@ class LSHTuner {
 
 				Bench bench;
 				bench.init();
+				cout << "bench.init() over."; eoaix::print_now();
 
 
 				cout << "tk(string): " << stk << " | " << "project_top_k: " << Configer::get("project_top_k").toString() << endl;
@@ -218,10 +228,10 @@ class LSHTuner {
 						double min_W = iter->second.first;//0.0001;//tuneW(min_prob, param, bench);
 						double max_W = iter->second.second;//0.03;//tuneW(max_prob, param, bench);
 
-						double step_W = (max_W - min_W) / 100;
+						double step_W = min_W; //(max_W - min_W) / 10;
 
 						int sw = 1;
-						for(double W = min_W; W <= max_W; W+=step_W*sw) {
+						for(double W = min_W; W <= max_W; W+=step_W) {
 							sw += 1;
 							param.W = W;	
 							_time = 0;

@@ -86,6 +86,8 @@ test_by_type(const string &type) {
 		}
 
 		for(u_int i = 0; i < resig.size(); ++i) {
+			cout << "[" << i << "]: " << resig[i].getID() << endl;
+			cerr << resig[i].getID() << " ";
 			for(size_t j = 0; j < resig[i].getSignal().size(); ++j) {
 				cerr << resig[i].getSignal()[j] << " ";
 			}

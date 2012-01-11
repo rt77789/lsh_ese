@@ -49,21 +49,51 @@ class Searcher {
 		}
 
 		std::sort(_res.begin(), _res.end());
+		if(_res.size() > topk) _res.resize(topk);
 		in.close();
 		return _res;
 	}
 
 	std::vector<SearchRes>& lsearch(const std::vector<u_int> &eid, const std::vector<double> &sin) {
 		_res.clear();
-		std::vector<Point> points;
-		points.swap(Candidate::get(eid));
+		//points.swap(Candidate::get(eid));
+		std::vector<u_int> index(eid.begin(), eid.end());
+		std::sort(index.begin(), index.end());
+
+
+		std::string path = Configer::get("project_dir").toString() + Configer::get("naive_dataset_path").toString();
+		size_t rows = Configer::get("rows").toInt();
+
+	std::ifstream _in(path.c_str(), std::ios_base::binary);
+	assert(_in.is_open());
 		
 		size_t topk = Configer::get("project_top_k").toInt();
 
-		for(size_t i = 0; i < points.size(); ++i) {
-			std::vector<double> tin(points[i].d, points[i].d + DIMS);
+		u64 base = 0;
+		_in.clear();
+		_in.seekg(base, std::ios_base::beg);
+		assert(!(_in.fail() && _in.bad()));
+
+		Point p;
+		for(size_t i = 0; i < index.size(); ++i) {
+			if(index[i] >= rows) {
+				std::cout << "[Attention]: index[i] >= rows in searcher. " << index[i] << " >= " << rows << std::endl;
+				continue;
+			}
+			u64 offset = (u64)sizeof(Point) * index[i];
+			if(i > 0) offset -= sizeof(Point);
+			_in.seekg(offset - base, std::ios_base::cur);
+			assert(!(_in.fail() && _in.bad()));
+			_in.read((char*)&p, sizeof(Point));
+
+			std::vector<double> tin(p.d, p.d + DIMS);
+
 			double sim = FFT::corr(tin, sin);
-			_res.push_back(SearchRes(points[i].identity, sim, tin));
+			_res.push_back(SearchRes(p.identity, sim, tin));
+
+			assert(p.identity == index[i]);
+			base = (u64)sizeof(Point) * index[i];
+
 			if(i + 1 == topk) {
 				make_heap(_res.begin(), _res.end());
 			}

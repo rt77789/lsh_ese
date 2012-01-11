@@ -128,7 +128,6 @@ NNIndex<Distance>* create_index_by_type(const Matrix<typename Distance::ElementT
 {
 	typedef typename Distance::ElementType ElementType;
 	flann_algorithm_t index_type = get_param<flann_algorithm_t>(params, "algorithm");
-	Logger::info("[%d index_type]", index_type);
 
     NNIndex<Distance>* nnIndex;
     switch (index_type) {

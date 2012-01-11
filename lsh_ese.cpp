@@ -150,6 +150,7 @@ LShashESE::findIndex(const vector<double> &sin, vector<SearchRes> &resig, const 
 	resig.swap(res);
 	int topk = Configer::get("project_top_k").toInt();
 	if(resig.size() > topk) resig.resize(topk);
+	cout << "resig.size(): " << resig.size() << "  - topk: " << topk << endl;
 
 	return eid.size();
 }
