@@ -104,6 +104,8 @@ class FLANNTuner {
 		double cost = 0;
 		vector< vector<u_int> > apro(_points.size());
 
+		ofstream otf("flann.search.result");
+
 		for(size_t i = 0; i < reid.size(); ++i) {
 			cost += 1.0 * reid[i].size() / rows;
 			eoaix::Timer timer;
@@ -114,8 +116,15 @@ class FLANNTuner {
 			for(size_t j = 0; j < res.size(); ++j) {
 				apro[i].push_back(res[j].getID());
 				std::cout << "j: " << j << " | sim: " << res[j].getSim() << std::endl;
+				otf << res[j].getID() << " ";
+				for(size_t k = 0; k < res[j].getSignal().size(); ++k) {
+					otf << res[j].getSignal()[k] << " ";
+				}
+				otf << endl;
 			}
 		}
+
+		otf.close();
 		double recall = bench.recall(apro);
 		cost = cost / _points.size();
 		return make_pair<double, double>(recall, cost);
@@ -192,7 +201,7 @@ class FLANNTuner {
 		int _dataset_rows = Configer::get("rows").toInt();
 		int multi_file_rows = Configer::get("multi_file_rows").toInt();
 
-		int min_rows = multi_file_rows, max_rows = _dataset_rows, step_rows = min_rows;
+		int min_rows = _dataset_rows, max_rows = _dataset_rows, step_rows = min_rows;
 
 		for(int r = min_rows; r <= max_rows; r += step_rows) {
 			int min_checks = r / 200 > 6500 ? r / 200 : 6500, max_checks = min_checks, step_checks = min_checks;

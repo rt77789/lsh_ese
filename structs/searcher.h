@@ -105,6 +105,7 @@ class Searcher {
 		}
 		/* Sort the SearchRes objects according to their sims/distance, from low to high. */
 		std::sort(_res.begin(), _res.end());
+		if(_res.size() > topk) _res.resize(topk);
 		return _res;
 	}
 

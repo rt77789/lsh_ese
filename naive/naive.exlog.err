@@ -1,0 +1,12 @@
+rows: 109242 | top_k: 50 = recall: 1 - cost: 1 - time: 2.71
+rows: 218484 | top_k: 50 = recall: 1 - cost: 1 - time: 7.95
+rows: 327726 | top_k: 50 = recall: 1 - cost: 1 - time: 12.12
+rows: 436968 | top_k: 50 = recall: 1 - cost: 1 - time: 15.87
+rows: 546210 | top_k: 50 = recall: 1 - cost: 1 - time: 19.83
+rows: 655452 | top_k: 50 = recall: 1 - cost: 1 - time: 24.57
+rows: 764694 | top_k: 50 = recall: 1 - cost: 1 - time: 28.17
+rows: 873936 | top_k: 50 = recall: 1 - cost: 1 - time: 31.8
+rows: 983178 | top_k: 50 = recall: 1 - cost: 1 - time: 35.98
+rows: 1092420 | top_k: 50 = recall: 1 - cost: 1 - time: 40.19
+rows: 1201662 | top_k: 50 = recall: 1 - cost: 1 - time: 43.41
+rows: 1310904 | top_k: 50 = recall: 1 - cost: 1 - time: 48.37

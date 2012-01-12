@@ -14,7 +14,7 @@ typedef unsigned long long u64;
 //# Batch fread Points at one time.
 #define BATCH_READ_NUM 1
 
-#define DIMS 1501
+#define DIMS 2048
 #define FREQUENT 100
 
 //# switch t0.

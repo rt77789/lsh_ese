@@ -1,0 +1,220 @@
+testset_query_num: 1
+2012/01/12 09:25:21 Thursday
+begin bench init()
+ before doBench | 1
+end search
+bench(dim): 0 | id: 0
+bench(dim): 0.00585157 | id: 95227
+bench(dim): 0.00804238 | id: 56380
+bench(dim): 0.0123958 | id: 42138
+bench(dim): 0.0129784 | id: 100036
+bench(dim): 0.0170386 | id: 38813
+bench(dim): 0.0178924 | id: 71807
+bench(dim): 0.0200766 | id: 15619
+bench(dim): 0.0201483 | id: 92268
+bench(dim): 0.0214549 | id: 88761
+bench(dim): 0.0224768 | id: 4589
+bench(dim): 0.0224898 | id: 8926
+bench(dim): 0.0225174 | id: 1479
+bench(dim): 0.0244031 | id: 69710
+bench(dim): 0.0262185 | id: 89658
+bench(dim): 0.0269189 | id: 428
+bench(dim): 0.0275387 | id: 10289
+bench(dim): 0.0284935 | id: 78205
+bench(dim): 0.0287268 | id: 6261
+bench(dim): 0.0289433 | id: 4502
+bench(dim): 0.0293726 | id: 97476
+--------------------------------------------------------------------------------
+end bench init()
+tk(string): 21 | project_top_k: 21
+before evaluate: 2012/01/12 09:25:43 Thursday
+j: 0 | sim: 2.68874e-09
+j: 1 | sim: 0.00585157
+j: 2 | sim: 0.00804238
+j: 3 | sim: 0.0123958
+j: 4 | sim: 0.0129784
+j: 5 | sim: 0.0170386
+j: 6 | sim: 0.0178924
+j: 7 | sim: 0.0200766
+j: 8 | sim: 0.0201483
+j: 9 | sim: 0.0214549
+j: 10 | sim: 0.0224768
+j: 11 | sim: 0.0224898
+j: 12 | sim: 0.0225174
+j: 13 | sim: 0.0244031
+j: 14 | sim: 0.0262185
+j: 15 | sim: 0.0269189
+j: 16 | sim: 0.0275387
+j: 17 | sim: 0.0284935
+j: 18 | sim: 0.0287268
+j: 19 | sim: 0.0289433
+j: 20 | sim: 0.0293726
+j: 21 | sim: 0.227014
+min single case precision: 1
+max single case precision: 1
+2012/01/12 09:25:49 Thursday
+2012/01/12 09:25:49 Thursday
+begin bench init()
+ before doBench | 1
+end search
+bench(dim): 0 | id: 0
+bench(dim): 0.00286355 | id: 192871
+bench(dim): 0.00585157 | id: 95227
+bench(dim): 0.00763966 | id: 202876
+bench(dim): 0.00804238 | id: 56380
+bench(dim): 0.0101665 | id: 142717
+bench(dim): 0.0113969 | id: 168466
+bench(dim): 0.011693 | id: 162731
+bench(dim): 0.0123958 | id: 42138
+bench(dim): 0.0129784 | id: 100036
+bench(dim): 0.0155157 | id: 140504
+bench(dim): 0.0170386 | id: 38813
+bench(dim): 0.0171254 | id: 131458
+bench(dim): 0.0178924 | id: 71807
+bench(dim): 0.0187481 | id: 181803
+bench(dim): 0.0200766 | id: 15619
+bench(dim): 0.0201483 | id: 92268
+bench(dim): 0.020919 | id: 212165
+bench(dim): 0.0214549 | id: 88761
+bench(dim): 0.0224768 | id: 4589
+bench(dim): 0.0224898 | id: 8926
+--------------------------------------------------------------------------------
+end bench init()
+tk(string): 21 | project_top_k: 21
+before evaluate: 2012/01/12 09:26:06 Thursday
+j: 0 | sim: 2.68874e-09
+j: 1 | sim: 0.00286355
+j: 2 | sim: 0.00585157
+j: 3 | sim: 0.00763966
+j: 4 | sim: 0.00804238
+j: 5 | sim: 0.0101665
+j: 6 | sim: 0.0113969
+j: 7 | sim: 0.011693
+j: 8 | sim: 0.0123958
+j: 9 | sim: 0.0129784
+j: 10 | sim: 0.0155157
+j: 11 | sim: 0.0170386
+j: 12 | sim: 0.0171254
+j: 13 | sim: 0.0178924
+j: 14 | sim: 0.0187481
+j: 15 | sim: 0.0200766
+j: 16 | sim: 0.0201483
+j: 17 | sim: 0.020919
+j: 18 | sim: 0.0214549
+j: 19 | sim: 0.0224768
+j: 20 | sim: 0.0224898
+j: 21 | sim: 0.177846
+min single case precision: 1
+max single case precision: 1
+2012/01/12 09:26:29 Thursday
+2012/01/12 09:26:29 Thursday
+begin bench init()
+ before doBench | 1
+end search
+bench(dim): 0 | id: 0
+bench(dim): 0.00286355 | id: 192871
+bench(dim): 0.00585157 | id: 95227
+bench(dim): 0.00763966 | id: 202876
+bench(dim): 0.00804238 | id: 56380
+bench(dim): 0.00894621 | id: 295049
+bench(dim): 0.00909245 | id: 287056
+bench(dim): 0.0101665 | id: 142717
+bench(dim): 0.0113969 | id: 168466
+bench(dim): 0.011693 | id: 162731
+bench(dim): 0.0123958 | id: 42138
+bench(dim): 0.0129784 | id: 100036
+bench(dim): 0.0155157 | id: 140504
+bench(dim): 0.0170386 | id: 38813
+bench(dim): 0.0171254 | id: 131458
+bench(dim): 0.0178924 | id: 71807
+bench(dim): 0.0187481 | id: 181803
+bench(dim): 0.0200766 | id: 15619
+bench(dim): 0.0201483 | id: 92268
+bench(dim): 0.020919 | id: 212165
+bench(dim): 0.0214549 | id: 88761
+--------------------------------------------------------------------------------
+end bench init()
+tk(string): 21 | project_top_k: 21
+before evaluate: 2012/01/12 09:27:06 Thursday
+j: 0 | sim: 2.68874e-09
+j: 1 | sim: 0.00286355
+j: 2 | sim: 0.00585157
+j: 3 | sim: 0.00763966
+j: 4 | sim: 0.00804238
+j: 5 | sim: 0.00894621
+j: 6 | sim: 0.00909245
+j: 7 | sim: 0.0101665
+j: 8 | sim: 0.0113969
+j: 9 | sim: 0.011693
+j: 10 | sim: 0.0123958
+j: 11 | sim: 0.0129784
+j: 12 | sim: 0.0155157
+j: 13 | sim: 0.0170386
+j: 14 | sim: 0.0171254
+j: 15 | sim: 0.0178924
+j: 16 | sim: 0.0187481
+j: 17 | sim: 0.0200766
+j: 18 | sim: 0.0201483
+j: 19 | sim: 0.020919
+j: 20 | sim: 0.0214549
+j: 21 | sim: 496.895
+min single case precision: 1
+max single case precision: 1
+2012/01/12 09:27:42 Thursday
+2012/01/12 09:27:42 Thursday
+begin bench init()
+ before doBench | 1
+end search
+bench(dim): 0 | id: 0
+bench(dim): 0.00286355 | id: 192871
+bench(dim): 0.00402362 | id: 363337
+bench(dim): 0.00546636 | id: 371211
+bench(dim): 0.00585157 | id: 95227
+bench(dim): 0.00763966 | id: 202876
+bench(dim): 0.00804238 | id: 56380
+bench(dim): 0.00891588 | id: 387399
+bench(dim): 0.00894621 | id: 295049
+bench(dim): 0.00909245 | id: 287056
+bench(dim): 0.0101665 | id: 142717
+bench(dim): 0.0112718 | id: 377193
+bench(dim): 0.0113969 | id: 168466
+bench(dim): 0.011693 | id: 162731
+bench(dim): 0.0123958 | id: 42138
+bench(dim): 0.0125197 | id: 370727
+bench(dim): 0.0129784 | id: 100036
+bench(dim): 0.0149618 | id: 397642
+bench(dim): 0.0150083 | id: 420053
+bench(dim): 0.0155157 | id: 140504
+bench(dim): 0.0170386 | id: 38813
+--------------------------------------------------------------------------------
+end bench init()
+tk(string): 21 | project_top_k: 21
+before evaluate: 2012/01/12 09:28:35 Thursday
+j: 0 | sim: 2.68874e-09
+j: 1 | sim: 0.00286355
+j: 2 | sim: 0.00402362
+j: 3 | sim: 0.00546636
+j: 4 | sim: 0.00585157
+j: 5 | sim: 0.00763966
+j: 6 | sim: 0.00804238
+j: 7 | sim: 0.00891588
+j: 8 | sim: 0.00894621
+j: 9 | sim: 0.00909245
+j: 10 | sim: 0.0101665
+j: 11 | sim: 0.0112718
+j: 12 | sim: 0.0113969
+j: 13 | sim: 0.011693
+j: 14 | sim: 0.0123958
+j: 15 | sim: 0.0125197
+j: 16 | sim: 0.0129784
+j: 17 | sim: 0.0149618
+j: 18 | sim: 0.0150083
+j: 19 | sim: 0.0155157
+j: 20 | sim: 0.0170386
+j: 21 | sim: 5.34371
+min single case precision: 1
+max single case precision: 1
+2012/01/12 09:29:31 Thursday
+2012/01/12 09:29:31 Thursday
+begin bench init()
+ before doBench | 1

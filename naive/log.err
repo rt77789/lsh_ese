@@ -1,0 +1,4 @@
+rows: 109242 | top_k: 21 = recall: 1 - cost: 1 - time: 2.59
+rows: 218484 | top_k: 21 = recall: 1 - cost: 1 - time: 6.35
+rows: 327726 | top_k: 21 = recall: 1 - cost: 1 - time: 10.19
+rows: 436968 | top_k: 21 = recall: 1 - cost: 1 - time: 13.97
