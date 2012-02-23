@@ -105,12 +105,15 @@ FFT::lconvolve(const vector<Complex> &x, const vector<Complex> &y, vector<Comple
 double FFT::corr(const vector<double> &x, const vector<double> &y) {
 
 #ifdef L2NORM
+	std::cout << "L2Norm\n";
 	return l2norm(x, y);
 #else
 
 #ifdef T0XCORR
+	std::cout << "T0-correlation\n";
 	return t0xcorr(x, y);
 #else
+	std::cout << "cross-correlation\n";
 	return xcorr(x, y);
 #endif
 

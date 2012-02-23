@@ -28,12 +28,18 @@ class Searcher {
 		size_t topk = Configer::get("project_top_k").toInt();
 		size_t rows = Configer::get("rows").toInt();
 
+		double time = 0;
 		//while((cpnum = fread(p, sizeof(Point), BATCH_READ_NUM, fhandle)) > 0) {
 		while(!in.fail() && !in.eof() && cpnum < rows) {
+			// eoaix::print_now();
+
 			in.read((char*)&p, sizeof(Point));
 			vector<double> tin(p.d, p.d + DIMS);
 			//cout << "p.identity: " << p.identity << endl;
+			eoaix::Timer t;
 			double sim = FFT::corr(sin, tin);
+			time += t.elapsed();
+			std::cout << "cpnum: " << cpnum << " " << time / (cpnum + 1) << std::endl;
 
 			_res.push_back(SearchRes(p.identity, sim, tin));
 			if(cpnum + 1 == topk) {

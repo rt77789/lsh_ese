@@ -21,7 +21,7 @@ typedef unsigned long long u64;
 //#define T0XCORR
 
 //#ifndef T0XCORR /* T0XCORR priority is higher than L2NORM. */
-#define L2NORM /* L2 metric for correlation. */
+//#define L2NORM /* L2 metric for correlation. */
 //#endif
 
 /* Switch for normalize the input dataset and query or not. */
