@@ -1,0 +1,2 @@
+rows: 109242 | top_k: 50 | checks: 4000000 | K: 10 | W: 10 | prob: 0.9 = recall: 0.86 - cost: 0.347998 - time: 0.968
+rows: 218484 | top_k: 50 | checks: 4000000 | K: 10 | W: 10 | prob: 0.9 = recall: 0.882 - cost: 0.441588 - time: 4.475

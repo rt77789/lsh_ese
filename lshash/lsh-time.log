@@ -1,0 +1,4 @@
+rows: 100 | top_k: 10 | checks: 10 | K: 10 | W: 0.001 | prob: 0.9 = recall: 0.5297 - cost: 0.15485 - time: 0.071
+rows: 100 | top_k: 10 | checks: 10 | K: 10 | W: 0.0039 | prob: 0.9 = recall: 0.6454 - cost: 0.28317 - time: 0.069
+rows: 100 | top_k: 10 | checks: 10 | K: 10 | W: 0.0068 | prob: 0.9 = recall: 0.7909 - cost: 0.51995 - time: 0.064
+rows: 100 | top_k: 10 | checks: 10 | K: 10 | W: 0.0097 | prob: 0.9 = recall: 0.8401 - cost: 0.63884 - time: 0.072

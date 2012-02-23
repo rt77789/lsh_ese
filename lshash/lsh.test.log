@@ -1,0 +1,245 @@
+ before doBench | 100
+tk(string): 10 | project_top_k: 10
+K: 10 - prob: 0.900000 - W: 0.000019 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 36 | alen: 9.10843 | unempty: 10458
+Table[1]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.11279 | unempty: 10453
+Table[2]:sum: 95256 | median: 1 | xlen: 36 | alen: 9.06855 | unempty: 10504
+Table[3]:sum: 95256 | median: 1 | xlen: 48 | alen: 9.12064 | unempty: 10444
+Table[4]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.07632 | unempty: 10495
+Table[5]:sum: 95256 | median: 1 | xlen: 36 | alen: 9.12326 | unempty: 10441
+Table[6]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.18839 | unempty: 10367
+Table[7]:sum: 95256 | median: 1 | xlen: 48 | alen: 9.10669 | unempty: 10460
+Table[8]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.1399 | unempty: 10422
+Table[9]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.10321 | unempty: 10464
+Table[10]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.09452 | unempty: 10474
+Table[11]:sum: 95256 | median: 1 | xlen: 36 | alen: 9.13727 | unempty: 10425
+Table[12]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.11192 | unempty: 10454
+Table[13]:sum: 95256 | median: 1 | xlen: 36 | alen: 9.13902 | unempty: 10423
+Table[14]:sum: 95256 | median: 1 | xlen: 36 | alen: 9.13289 | unempty: 10430
+Table[15]:sum: 95256 | median: 1 | xlen: 60 | alen: 9.11105 | unempty: 10455
+Table[16]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.11802 | unempty: 10447
+Table[17]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.09626 | unempty: 10472
+Table[18]:sum: 95256 | median: 1 | xlen: 42 | alen: 9.08238 | unempty: 10488
+Table[19]:sum: 95256 | median: 1 | xlen: 48 | alen: 9.09105 | unempty: 10478
+_points.size(): 100
+open /home/rt777789/code/project/lsh_ese/10wdata.raw.input over
+aveEval[0]: recall: 0.528 | cost: 5.66893e-05 | time: 0.08
+K: 10 - prob: 0.900000 - W: 10.000019 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 35232 | alen: 43.6754 | unempty: 2181
+Table[1]:sum: 95256 | median: 1 | xlen: 30366 | alen: 38.0112 | unempty: 2506
+Table[2]:sum: 95256 | median: 1 | xlen: 30570 | alen: 40.8824 | unempty: 2330
+Table[3]:sum: 95256 | median: 1 | xlen: 29454 | alen: 41.0586 | unempty: 2320
+Table[4]:sum: 95256 | median: 1 | xlen: 31344 | alen: 38.534 | unempty: 2472
+Table[5]:sum: 95256 | median: 1 | xlen: 27120 | alen: 34.0565 | unempty: 2797
+Table[6]:sum: 95256 | median: 1 | xlen: 33270 | alen: 42.3737 | unempty: 2248
+Table[7]:sum: 95256 | median: 1 | xlen: 32430 | alen: 43.1609 | unempty: 2207
+Table[8]:sum: 95256 | median: 1 | xlen: 30966 | alen: 40.1755 | unempty: 2371
+Table[9]:sum: 95256 | median: 1 | xlen: 34722 | alen: 43.1609 | unempty: 2207
+Table[10]:sum: 95256 | median: 1 | xlen: 29652 | alen: 39.1839 | unempty: 2431
+Table[11]:sum: 95256 | median: 1 | xlen: 27396 | alen: 30.2016 | unempty: 3154
+Table[12]:sum: 95256 | median: 1 | xlen: 33540 | alen: 44.1 | unempty: 2160
+Table[13]:sum: 95256 | median: 1 | xlen: 30582 | alen: 35.4771 | unempty: 2685
+Table[14]:sum: 95256 | median: 1 | xlen: 25488 | alen: 32.389 | unempty: 2941
+Table[15]:sum: 95256 | median: 1 | xlen: 33072 | alen: 40.2774 | unempty: 2365
+Table[16]:sum: 95256 | median: 1 | xlen: 32076 | alen: 41.2542 | unempty: 2309
+Table[17]:sum: 95256 | median: 1 | xlen: 30498 | alen: 37.6953 | unempty: 2527
+Table[18]:sum: 95256 | median: 1 | xlen: 21150 | alen: 27.046 | unempty: 3522
+Table[19]:sum: 95256 | median: 1 | xlen: 31428 | alen: 37.0935 | unempty: 2568
+_points.size(): 100
+aveEval[0]: recall: 0.858 | cost: 0.239337 | time: 68.97
+K: 10 - prob: 0.900000 - W: 25.000018 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 41832 | alen: 67.414 | unempty: 1413
+Table[1]:sum: 95256 | median: 1 | xlen: 39450 | alen: 51.4619 | unempty: 1851
+Table[2]:sum: 95256 | median: 1 | xlen: 42078 | alen: 66.9873 | unempty: 1422
+Table[3]:sum: 95256 | median: 1 | xlen: 40512 | alen: 54.4943 | unempty: 1748
+Table[4]:sum: 95256 | median: 1 | xlen: 40236 | alen: 54.092 | unempty: 1761
+Table[5]:sum: 95256 | median: 1 | xlen: 39078 | alen: 64.3187 | unempty: 1481
+Table[6]:sum: 95256 | median: 1 | xlen: 42096 | alen: 71.6749 | unempty: 1329
+Table[7]:sum: 95256 | median: 1 | xlen: 38718 | alen: 56.0659 | unempty: 1699
+Table[8]:sum: 95256 | median: 1 | xlen: 42330 | alen: 65.6485 | unempty: 1451
+Table[9]:sum: 95256 | median: 1 | xlen: 36108 | alen: 45.973 | unempty: 2072
+Table[10]:sum: 95256 | median: 1 | xlen: 41472 | alen: 63.4617 | unempty: 1501
+Table[11]:sum: 95256 | median: 1 | xlen: 41190 | alen: 66.6592 | unempty: 1429
+Table[12]:sum: 95256 | median: 1 | xlen: 42666 | alen: 61.1007 | unempty: 1559
+Table[13]:sum: 95256 | median: 1 | xlen: 41700 | alen: 67.5574 | unempty: 1410
+Table[14]:sum: 95256 | median: 1 | xlen: 41760 | alen: 67.1763 | unempty: 1418
+Table[15]:sum: 95256 | median: 1 | xlen: 40698 | alen: 57.5913 | unempty: 1654
+Table[16]:sum: 95256 | median: 1 | xlen: 41496 | alen: 56.8353 | unempty: 1676
+Table[17]:sum: 95256 | median: 1 | xlen: 42882 | alen: 61.8545 | unempty: 1540
+Table[18]:sum: 95256 | median: 1 | xlen: 41826 | alen: 58.7275 | unempty: 1622
+Table[19]:sum: 95256 | median: 1 | xlen: 39804 | alen: 53.9388 | unempty: 1766
+_points.size(): 100
+aveEval[0]: recall: 0.866 | cost: 0.309225 | time: 89.06
+K: 10 - prob: 0.900000 - W: 45.000018 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 51246 | alen: 100.587 | unempty: 947
+Table[1]:sum: 95256 | median: 1 | xlen: 49404 | alen: 108.74 | unempty: 876
+Table[2]:sum: 95256 | median: 1 | xlen: 49176 | alen: 84.672 | unempty: 1125
+Table[3]:sum: 95256 | median: 1 | xlen: 41298 | alen: 49.6642 | unempty: 1918
+Table[4]:sum: 95256 | median: 1 | xlen: 45084 | alen: 76.7575 | unempty: 1241
+Table[5]:sum: 95256 | median: 1 | xlen: 50520 | alen: 93.2968 | unempty: 1021
+Table[6]:sum: 95256 | median: 1 | xlen: 49206 | alen: 93.7559 | unempty: 1016
+Table[7]:sum: 95256 | median: 1 | xlen: 47340 | alen: 82.1881 | unempty: 1159
+Table[8]:sum: 95256 | median: 1 | xlen: 47442 | alen: 75.3012 | unempty: 1265
+Table[9]:sum: 95256 | median: 1 | xlen: 45180 | alen: 78.9851 | unempty: 1206
+Table[10]:sum: 95256 | median: 1 | xlen: 45720 | alen: 85.126 | unempty: 1119
+Table[11]:sum: 95256 | median: 1 | xlen: 46680 | alen: 86.9124 | unempty: 1096
+Table[12]:sum: 95256 | median: 1 | xlen: 44520 | alen: 64.1887 | unempty: 1484
+Table[13]:sum: 95256 | median: 1 | xlen: 47538 | alen: 87.3107 | unempty: 1091
+Table[14]:sum: 95256 | median: 1 | xlen: 48366 | alen: 82.3302 | unempty: 1157
+Table[15]:sum: 95256 | median: 1 | xlen: 48582 | alen: 81.9054 | unempty: 1163
+Table[16]:sum: 95256 | median: 1 | xlen: 49110 | alen: 101.228 | unempty: 941
+Table[17]:sum: 95256 | median: 1 | xlen: 49212 | alen: 130.846 | unempty: 728
+Table[18]:sum: 95256 | median: 1 | xlen: 52404 | alen: 121.655 | unempty: 783
+Table[19]:sum: 95256 | median: 1 | xlen: 51096 | alen: 105.605 | unempty: 902
+_points.size(): 100
+aveEval[0]: recall: 0.905 | cost: 0.389015 | time: 112.9
+K: 10 - prob: 0.900000 - W: 70.000017 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 48336 | alen: 90.4615 | unempty: 1053
+Table[1]:sum: 95256 | median: 1 | xlen: 52398 | alen: 170.404 | unempty: 559
+Table[2]:sum: 95256 | median: 1 | xlen: 46248 | alen: 96.2182 | unempty: 990
+Table[3]:sum: 95256 | median: 1 | xlen: 49998 | alen: 89.3583 | unempty: 1066
+Table[4]:sum: 95256 | median: 1 | xlen: 52254 | alen: 120.883 | unempty: 788
+Table[5]:sum: 95256 | median: 1 | xlen: 51156 | alen: 124.844 | unempty: 763
+Table[6]:sum: 95256 | median: 1 | xlen: 45852 | alen: 82.0465 | unempty: 1161
+Table[7]:sum: 95256 | median: 1 | xlen: 53136 | alen: 151.2 | unempty: 630
+Table[8]:sum: 95256 | median: 1 | xlen: 51444 | alen: 118.921 | unempty: 801
+Table[9]:sum: 95256 | median: 1 | xlen: 51270 | alen: 89.5263 | unempty: 1064
+Table[10]:sum: 95256 | median: 1 | xlen: 49182 | alen: 110.378 | unempty: 863
+Table[11]:sum: 95256 | median: 1 | xlen: 52626 | alen: 111.672 | unempty: 853
+Table[12]:sum: 95256 | median: 1 | xlen: 52890 | alen: 95.0659 | unempty: 1002
+Table[13]:sum: 95256 | median: 1 | xlen: 52776 | alen: 146.548 | unempty: 650
+Table[14]:sum: 95256 | median: 1 | xlen: 49734 | alen: 116.592 | unempty: 817
+Table[15]:sum: 95256 | median: 1 | xlen: 50700 | alen: 118.773 | unempty: 802
+Table[16]:sum: 95256 | median: 1 | xlen: 50928 | alen: 123.389 | unempty: 772
+Table[17]:sum: 95256 | median: 1 | xlen: 42888 | alen: 68.6282 | unempty: 1388
+Table[18]:sum: 95256 | median: 1 | xlen: 46086 | alen: 75.4204 | unempty: 1263
+Table[19]:sum: 95256 | median: 1 | xlen: 48936 | alen: 100.269 | unempty: 950
+_points.size(): 100
+aveEval[0]: recall: 0.934 | cost: 0.417894 | time: 125.63
+K: 10 - prob: 0.900000 - W: 100.000015 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 55836 | alen: 174.782 | unempty: 545
+Table[1]:sum: 95256 | median: 1 | xlen: 57834 | alen: 176.727 | unempty: 539
+Table[2]:sum: 95256 | median: 1 | xlen: 54816 | alen: 184.963 | unempty: 515
+Table[3]:sum: 95256 | median: 1 | xlen: 55734 | alen: 233.471 | unempty: 408
+Table[4]:sum: 95256 | median: 1 | xlen: 53538 | alen: 165.951 | unempty: 574
+Table[5]:sum: 95256 | median: 1 | xlen: 54684 | alen: 146.098 | unempty: 652
+Table[6]:sum: 95256 | median: 1 | xlen: 52374 | alen: 160.094 | unempty: 595
+Table[7]:sum: 95256 | median: 1 | xlen: 55830 | alen: 199.28 | unempty: 478
+Table[8]:sum: 95256 | median: 1 | xlen: 54510 | alen: 165.088 | unempty: 577
+Table[9]:sum: 95256 | median: 1 | xlen: 54714 | alen: 172.878 | unempty: 551
+Table[10]:sum: 95256 | median: 1 | xlen: 53142 | alen: 151.923 | unempty: 627
+Table[11]:sum: 95256 | median: 1 | xlen: 54516 | alen: 232.332 | unempty: 410
+Table[12]:sum: 95256 | median: 1 | xlen: 53910 | alen: 170.71 | unempty: 558
+Table[13]:sum: 95256 | median: 1 | xlen: 55434 | alen: 154.136 | unempty: 618
+Table[14]:sum: 95256 | median: 1 | xlen: 54510 | alen: 147 | unempty: 648
+Table[15]:sum: 95256 | median: 1 | xlen: 54270 | alen: 159.291 | unempty: 598
+Table[16]:sum: 95256 | median: 1 | xlen: 50676 | alen: 102.868 | unempty: 926
+Table[17]:sum: 95256 | median: 1 | xlen: 52932 | alen: 260.262 | unempty: 366
+Table[18]:sum: 95256 | median: 1 | xlen: 52632 | alen: 172.878 | unempty: 551
+Table[19]:sum: 95256 | median: 1 | xlen: 52776 | alen: 121.345 | unempty: 785
+_points.size(): 100
+aveEval[0]: recall: 0.902 | cost: 0.462652 | time: 135.5
+K: 10 - prob: 0.900000 - W: 135.000014 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 52230 | alen: 171.324 | unempty: 556
+Table[1]:sum: 95256 | median: 1 | xlen: 54324 | alen: 169.797 | unempty: 561
+Table[2]:sum: 95256 | median: 1 | xlen: 52746 | alen: 114.766 | unempty: 830
+Table[3]:sum: 95256 | median: 1 | xlen: 57534 | alen: 257.449 | unempty: 370
+Table[4]:sum: 95256 | median: 1 | xlen: 55224 | alen: 352.8 | unempty: 270
+Table[5]:sum: 95256 | median: 1 | xlen: 53646 | alen: 134.924 | unempty: 706
+Table[6]:sum: 95256 | median: 1 | xlen: 54270 | alen: 230.087 | unempty: 414
+Table[7]:sum: 95256 | median: 1 | xlen: 56598 | alen: 240.545 | unempty: 396
+Table[8]:sum: 95256 | median: 1 | xlen: 57606 | alen: 384.097 | unempty: 248
+Table[9]:sum: 95256 | median: 1 | xlen: 54756 | alen: 199.28 | unempty: 478
+Table[10]:sum: 95256 | median: 1 | xlen: 55458 | alen: 396.9 | unempty: 240
+Table[11]:sum: 95256 | median: 1 | xlen: 57210 | alen: 216.491 | unempty: 440
+Table[12]:sum: 95256 | median: 1 | xlen: 56820 | alen: 213.101 | unempty: 447
+Table[13]:sum: 95256 | median: 1 | xlen: 51768 | alen: 146.323 | unempty: 651
+Table[14]:sum: 95256 | median: 1 | xlen: 54918 | alen: 196 | unempty: 486
+Table[15]:sum: 95256 | median: 1 | xlen: 54726 | alen: 182.483 | unempty: 522
+Table[16]:sum: 95256 | median: 1 | xlen: 55680 | alen: 197.627 | unempty: 482
+Table[17]:sum: 95256 | median: 1 | xlen: 49098 | alen: 111.934 | unempty: 851
+Table[18]:sum: 95256 | median: 1 | xlen: 55542 | alen: 230.087 | unempty: 414
+Table[19]:sum: 95256 | median: 1 | xlen: 56430 | alen: 286.054 | unempty: 333
+_points.size(): 100
+aveEval[0]: recall: 0.954 | cost: 0.512215 | time: 148.22
+K: 10 - prob: 0.900000 - W: 175.000013 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 56340 | alen: 325.106 | unempty: 293
+Table[1]:sum: 95256 | median: 1 | xlen: 53256 | alen: 235.782 | unempty: 404
+Table[2]:sum: 95256 | median: 1 | xlen: 53286 | alen: 304.332 | unempty: 313
+Table[3]:sum: 95256 | median: 1 | xlen: 52014 | alen: 286.916 | unempty: 332
+Table[4]:sum: 95256 | median: 1 | xlen: 53688 | alen: 237.546 | unempty: 401
+Table[5]:sum: 95256 | median: 1 | xlen: 57396 | alen: 300.492 | unempty: 317
+Table[6]:sum: 95256 | median: 1 | xlen: 51186 | alen: 147.227 | unempty: 647
+Table[7]:sum: 95256 | median: 1 | xlen: 54396 | alen: 364.966 | unempty: 261
+Table[8]:sum: 95256 | median: 1 | xlen: 49224 | alen: 186.411 | unempty: 511
+Table[9]:sum: 95256 | median: 1 | xlen: 56496 | alen: 263.867 | unempty: 361
+Table[10]:sum: 95256 | median: 1 | xlen: 54606 | alen: 343.884 | unempty: 277
+Table[11]:sum: 95256 | median: 1 | xlen: 56202 | alen: 236.955 | unempty: 402
+Table[12]:sum: 95256 | median: 1 | xlen: 55620 | alen: 315.417 | unempty: 302
+Table[13]:sum: 95256 | median: 1 | xlen: 54492 | alen: 218.477 | unempty: 436
+Table[14]:sum: 95256 | median: 1 | xlen: 52110 | alen: 200.962 | unempty: 474
+Table[15]:sum: 95256 | median: 1 | xlen: 50424 | alen: 109.239 | unempty: 872
+Table[16]:sum: 95256 | median: 1 | xlen: 57834 | alen: 355.433 | unempty: 268
+Table[17]:sum: 95256 | median: 1 | xlen: 53760 | alen: 245.505 | unempty: 388
+Table[18]:sum: 95256 | median: 1 | xlen: 52914 | alen: 213.578 | unempty: 446
+Table[19]:sum: 95256 | median: 1 | xlen: 55338 | alen: 250.674 | unempty: 380
+_points.size(): 100
+aveEval[0]: recall: 0.909 | cost: 0.504974 | time: 144.52
+K: 10 - prob: 0.900000 - W: 220.000011 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 95256 | median: 1 | xlen: 56814 | alen: 195.598 | unempty: 487
+Table[1]:sum: 95256 | median: 1 | xlen: 59478 | alen: 352.8 | unempty: 270
+Table[2]:sum: 95256 | median: 1 | xlen: 57750 | alen: 204.412 | unempty: 466
+Table[3]:sum: 95256 | median: 1 | xlen: 62556 | alen: 498.723 | unempty: 191
+Table[4]:sum: 95256 | median: 1 | xlen: 61062 | alen: 469.241 | unempty: 203
+Table[5]:sum: 95256 | median: 1 | xlen: 59220 | alen: 415.965 | unempty: 229
+Table[6]:sum: 95256 | median: 1 | xlen: 54636 | alen: 197.217 | unempty: 483
+Table[7]:sum: 95256 | median: 1 | xlen: 57144 | alen: 249.361 | unempty: 382
+Table[8]:sum: 95256 | median: 1 | xlen: 57696 | alen: 347.65 | unempty: 274
+Table[9]:sum: 95256 | median: 1 | xlen: 58734 | alen: 276.907 | unempty: 344
+Table[10]:sum: 95256 | median: 1 | xlen: 62946 | alen: 591.652 | unempty: 161
+Table[11]:sum: 95256 | median: 1 | xlen: 59034 | alen: 278.526 | unempty: 342
+Table[12]:sum: 95256 | median: 1 | xlen: 58350 | alen: 328.469 | unempty: 290
+Table[13]:sum: 95256 | median: 1 | xlen: 55920 | alen: 329.606 | unempty: 289
+Table[14]:sum: 95256 | median: 1 | xlen: 57324 | alen: 447.211 | unempty: 213
+Table[15]:sum: 95256 | median: 1 | xlen: 58968 | alen: 250.016 | unempty: 381
+Table[16]:sum: 95256 | median: 1 | xlen: 59490 | alen: 400.235 | unempty: 238
+Table[17]:sum: 95256 | median: 1 | xlen: 55938 | alen: 219.484 | unempty: 434
+Table[18]:sum: 95256 | median: 1 | xlen: 60486 | alen: 496.125 | unempty: 192
+Table[19]:sum: 95256 | median: 1 | xlen: 56808 | alen: 235.2 | unempty: 405
+_points.size(): 100

@@ -1,0 +1,736 @@
+open /home/rt777789/code/project/lsh_ese/output_moment.raw.input over
+tk(string): 10 | project_top_k: 10
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.611 | cost: 0.1397
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.551 | cost: 0.1142
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.486 | cost: 0.0764
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.567 | cost: 0.1478
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.509 | cost: 0.079
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.582 | cost: 0.1358
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.631 | cost: 0.1538
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.552 | cost: 0.0998
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.357 | cost: 0.0625
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.593 | cost: 0.1389
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.683 | cost: 0.1571
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.799 | cost: 0.2726
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.806 | cost: 0.388
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.834 | cost: 0.3898
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.677 | cost: 0.1643
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.787 | cost: 0.438
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.783 | cost: 0.3696
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.738 | cost: 0.2583
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.724 | cost: 0.2142
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.894 | cost: 0.5768
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.908 | cost: 0.8023
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.883 | cost: 0.5617
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.815 | cost: 0.468
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.809 | cost: 0.3436
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.771 | cost: 0.3067
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.735 | cost: 0.215
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.989 | cost: 0.9525
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.918 | cost: 0.6458
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.759 | cost: 0.2734
+K: 10 - prob: 0.900000 - W: 0.006800 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.87 | cost: 0.6012
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.993 | cost: 0.9703
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.836 | cost: 0.3353
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.981 | cost: 0.9517
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.996 | cost: 0.9431
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.784 | cost: 0.3466
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.994 | cost: 0.9709
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.794 | cost: 0.2523
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.69 | cost: 0.162
+K: 10 - prob: 0.900000 - W: 0.009700 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.994 | cost: 0.9708
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.866 | cost: 0.5596
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.997 | cost: 0.9525
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.716 | cost: 0.186
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.882 | cost: 0.5344
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.97 | cost: 0.897
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.894 | cost: 0.735
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.806 | cost: 0.4353
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.981 | cost: 0.8896
+K: 10 - prob: 0.900000 - W: 0.012600 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.996 | cost: 0.9616
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.996 | cost: 0.9612
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.993 | cost: 0.9519
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.015500 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.826 | cost: 0.2973
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.992 | cost: 0.9804
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.858 | cost: 0.538
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.995 | cost: 0.9804
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.902 | cost: 0.7517
+K: 10 - prob: 0.900000 - W: 0.018400 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.989 | cost: 0.96
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.854 | cost: 0.3273
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.989 | cost: 0.9798
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.021300 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.962 | cost: 0.8568
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.844 | cost: 0.3173
+K: 10 - prob: 0.900000 - W: 0.024200 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.812 | cost: 0.4365
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.996 | cost: 0.96
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.989 | cost: 0.9249
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.027100 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.806 | cost: 0.3389
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.995 | cost: 0.9802
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.995 | cost: 0.9804
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.995 | cost: 0.9709
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.814 | cost: 0.4922
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.994 | cost: 0.9612
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.030000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 1 | cost: 1
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.615 | cost: 0.1282
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.586 | cost: 0.1264
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[2]: recall: 0.573 | cost: 0.1385
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[3]: recall: 0.564 | cost: 0.1161
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[4]: recall: 0.531 | cost: 0.0945
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[5]: recall: 0.595 | cost: 0.1502
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[6]: recall: 0.523 | cost: 0.0915
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[7]: recall: 0.566 | cost: 0.1301
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[8]: recall: 0.571 | cost: 0.1581
+K: 10 - prob: 0.900000 - W: 0.001000 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[9]: recall: 0.598 | cost: 0.1585
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[0]: recall: 0.944 | cost: 0.6992
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before
+before buildIndex
+load Point over.
+begin store static fileds
+aveEval[1]: recall: 0.811 | cost: 0.2457
+K: 10 - prob: 0.900000 - W: 0.003900 - R: 0.500000 - M: 20
+load_index before

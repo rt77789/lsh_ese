@@ -1,0 +1,26 @@
+lsh version of ESE.
+
+A LSH implementation same as e2lsh, but more OO-like.
+A wavelet transform method for computing similar signals.
+
+T=0 cross-correlation calculation.
+
+TO DO:
+0. Query Point -> Expand some nearby Point.
+1. Normalize all the Point?
+2. Features? How to use it?
+3. [DOING] Multi-threads. # It's a little hard to transfer to multi-threads.
+4. Experimences to check the precisions.
+5. [DONE] Batch dealing with loading data from external file.
+6. Adjusting the parameters.
+7. SAC file as the input query | non-consistent dimensions.
+8. Plotting the signal, matlab or java.
+
+
+Remove remote branch:(:heads/new_created_branch)
+git push origin :heads/origin/t0corr
+
+Plot using R.
+R CMD BATCH --args plot.R
+
+Permission problem costs me such a long time to deal with, finally I chown the directory that the systems' root dir as 'www-data'.

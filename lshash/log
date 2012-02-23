@@ -1,0 +1,84 @@
+one rows begin: 2012/01/10 21:44:19 Tuesday
+ before doBench | 10
+bench load ok...
+bench.init() over.2012/01/10 21:44:19 Tuesday
+tk(string): 50 | project_top_k: 50
+lsh.init begin: 2012/01/10 21:44:19 Tuesday
+K: 10 - prob: 0.900000 - W: 10.000000 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 109242 | median: 1 | xlen: 36630 | alen: 22.5195 | unempty: 4851
+Table[1]:sum: 109242 | median: 1 | xlen: 38741 | alen: 22.608 | unempty: 4832
+Table[2]:sum: 109242 | median: 1 | xlen: 39467 | alen: 23.6148 | unempty: 4626
+Table[3]:sum: 109242 | median: 1 | xlen: 36557 | alen: 19.5424 | unempty: 5590
+Table[4]:sum: 109242 | median: 1 | xlen: 37857 | alen: 19.5354 | unempty: 5592
+Table[5]:sum: 109242 | median: 1 | xlen: 37777 | alen: 18.9656 | unempty: 5760
+Table[6]:sum: 109242 | median: 1 | xlen: 36748 | alen: 22.1451 | unempty: 4933
+Table[7]:sum: 109242 | median: 1 | xlen: 35886 | alen: 20.4152 | unempty: 5351
+Table[8]:sum: 109242 | median: 1 | xlen: 38306 | alen: 19.9492 | unempty: 5476
+Table[9]:sum: 109242 | median: 1 | xlen: 35143 | alen: 17.0985 | unempty: 6389
+Table[10]:sum: 109242 | median: 1 | xlen: 39095 | alen: 20.808 | unempty: 5250
+Table[11]:sum: 109242 | median: 1 | xlen: 35421 | alen: 26.1971 | unempty: 4170
+Table[12]:sum: 109242 | median: 1 | xlen: 37914 | alen: 20.2864 | unempty: 5385
+Table[13]:sum: 109242 | median: 1 | xlen: 36969 | alen: 19.9129 | unempty: 5486
+Table[14]:sum: 109242 | median: 1 | xlen: 38172 | alen: 21.0162 | unempty: 5198
+Table[15]:sum: 109242 | median: 1 | xlen: 33479 | alen: 17.2633 | unempty: 6328
+Table[16]:sum: 109242 | median: 1 | xlen: 36595 | alen: 19.5459 | unempty: 5589
+Table[17]:sum: 109242 | median: 1 | xlen: 38512 | alen: 22.1991 | unempty: 4921
+Table[18]:sum: 109242 | median: 1 | xlen: 36086 | alen: 17.9438 | unempty: 6088
+Table[19]:sum: 109242 | median: 1 | xlen: 37204 | alen: 21.0283 | unempty: 5195
+lsh.init() end: 2012/01/10 21:45:44 Tuesday
+_points.size(): 10
+min single case precision: 0.06
+max single case precision: 1
+evaluate end: 2012/01/10 21:45:53 Tuesday
+aveEval[0]: recall: 0.86 | cost: 0.347998 | time: 0.968
+one rows begin: 2012/01/10 21:45:53 Tuesday
+ before doBench | 10
+bench load ok...
+bench.init() over.2012/01/10 21:45:54 Tuesday
+tk(string): 50 | project_top_k: 50
+lsh.init begin: 2012/01/10 21:45:54 Tuesday
+K: 10 - prob: 0.900000 - W: 10.000000 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex
+load Point over.
+Table[0]:sum: 218484 | median: 1 | xlen: 93485 | alen: 38.7864 | unempty: 5633
+Table[1]:sum: 218484 | median: 1 | xlen: 94177 | alen: 39.833 | unempty: 5485
+Table[2]:sum: 218484 | median: 1 | xlen: 85752 | alen: 35.9704 | unempty: 6074
+Table[3]:sum: 218484 | median: 1 | xlen: 90962 | alen: 33.3004 | unempty: 6561
+Table[4]:sum: 218484 | median: 1 | xlen: 94255 | alen: 40.9223 | unempty: 5339
+Table[5]:sum: 218484 | median: 1 | xlen: 91793 | alen: 37.4694 | unempty: 5831
+Table[6]:sum: 218484 | median: 1 | xlen: 83058 | alen: 28.0792 | unempty: 7781
+Table[7]:sum: 218484 | median: 1 | xlen: 91084 | alen: 37.1445 | unempty: 5882
+Table[8]:sum: 218484 | median: 1 | xlen: 81462 | alen: 30.7767 | unempty: 7099
+Table[9]:sum: 218484 | median: 1 | xlen: 85103 | alen: 31.1586 | unempty: 7012
+Table[10]:sum: 218484 | median: 1 | xlen: 90988 | alen: 34.4178 | unempty: 6348
+Table[11]:sum: 218484 | median: 1 | xlen: 93169 | alen: 40.0007 | unempty: 5462
+Table[12]:sum: 218484 | median: 1 | xlen: 90915 | alen: 39.4233 | unempty: 5542
+Table[13]:sum: 218484 | median: 1 | xlen: 96318 | alen: 46.0451 | unempty: 4745
+Table[14]:sum: 218484 | median: 1 | xlen: 87907 | alen: 43.393 | unempty: 5035
+Table[15]:sum: 218484 | median: 1 | xlen: 83051 | alen: 29.5528 | unempty: 7393
+Table[16]:sum: 218484 | median: 1 | xlen: 95565 | alen: 39.2674 | unempty: 5564
+Table[17]:sum: 218484 | median: 1 | xlen: 86159 | alen: 30.3071 | unempty: 7209
+Table[18]:sum: 218484 | median: 1 | xlen: 89699 | alen: 32.0828 | unempty: 6810
+Table[19]:sum: 218484 | median: 1 | xlen: 87882 | alen: 35.0472 | unempty: 6234
+lsh.init() end: 2012/01/10 21:48:44 Tuesday
+_points.size(): 10
+min single case precision: 0.08
+max single case precision: 1
+evaluate end: 2012/01/10 21:51:52 Tuesday
+aveEval[0]: recall: 0.882 | cost: 0.441588 | time: 4.475
+one rows begin: 2012/01/10 21:51:52 Tuesday
+ before doBench | 10
+bench load ok...
+bench.init() over.2012/01/10 21:51:52 Tuesday
+tk(string): 50 | project_top_k: 50
+lsh.init begin: 2012/01/10 21:51:52 Tuesday
+K: 10 - prob: 0.900000 - W: 10.000000 - R: 0.500000 - M: 20
+load_index before
+L: 20
+before buildIndex

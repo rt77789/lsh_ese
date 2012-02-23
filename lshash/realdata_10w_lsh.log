@@ -1,0 +1,8 @@
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 1.93164e-05 | prob: 0.9 = recall: 0.528 - cost: 5.66893e-05 - time: 0.08
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 10 | prob: 0.9 = recall: 0.858 - cost: 0.239337 - time: 68.97
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 25 | prob: 0.9 = recall: 0.866 - cost: 0.309225 - time: 89.06
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 45 | prob: 0.9 = recall: 0.905 - cost: 0.389015 - time: 112.9
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 70 | prob: 0.9 = recall: 0.934 - cost: 0.417894 - time: 125.63
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 100 | prob: 0.9 = recall: 0.902 - cost: 0.462652 - time: 135.5
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 135 | prob: 0.9 = recall: 0.954 - cost: 0.512215 - time: 148.22
+rows: 95256 | top_k: 10 | checks: 95256 | K: 10 | W: 175 | prob: 0.9 = recall: 0.909 - cost: 0.504974 - time: 144.52

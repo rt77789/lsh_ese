@@ -1,0 +1,11 @@
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 50 | prob: 0.9 = recall: 0.892 - cost: 0.564246 - time: 1.76
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 54 | prob: 0.9 = recall: 0.904 - cost: 0.620238 - time: 1.96
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 58 | prob: 0.9 = recall: 0.902 - cost: 0.563643 - time: 1.79
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 62 | prob: 0.9 = recall: 0.906 - cost: 0.544534 - time: 1.71
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 66 | prob: 0.9 = recall: 0.898 - cost: 0.551026 - time: 1.72
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 70 | prob: 0.9 = recall: 0.916 - cost: 0.590846 - time: 1.87
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 74 | prob: 0.9 = recall: 0.924 - cost: 0.659005 - time: 2.05
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 78 | prob: 0.9 = recall: 0.918 - cost: 0.57681 - time: 1.82
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 82 | prob: 0.9 = recall: 0.914 - cost: 0.608208 - time: 1.94
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 86 | prob: 0.9 = recall: 0.92 - cost: 0.560561 - time: 1.94
+rows: 13109 | top_k: 50 | checks: 40000 | K: 10 | W: 90 | prob: 0.9 = recall: 0.912 - cost: 0.49077 - time: 1.53

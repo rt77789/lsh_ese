@@ -1,0 +1,12 @@
+rows: 100 | top_k: 10 | K: 10 | W: 0.001 | prob: 0.9 = recall: 0.5439 - cost: 0.11479
+rows: 100 | top_k: 10 | K: 10 | W: 0.0039 | prob: 0.9 = recall: 0.7725 - cost: 0.32287
+rows: 100 | top_k: 10 | K: 10 | W: 0.0068 | prob: 0.9 = recall: 0.8457 - cost: 0.51702
+rows: 100 | top_k: 10 | K: 10 | W: 0.0097 | prob: 0.9 = recall: 0.9062 - cost: 0.6903
+rows: 100 | top_k: 10 | K: 10 | W: 0.0126 | prob: 0.9 = recall: 0.9108 - cost: 0.7151
+rows: 100 | top_k: 10 | K: 10 | W: 0.0155 | prob: 0.9 = recall: 0.9989 - cost: 0.99131
+rows: 100 | top_k: 10 | K: 10 | W: 0.0184 | prob: 0.9 = recall: 0.9573 - cost: 0.85478
+rows: 100 | top_k: 10 | K: 10 | W: 0.0213 | prob: 0.9 = recall: 0.9832 - cost: 0.92671
+rows: 100 | top_k: 10 | K: 10 | W: 0.0242 | prob: 0.9 = recall: 0.9618 - cost: 0.86106
+rows: 100 | top_k: 10 | K: 10 | W: 0.0271 | prob: 0.9 = recall: 0.9791 - cost: 0.92238
+rows: 100 | top_k: 10 | K: 10 | W: 0.03 | prob: 0.9 = recall: 0.9793 - cost: 0.93849
+rows: 100 | top_k: 10 | K: 10 | W: 0.001 | prob: 0.9 = recall: 0.5722 - cost: 0.12921
