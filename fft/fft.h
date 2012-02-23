@@ -17,8 +17,8 @@ class FFT {
 
 		//# linear convolution.
 		static void lconvolve(const vector<Complex> &x, const vector<Complex> &y, vector<Complex> &res);
-		static double xcorr(const vector<double> &x, const vector<double> &y);
-		static double xcorr(const double *x, const double *y, size_t len);
+		static pair<int, double> xcorr(const vector<double> &x, const vector<double> &y);
+		static pair<int, double> xcorr(const double *x, const double *y, size_t len);
 
 		static double t0xcorr(const vector<double> &sa, const vector<double> &sb);
 

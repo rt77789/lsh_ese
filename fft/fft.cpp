@@ -113,7 +113,8 @@ double FFT::corr(const vector<double> &x, const vector<double> &y) {
 #ifdef T0XCORR
 	return t0xcorr(x, y);
 #else
-	return xcorr(x, y);
+	pair<int, double> res = xcorr(x, y);
+	return res.second;
 #endif
 
 #endif
@@ -157,7 +158,7 @@ void FFT::normalize(vector<double> &sin) {
 	}
 }
 //# cross-correlation.
-double
+pair<int, double>
 FFT::xcorr(const vector<double> &x, const vector<double> &y) {
 	//# It's normalized.
 
@@ -204,13 +205,16 @@ FFT::xcorr(const vector<double> &x, const vector<double> &y) {
 	double maxcorr = -1e100;
 
 	//# Attention, here 'len' is suitable?
+	int mini = -1;
 	for(size_t i = 0; i < len; ++i) {
 		//cout << i << " [:] " << res[i].real() << " - " << res[i].imagin() << endl;
-		if(res[i].real() > maxcorr)
+		if(res[i].real() > maxcorr) {
 			maxcorr = res[i].real();
+			mini = i;
+		}
 	}
 
-	return maxcorr / (xnorm * ynorm);
+	return make_pair<int, double>(len - mini - 1, maxcorr / (xnorm * ynorm));
 }
 
 pair<int, double> FFT::shift(const vector<double> &sa, const vector<double> &sb) {
@@ -261,7 +265,7 @@ pair<int, double> FFT::shift(const vector<double> &sa, const vector<double> &sb)
 }
 
 //# override-above function.
-double
+pair<int, double>
 FFT::xcorr(const double *x, const double *y, size_t len) {
 	vector<double> nx, ny;
 	nx.resize(len); ny.resize(len);

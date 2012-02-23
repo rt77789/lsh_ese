@@ -88,7 +88,10 @@ test_by_type(const string &type) {
 		}
 
 		for(u_int i = 0; i < resig.size(); ++i) {
-			pair<int, double> fres = FFT::shift(sin, resig[i].getSignal());
+			// pair<int, double> fres = FFT::shift(sin, resig[i].getSignal());
+			pair<int, double> fres = FFT::xcorr(sin, resig[i].getSignal());
+
+			//assert((fres.first % sin.size() + sin.size()) % sin.size() == xres.first);
 
 			int offset = fres.first;
 			double sim = fres.second;

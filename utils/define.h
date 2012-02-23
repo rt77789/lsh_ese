@@ -25,7 +25,7 @@ typedef unsigned long long u64;
 //#endif
 
 /* Switch for normalize the input dataset and query or not. */
-//#define NORMALIZE
+#define NORMALIZE
 #define INF 1<<31
 
 #define TABLE_PRIME 17681 //((1LL<<13) - 1)

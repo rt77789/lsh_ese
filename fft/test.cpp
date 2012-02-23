@@ -143,9 +143,9 @@ test_xcorr2() {
 	for(size_t i = 0; i < y.size(); ++i)
 		y[i] = x[i] - 1; //sin(x[i] * x[i] * x[i]);
 
-	double res = FFT::xcorr(x, y);
+	pair<int, double> res = FFT::xcorr(x, y);
 
-	cout << res << endl;
+	cout << res.first << " " << res.second << endl;
 
 }
 

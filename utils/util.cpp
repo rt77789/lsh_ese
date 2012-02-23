@@ -168,6 +168,7 @@ namespace eoaix {
 	}
 	void normalize(float *p) {
 #ifdef NORMALIZE	
+		// 最大振幅归一化 .
 		double max = 0;
 		for(int i = 0; i < DIMS; ++i) {
 			max = fabs(p[i]) > max ? fabs(p[i]) : max;

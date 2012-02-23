@@ -68,6 +68,8 @@ void extract_sac_sample(const char *path, const char *opath) {
 			if(j > 0) fprintf(fout, " "); 
 			fprintf(fout, "%lf", sin[j]);
 		}
+		for(size_t j = sin.size(); j < 4096 /*8192*/; ++j) 
+			fprintf(fout, " %lf", 0.0);
 		fprintf(fout, "\n");
 	}
 	fclose(fout);

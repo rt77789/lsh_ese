@@ -330,6 +330,8 @@ LShashESE::transformDataSet(const char *_fin, const char *_fout) {
 		}
 		assert(j == DIMS);
 
+		// Normalize.
+		eoaix::normalize(p);
 		assert(fwrite(&p, sizeof(Point), 1, fh) == 1);
 	}
 
