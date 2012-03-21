@@ -15,11 +15,9 @@ read(const char *file) {
 		exit(0);
 	}
 	
-/*	
 	printf("delta: %f\nscale: %f\no: %f\na: %f\nb: %f\ne: %f\n",
 			sHead->delta, sHead->scale, sHead->o, sHead->a, sHead->b, sHead->e);
 	cout << sHead->npts << endl;
-*/	
 	for(int i = 0; i < sHead->npts && i < 2048; ++i) {
 		cout << res[i] << ' ';
 	}

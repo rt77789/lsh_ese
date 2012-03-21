@@ -52,7 +52,7 @@ class Searcher {
 		if(_res.size() > topk) _res.resize(topk);
 		in.close();
 
-		patch(_res);
+		//patch(_res);
 
 		return _res;
 	}
@@ -110,7 +110,7 @@ class Searcher {
 		std::sort(_res.begin(), _res.end());
 		if(_res.size() > topk) _res.resize(topk);
 	
-		patch(_res);
+		//patch(_res);
 
 		return _res;
 	}

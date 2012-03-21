@@ -10,11 +10,10 @@ UTILS=../utils
 
 FFT=../fft
 
-prefix=/opt/local
-#/opt/local/lib/
-libdir=${prefix}/lib
+prefix=/usr/local
+libdir=${prefix}/lib64
 includedir=${prefix}/include
-libs=/usr/lib
+libs=/usr/lib64
 
 flann_includedir=./src/cpp/
 flann_libdir=./lib/

@@ -82,13 +82,16 @@ test_by_type(const string &type) {
 		cost += candi * 1.0 / totalRows;
 		time += t.elapsed();
 
+		std::cout << "L2 Norm result.\n";
+
 		for(size_t i = 0; i < resig.size(); ++i) {
 			apro[x].push_back(resig[i].getID());
 			epro[x].push_back(resig[i].getSim());
+			std::cout << "[" << i << "]: " << resig[i].getSim() << " | " << resig[i].getID() << std::endl;	
 		}
 
 		for(u_int i = 0; i < resig.size(); ++i) {
-			// pair<int, double> fres = FFT::shift(sin, resig[i].getSignal());
+			//pair<int, double> fres = FFT::shift(sin, resig[i].getSignal());
 			pair<int, double> fres = FFT::xcorr(sin, resig[i].getSignal());
 
 			//assert((fres.first % sin.size() + sin.size()) % sin.size() == xres.first);
@@ -103,12 +106,13 @@ test_by_type(const string &type) {
 		}
 
 		sort(resig.begin(), resig.end());
-
+#ifdef L2NORM
 		for(size_t i = 0; i*2 < resig.size(); ++i) {
 			SearchRes tmp = resig[i];
 			resig[i] = resig[resig.size() - 1 - i];
 			resig[resig.size() - 1 - i] = tmp;
 		}
+#endif
 
 		{
 			int offset = 0;

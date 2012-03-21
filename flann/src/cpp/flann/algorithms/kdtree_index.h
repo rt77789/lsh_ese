@@ -559,7 +559,7 @@ private:
          * compute the mean and variance at each level when building a tree.
          * A value of 100 seems to perform as well as using all values.
          */
-        SAMPLE_MEAN = 200000,
+        SAMPLE_MEAN = 500000,
         /**
          * Top random dimensions to consider
          *
