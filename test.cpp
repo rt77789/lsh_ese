@@ -90,9 +90,10 @@ test_by_type(const string &type) {
 			std::cout << "[" << i << "]: " << resig[i].getSim() << " | " << resig[i].getID() << std::endl;	
 		}
 
+//#if (0)
 		for(u_int i = 0; i < resig.size(); ++i) {
-			//pair<int, double> fres = FFT::shift(sin, resig[i].getSignal());
 			pair<int, double> fres = FFT::xcorr(sin, resig[i].getSignal());
+			//pair<int, double> fres = FFT::xcorr(sin, resig[i].getSignal());
 
 			//assert((fres.first % sin.size() + sin.size()) % sin.size() == xres.first);
 
@@ -113,6 +114,7 @@ test_by_type(const string &type) {
 			resig[resig.size() - 1 - i] = tmp;
 		}
 #endif
+//#endif
 
 		{
 			int offset = 0;
@@ -132,7 +134,6 @@ test_by_type(const string &type) {
 				cerr << sig[offset++] << " ";
 			}
 			cerr << endl;
-
 		}
 		for(size_t i = 0; i < resig.size(); ++i) {
 			int offset = resig[i].getOffset();

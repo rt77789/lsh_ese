@@ -482,7 +482,7 @@ private:
             checked.set(index);
             checkCount++;
 
-            DistanceType dist = distance_(dataset_[index], vec, veclen_);
+            DistanceType dist = 0;//distance_(dataset_[index], vec, veclen_);
             result_set.addPoint(dist,index);
 
             return;

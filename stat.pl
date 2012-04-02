@@ -21,7 +21,7 @@ sub id2name {
 	#my $sac_path = 'data/million_data/';
 	my $sac_path = 'wenhuan/wenhuan/';
 	#my $map_path = 'wavelet/million.map';
-	my $map_path = 'wavelet/enh.map';
+	my $map_path = 'wavelet/coco.map';
 
 	open MAP, "<$map_path" or die "open $map_path fail.";
 	my %map;

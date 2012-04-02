@@ -28,7 +28,7 @@ CFLAGS= -Wall -O -g -I${includedir} -I${flann_includedir}
 INCLUDE=-I${includedir} -I${flann_includedir}
 
 
-OBJ=${UTILS}/util.o ${UTILS}/config.o flann_interface.o ${FFT}/fft.o ${FFT}/complex.o 
+OBJ=${UTILS}/util.o ${UTILS}/config.o mrkd_tree.o flann_interface.o ${FFT}/fft.o ${FFT}/complex.o 
 DEPEND=${STRUCTS}/searcher.h ${STRUCTS}/candidate.h ${STRUCTS}/bench.h ${UTILS}/util.h
 
 all: test_case main
@@ -42,6 +42,8 @@ test_case: ${OBJ} ${DEPEND} test_case.cpp
 flann_interface.o: flann_interface.h flann_interface.cpp
 	${CPP} ${CFLAGS} ${INCLUDE} -c flann_interface.cpp -o flann_interface.o
 
+mrkd_tree.o: mrkd_tree.h mrkd_tree.cpp
+	${CPP} ${CFLAGS} ${INCLUDE} -c mrkd_tree.cpp -o mrkd_tree.o
 
 clean:
 	rm -rf *.o test_case main

@@ -64,12 +64,22 @@ void extract_sac_sample(const char *path, const char *opath) {
 		string fn = sacs[i].substr(sacs[i].find_last_of("/") + 1);
 		cerr << i << " " << fn << endl;
 		printf("total: 1350000 - now: %d\r", i);
-		for(size_t j = 0; j < sin.size() && j < 4096; ++j) {
-			if(j > 0) fprintf(fout, " "); 
+
+		size_t jj = 0;
+		/*
+		for(; jj < 250; ++jj) {
+			if(jj > 0) fprintf(fout, " "); 
+			fprintf(fout, "%lf", 0.0);
+		}
+		*/
+
+		for(size_t j = 0; j < sin.size() && jj < 4096; ++j, ++jj) {
+			if(jj > 0) fprintf(fout, " "); 
 			fprintf(fout, "%lf", sin[j]);
 		}
-		for(size_t j = sin.size(); j < 4096; ++j) 
+		for(;jj < 4096; ++jj) 
 			fprintf(fout, " %lf", 0.0);
+
 		fprintf(fout, "\n");
 	}
 	fclose(fout);

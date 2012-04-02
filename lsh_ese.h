@@ -4,6 +4,7 @@
 
 //#include "mplshash/mplshash.h"
 #include "flann/flann_interface.h"
+#include "flann/mrkd_tree.h"
 
 #include <cstdio>
 #include <vector>
@@ -80,7 +81,7 @@ class LShashESE {
 		LShash lsh;
 		WaveletEps wavelet;
 //MPLSHash mpl;
-		FlannInterface flann;
+		MRKDTrees flann;
 
 		std::ifstream fhandle;
 		//FILE *fhandle;

@@ -54,17 +54,24 @@ void FlannInterface::init(int trees, int leaf_max_size, int checks, const std::s
 	bool doSave = Configer::get("flann_do_save").toBool();
 	bool doIndex = Configer::get("flann_do_index").toBool();
 
-	_dataset = new float[_dims * _rows];
-	assert(_dataset != NULL);
-
-	load(dataPath);
 
 	std::cout << "load over." << std::endl;
 	if(doIndex) {
+		_dataset = new float[_dims * _rows];
+		assert(_dataset != NULL);
+
+		load(dataPath);
+
 		buildIndex();
 		if(doSave) {
 			storeIndex(indexPath);
 		}
+		std::cout << "before _dataset free." << std::endl;
+		if(_dataset != NULL) {
+			delete[] _dataset;
+		}
+		std::cout << "after _dataset free." << std::endl;
+
 	}
 	else {
 		restoreIndex(indexPath);
@@ -119,11 +126,11 @@ void FlannInterface::storeIndex(const std::string &path) const {
 
 void FlannInterface::restoreIndex(const std::string &path) {
 	/*
-	if(_dataset != NULL) {
-		delete[] _dataset;
-	}
-	_dataset = new float[_rows * _dims];
-	*/
+	   if(_dataset != NULL) {
+	   delete[] _dataset;
+	   }
+	   _dataset = new float[_rows * _dims];
+	 */
 
 	char *tmpPath = new char[path.size() + 1];
 	strncpy(tmpPath, path.c_str(), path.size());
@@ -153,24 +160,24 @@ void FlannInterface::find(float *query, int K, std::vector<u_int> &result) {
 	}
 }
 /*
-void FlannInterface::findTest(int K) {
-	float *dists = new float[K*_rows];
-	int *res = new int[K*_rows];
-	flann_find_nearest_neighbors_index(_index_id, _dataset, _rows, res, dists, K, &_param);
-	for(int i = 0;  i < _rows; ++i) {
-		for(int j = 0; j < K; ++j) {
-			std::cout << res[i*K + j] << " ";
-		}
-		std::cout << std::endl;
-	}
-	if(dists != NULL) {
-		delete[] dists;
-	}
-	if(res != NULL) {
-		delete[] res;
-	}
-}
-*/
+   void FlannInterface::findTest(int K) {
+   float *dists = new float[K*_rows];
+   int *res = new int[K*_rows];
+   flann_find_nearest_neighbors_index(_index_id, _dataset, _rows, res, dists, K, &_param);
+   for(int i = 0;  i < _rows; ++i) {
+   for(int j = 0; j < K; ++j) {
+   std::cout << res[i*K + j] << " ";
+   }
+   std::cout << std::endl;
+   }
+   if(dists != NULL) {
+   delete[] dists;
+   }
+   if(res != NULL) {
+   delete[] res;
+   }
+   }
+ */
 const float* FlannInterface::getData() {
 	return _dataset;
 }
