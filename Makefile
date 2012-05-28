@@ -42,12 +42,12 @@ FLANN_LIB_OPTION=-L${libdir} -L${flann_libdir} -L${libs} -lflann -lhdf5
 RDANAMIC = -rdynamic ${LIBLSHKIT}/liblshkit.a -Wl,-Bstatic -lboost_program_options-mt -Wl,-Bdynamic -L/usr/local/lib -lgsl -lgslcblas -lm
 
 OBJ=${FLANN}/mrkd_tree.o ${FLANN}/flann_interface.o ${UTILS}/util.o ${UTILS}/config.o $(LSH)/ghash.o $(LSH)/lshash.o $(WAVE)/weps.o\
-	${FFT}/fft.o ${FFT}/complex.o ${MPLSH}/mplshash.o lsh_ese.o ${WAVE}/sacio.o ${WAVE}/sac_prep.o
+	${FFT}/fft.o ${FFT}/complex.o ${MPLSH}/mplshash.o lsh_ese.o ${WAVE}/sacio.o ${WAVE}/sac_prep.o ${UTILS}/indexmapper.o
 
 LSH_ESE_DEP=${FLANN}/mrkd_tree.h ${FLANN}/flann_interface.h ${STRUCTS}/point.h ${LSH}/lshash.h ${WAVE}/weps.h ${UTILS}/util.h ${MPLSH}/mplshash.h lsh_ese.h lsh_ese.cpp
 
 
-all: main test palk_qiz_enh_average
+all: main test palk_qiz_enh_average server
 
 main: fft_make lshash_make wavelet_make mplsh_make flann_make structs_make utils_make ${OBJ} main.cpp
 #main: ${OBJ} main.cpp
@@ -56,6 +56,10 @@ main: fft_make lshash_make wavelet_make mplsh_make flann_make structs_make utils
 test: lshash_make wavelet_make mplsh_make flann_make structs_make utils_make ${OBJ} lsh_ese.h test.cpp
 #test: ${OBJ} test.cpp
 	$(CPP) ${INCLUDE} ${FLANN_LIB_OPTION} ${OBJ} test.cpp -o test ${RDANAMIC}
+
+server: lshash_make wavelet_make mplsh_make flann_make structs_make utils_make ${OBJ} lsh_ese.h server.cpp
+	${CPP} ${INCLUDE} ${FLANN_LIB_OPTION} ${OBJ} server.cpp -o server ${RDANAMIC}
+
 
 palk_qiz_enh_average: lshash_make wavelet_make mplsh_make flann_make structs_make utils_make ${OBJ} lsh_ese.h 
 	$(CPP) ${INCLUDE} ${FLANN_LIB_OPTION} ${OBJ} palk_qiz_enh_average.cpp -o palk_qiz_enh_average ${RDANAMIC}
@@ -94,5 +98,5 @@ clean:
 	cd ${FLANN}; make clean
 	cd ${STRUCTS}; make clean
 	cd ${UTILS}; make clean
-
-	rm -rf *.o main test palk_qiz_enh_average
+	
+	rm -rf *.o main test palk_qiz_enh_average server

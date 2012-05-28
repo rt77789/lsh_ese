@@ -13,17 +13,20 @@ class MPLTuner {
 	vector< float* > _points;
 	double _time;
 
-	pair<double, double> evaluate(MPLSHash &mpl, u_int len, Bench &bench) {
+	vector<double> evaluate(MPLSHash &mpl, u_int len, Bench &bench) {
 		vector< vector<u_int> > apro(_points.size());
 		int rows = Configer::get("rows").toInt();
 
 		double cost = 0;
+		vector<double> cosv;
+
 		for(size_t i = 0; i < _points.size(); ++i) {
 			vector<u_int> eid;
 
 			eoaix::Timer t;
 			mpl.query(_points[i], len, eid);
 
+			cosv.push_back(1. * eid.size() / rows);
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
@@ -33,9 +36,20 @@ class MPLTuner {
 				apro[i].push_back(res[j].getID());
 			}
 		}
-		double recall = bench.recall(apro);
+		pair<double, double> recall = bench.recall(apro);
 		cost = cost / _points.size();
-		return make_pair<double, double>(recall, cost);
+
+		double std = 0;
+		for(size_t i = 0; i < cosv.size(); ++i) {
+			std += (cost - cosv[i]) * (cost - cosv[i]);
+		}
+		vector<double> res;
+		res.push_back(recall.first);
+		res.push_back(recall.second);
+		res.push_back(cost);
+		res.push_back(std);
+		return res;
+		//return make_pair<double, double>(recall, cost);
 	}
 
 	void loadData() {
@@ -81,14 +95,17 @@ class MPLTuner {
 			param.W_ = (leftW + rightW) / 2;
 			MPLSHash mpl;
 			mpl.init(param.W_, param.M_, param.T_, param.L_, param.Q_, param.K_, param.R_, param.H_, param.recall, param.dims);
-			pair<double, double> res = evaluate(mpl, param.dims, bench);
+			vector<double> res = evaluate(mpl, param.dims, bench);
+
 			std::cout << "left: " << leftW 
 				<< " | mid: " << param.W_ 
 				<< " | right: " << rightW 
-				<< " | recall: " << res.first
-				<< " | cost: " << res.second
+				<< " | recall: " << res[0]
+				<< " | std: " << res[1]
+				<< " | cost: " << res[2]
+				<< " | std: " << res[3]
 				<< std::endl;
-			if(res.first > tw) {
+			if(res[0] > tw) {
 				rightW = param.W_ - eps;
 			}
 			else {
@@ -147,14 +164,16 @@ class MPLTuner {
 							MPLSHash mpl;
 							mpl.init(W, M, T, L, Q, K, R, H, recall, dims);
 							_time = 0;
-							pair<double, double> res = evaluate(mpl, dims, bench);
+							vector<double> res = evaluate(mpl, dims, bench);
 							std::cerr << "rows: " << sr << 
 								" | top_k: " << tk << 								" | M: " << M << 
 								" | W: " << W << 
 								//" | checks: " << ck << 
 								" | prob: " << recall <<
-								" = recall: " << res.first << 
-								" - cost: " << res.second <<
+								" = recall: " << res[0] << 
+								" - std: " << res[1] <<
+								" - cost: " << res[2] <<
+								" - std: " << res[3] <<
 								" - time: " << _time << std::endl;
 						//}
 						}

@@ -10,10 +10,13 @@ class NaiveTuner {
 	vector< float* > _points;
 	double _time;
 
-	pair<double, double> evaluate(Bench &bench) {
+	vector<double> evaluate(Bench &bench) {
 		vector< vector<u_int> > apro(_points.size());
 
 		double cost = 0;
+		double time = 0;
+		vector<double> tc;
+
 		for(size_t i = 0; i < _points.size(); ++i) {
 			vector<u_int> eid;
 			eoaix::Timer t;
@@ -22,7 +25,10 @@ class NaiveTuner {
 
 			vector<SearchRes> res;
 			res.swap(Searcher::search(_points[i]));
-			_time += t.elapsed();
+			double ela = t.elapsed();
+ 
+			_time += ela;
+			tc.push_back(ela);
 
 			for(size_t j = 0; j < res.size(); ++j) {
 				apro[i].push_back(res[j].getID());
@@ -30,9 +36,20 @@ class NaiveTuner {
 			}
 		}
 
-		double recall = bench.recall(apro);
-		cost = cost / _points.size();
-		return make_pair<double, double>(recall, cost);
+		double mean_tc = 0;
+		for(size_t i = 0; i < tc.size(); ++i) {
+			mean_tc += tc[i];
+		}
+		mean_tc /= tc.size();
+		double std_tc = 0;
+		for(size_t i = 0; i < tc.size(); ++i) {
+			std_tc += (tc[i] - mean_tc) * (tc[i] - mean_tc);
+		}
+
+		vector<double> res;
+		res.push_back(mean_tc);
+		res.push_back(std_tc);
+		return res;
 	}
 
 
@@ -65,6 +82,7 @@ class NaiveTuner {
 		int multi_file_rows = Configer::get("multi_file_rows").toInt();
 
 		int min_rows = multi_file_rows, max_rows = _dataset_rows, step_rows = min_rows;
+		int query_num = Configer::get("testset_query_num").toInt();
 
 		for(int r = min_rows; r <= max_rows; r += step_rows) {
 			std::string sr = eoaix::itoa(r, 10);
@@ -83,29 +101,25 @@ class NaiveTuner {
 				
 				_time += time.elapsed();
 
-				/*
 				cout << "end bench init()" << endl;
-
 				cout << "tk(string): " << stk << " | " << "project_top_k: " << Configer::get("project_top_k").toString() << endl;
 
 
-
 				cout << "before evaluate: "; eoaix::print_now();
-				pair<double, double> res = evaluate(bench);
-				*/
+				vector<double> res = evaluate(bench);
+
 				std::cerr << "rows: " << sr <<
 					" | top_k: " << tk <<
 					/*
 					" = recall: " << res.first << 
 					" - cost: " << res.second << 
 					*/
-					" - time: " << _time << std::endl;
+					" - mean_tc: " << res[0] <<
+					" - std_tc: " << res[1] << std::endl;
 				eoaix::print_now();
 			}
 		}
 	}
-
-
 };
 int main() {
 	NaiveTuner tt;

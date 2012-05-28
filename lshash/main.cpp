@@ -15,7 +15,7 @@ class LSHTuner {
 
 	double _time;
 
-	pair<double, double> evaluate(LShash &lsh, Bench &bench) {
+	vector<double> evaluate(LShash &lsh, Bench &bench) {
 		vector< vector<u_int> > apro(_points.size());
 		int rows = Configer::get("rows").toInt();
 		size_t top_k = Configer::get("project_top_k").toInt();
@@ -23,6 +23,10 @@ class LSHTuner {
 		double cost = 0;
 		double time = 0;
 		std::cout << "_points.size(): " << _points.size() << std::endl;
+		
+		vector<double> cosv;
+		vector<double> tc;
+
 		for(size_t i = 0; i < _points.size(); ++i) {
 			vector<u_int> eid;
 			Point p;
@@ -31,26 +35,52 @@ class LSHTuner {
 			eoaix::Timer t;
 
 			lsh.find(p, eid);
+			cosv.push_back(1.0 * eid.size() / rows);
+
 			cost += 1.0 * eid.size() / rows;
 
 			vector<SearchRes> res;
 			res.swap(Searcher::search(eid, _points[i]));
 
-			time += t.elapsed();
+			double ela = t.elapsed();
+
+			time += ela;
+			tc.push_back(ela);
 
 			for(size_t j = 0; j < res.size() && j < top_k; ++j) {
 				apro[i].push_back(res[j].getID());
-				/*
 				   std::cout << "dis: " << res[j].getSim() << 
 					" | id: " << res[j].getID() << std::endl;
-					*/
 			}
-			//std::cout << string('-', 80) << std::endl;
+			std::cout << string('-', 80) << std::endl;
 		}
+		
 		_time += time / _points.size();
-		double recall = bench.recall(apro);
+		pair<double, double> recall = bench.recall(apro);
 		cost = cost / _points.size();
-		return make_pair<double, double>(recall, cost);
+
+		double std = 0;
+		for(size_t i = 0; i < cosv.size(); ++i) {
+			std += (cost - cosv[i]) * (cost - cosv[i]);
+		}
+		double mean_tc = 0, std_tc = 0;
+		for(size_t i = 0; i < tc.size(); ++i) {
+			mean_tc += tc[i];
+		}
+		mean_tc /= tc.size();
+		for(size_t i = 0; i < tc.size(); ++i) {
+			std_tc += (mean_tc - tc[i]) * (mean_tc - tc[i]);
+		}
+		vector<double> res;
+		/* mean of recall, std of recall ; mean of cost, std of cost. */
+		res.push_back(recall.first);
+		res.push_back(recall.second);
+		res.push_back(cost);
+		res.push_back(std);
+		res.push_back(mean_tc);
+		res.push_back(std_tc);
+
+		return res;
 	}
 
 
@@ -81,10 +111,15 @@ class LSHTuner {
 		double R;
 	};
 
-	pair<double, double> aveEval(Parameter &param, Bench &bench) {
+	vector<double> aveEval(Parameter &param, Bench &bench) {
 		double recall = 0, cost = 0;
 		int retry = Configer::get("lsh_random_vector_try").toInt();
 		_time = 0;
+		vector<double> reco;
+
+		reco.resize(6);
+		double mean_tc = 0, std_tc = 0;
+
 		for(int i = 0; i < retry; ++i) {
 			LShash lsh;
 			cout << "lsh.init begin: "; eoaix::print_now();
@@ -92,14 +127,21 @@ class LSHTuner {
 			lsh.init(param.K, param.prob, param.W, param.R);
 			lsh.showStat();
 			cout << "lsh.init() end: "; eoaix::print_now();
-			pair<double, double> res = evaluate(lsh, bench);
+			vector<double> res = evaluate(lsh, bench);
 			cout << "evaluate end: "; eoaix::print_now();
 
-			recall += res.first;
-			cost += res.second;
+			recall += res[0];
+			cost += res[2];
+			mean_tc += res[4];
+			std_tc += res[5];
+
+			for(size_t j = 0; j < reco.size(); ++j) {
+				reco[j] += res[j];
+			}
+
 			std::cout << "aveEval[" << i << "]: "
-				<< "recall: " << res.first
-				<< " | cost: " << res.second
+				<< "recall: " << res[0]
+				<< " | cost: " << res[2]
 				<< " | time: " << _time
 				<< std::endl;
 		}
@@ -107,24 +149,32 @@ class LSHTuner {
 		_time /= retry;
 		recall /= retry;
 		cost /= retry;
-		return make_pair<double, double>(recall, cost);
+		mean_tc /= retry;
+		std_tc /= retry;
+
+		for(size_t j = 0; j < reco.size(); ++j)
+			reco[j] /= retry;
+
+		return reco;
 	}
 	double tuneW(double tw, Parameter &param, Bench &bench) {
 		double leftW = 0;
-		double rightW = 0.3;
-		const double eps = 0.0001;
+		double rightW = 10;
+		const double eps = 0.1;
 		while(leftW + eps <= rightW)
 		{
 			param.W = (leftW + rightW) / 2;
 			//_time = 0;
-			pair<double, double> res = aveEval(param, bench);
+			vector<double> res = aveEval(param, bench);
 			std::cout << "left: " << leftW 
 				<< " | mid: " << param.W 
 				<< " | right: " << rightW 
-				<< " | recall: " << res.first 
-				<< " | cost: " << res.second 
+				<< " | recall: " << res[0]
+				<< " | std: " << res[1]
+				<< " | cost: " << res[2]
+				<< " | std: " << res[3]
 				<< std::endl;
-			if(res.first > tw) {
+			if(res[0] > tw) {
 				rightW = param.W - eps;
 			}
 			else {
@@ -146,7 +196,7 @@ class LSHTuner {
 
 		double prob = 0.9, R = 0.5;
 		double min_prob = 0.2, max_prob = 0.9, step_prob;
-		int min_K = 8, max_K = 20, step_K = 2;
+		int min_K = 10, max_K = 10, step_K = 2;
 		ofstream ow("k_w.map");
 		for(int i = min_K; i <= max_K; i += step_K) {
 			Parameter param(0, i, prob, R);
@@ -228,14 +278,20 @@ class LSHTuner {
 						double min_W = iter->second.first;//0.0001;//tuneW(min_prob, param, bench);
 						double max_W = iter->second.second;//0.03;//tuneW(max_prob, param, bench);
 
-						double step_W = min_W; //(max_W - min_W) / 10;
+						double step_W = 0.05; //(max_W - min_W) / 20;
 
 						int sw = 1;
-						for(double W = min_W; W <= max_W; W+=step_W) {
+						//double aw[] = {1.1, 1.3, 1.8, 2, 3.8, 4};
+						double aw[] = {3.4}; //, 1.0, 1.1, 1.67, 1.73, 2.6, 3, 3.5};
+
+						//for(double W = min_W; W <= max_W; W += step_W) {
+						for(int ai = 0; ai < 1; ++ai) {
+							double W = aw[ai];
 							sw += 1;
+							step_W *= 1.2;
 							param.W = W;	
 							_time = 0;
-							pair<double, double> res = aveEval(param, bench);
+							vector<double> res = aveEval(param, bench);
 							std::cerr << "rows: " << sr << 
 								" | top_k: " << tk <<
 								" | checks: " << checks <<
@@ -243,11 +299,14 @@ class LSHTuner {
 								" | W: " << W << 
 								//" | checks: " << ck << 
 								" | prob: " << prob <<
-								" = recall: " << res.first << 
-								" - cost: " << res.second <<
-								" - time: " << _time << std::endl;
+								" = recall: " << res[0] << 
+								" - std: " << res[1] << 
+								" - cost: " << res[2]<<
+								" - std: " << res[3] <<
+								" - mean_tc: " << res[4] << 
+								" - std_tc: " << res[5] << std::endl;
 							//}
-
+							//if(W > 2) W += 0.3;
 					}
 				}
 			}

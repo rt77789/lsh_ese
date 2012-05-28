@@ -75,15 +75,48 @@ void extract_sac_sample(const char *path, const char *opath) {
 
 		for(size_t j = 0; j < sin.size() && jj < 4096; ++j, ++jj) {
 			if(jj > 0) fprintf(fout, " "); 
-			fprintf(fout, "%lf", sin[j]);
+			fprintf(fout, "%.20lf", sin[j]);
 		}
-		for(;jj < 4096; ++jj) 
-			fprintf(fout, " %lf", 0.0);
+		//for(;jj < 4096; ++jj) 
+	//		fprintf(fout, " %lf", 0.0);
 
 		fprintf(fout, "\n");
 	}
 	fclose(fout);
 }
+void extract_sac_sample(const string& path) {
+
+	vector<string> sacs;
+	sacs.push_back(path);
+
+	// Load Sac file one by one.
+
+	for(size_t i = 0; i < sacs.size(); ++i) {
+		PSac ps(sacs[i].c_str());
+
+		vector<double> sin;
+		ps.data2vector(sin);
+		string fn = sacs[i].substr(sacs[i].find_last_of("/") + 1);
+		//cerr << i << " " << fn << endl;
+
+		/* normalize. */
+		double max = 0;
+		for(size_t j = 0; j < sin.size(); ++j) {
+			if(fabs(sin[j]) > max) {
+				max = fabs(sin[j]);
+			}
+		}
+
+		size_t jj = 0;
+		for(size_t j = 0; j < sin.size(); ++j, ++jj) {
+			if(jj > 0) printf(" "); 
+			printf("%.20lf", sin[j] / max);
+		}
+		printf("\n");
+	}
+}
+
+
 
 void
 deal_data() {
@@ -264,6 +297,9 @@ main(int argc, char **args) {
 	}
 	else if(argc >= 4 && strcmp(args[1], "-sample") == 0) {
 		extract_sac_sample(args[2], args[3]);
+	}
+	else if(argc >= 3 && strcmp(args[1], "-sample2") == 0) {
+		extract_sac_sample(args[2]);
 	}
 	else {
 		perror("ill option");

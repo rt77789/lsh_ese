@@ -68,7 +68,7 @@ void FlannInterface::init(int trees, int leaf_max_size, int checks, const std::s
 		}
 		std::cout << "before _dataset free." << std::endl;
 		if(_dataset != NULL) {
-			delete[] _dataset;
+			//delete[] _dataset;
 		}
 		std::cout << "after _dataset free." << std::endl;
 

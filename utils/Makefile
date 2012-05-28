@@ -4,9 +4,9 @@ CPP=g++
 
 CFLAGS = -Wall -O -g 
 INCLUDE=
-CONFIG_TEST_OBJ=util.o config.o sacio.o sac_prep.o
+CONFIG_TEST_OBJ=indexmapper.o util.o config.o sacio.o sac_prep.o
 
-.PHONY : test_case config.o util.o
+.PHONY : test_case config.o util.o indexmapper.o
 
 all: test_case 
 
@@ -18,6 +18,9 @@ config.o: config.h config.cpp
 
 util.o: util.h util.cpp
 	${CPP} ${INCLUDE} ${CFLAGS} -c util.cpp -o util.o
+
+indexmapper.o: indexmapper.h indexmapper.cpp
+	${CPP} ${INCLUDE} ${CFLAGS} -c indexmapper.cpp -o indexmapper.o
 
 sac_prep.o: sac_prep.h sac_prep.cpp
 	${CPP} ${INCLUDE} ${CFLAGS} -c sac_prep.cpp -o sac_prep.o

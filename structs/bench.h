@@ -175,11 +175,12 @@ class Bench {
 		return apro.size() > 0 ? total / apro.size() : total;	
 	}
 
-	double recall(const vector< vector<u_int> > &apro) {
+	pair<double, double> recall(const vector< vector<u_int> > &apro) {
 		int insect = 0;
 		double total = 0;
 		double min_case = 1;
 		double max_case = 0;
+		vector<double> recv;
 
 		for(size_t i = 0; i < apro.size(); ++i) {
 			double si = 0;
@@ -191,12 +192,21 @@ class Bench {
 			}
 			total += _bench[i].size();
 			double st = si / _bench[i].size();
+			recv.push_back(st);
+			
 			if(st < min_case) min_case = st;
 			if(st > max_case) max_case = st;
 		}
+		/* 方差. */
+		double std = 0;
+		double mean = insect / total;
+
+		for(size_t i = 0; i < recv.size(); ++i) {
+			std += (recv[i] - mean) * (recv[i] - mean);
+		}
 		std::cout << "min single case precision: " << min_case << std::endl;
 		std::cout << "max single case precision: " << max_case << std::endl;
-		return insect / total;	
+		return make_pair<double, double>(mean, std);
 	}
 };
 #endif

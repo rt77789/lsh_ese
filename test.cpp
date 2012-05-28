@@ -92,7 +92,17 @@ test_by_type(const string &type) {
 
 //#if (0)
 		for(u_int i = 0; i < resig.size(); ++i) {
-			pair<int, double> fres = FFT::xcorr(sin, resig[i].getSignal());
+			pair<int, double> fres;
+			//FFT::xcorr(sin, resig[i].getSignal());
+#ifdef T0XCORR
+			//std::cout << "finally reorder by t=0 correlation\n";
+			fres.first = 0;
+			fres.second = FFT::t0xcorr(sin, resig[i].getSignal());
+#else
+			//std::cout << "finally reorder by cross-correlation\n";
+			fres = FFT::xcorr(sin, resig[i].getSignal());
+			//fres = FFT::shift(sin, resig[i].getSignal());
+#endif
 			//pair<int, double> fres = FFT::xcorr(sin, resig[i].getSignal());
 
 			//assert((fres.first % sin.size() + sin.size()) % sin.size() == xres.first);
@@ -120,6 +130,7 @@ test_by_type(const string &type) {
 			int offset = 0;
 			cout << "[input]: " << 1 << " | -1 | " << offset << endl;
 
+			cout << "<final_ans>\n";
 			vector<double> sig;
 			vector<double> &rs = sin;
 			sig.assign(rs.begin(), rs.end());
@@ -154,13 +165,16 @@ test_by_type(const string &type) {
 			}
 			cerr << endl;
 		}
+
+		cout << "</final_ans>\n";
 	}
 	if(doBenchmark) {
 		Bench bench;
 		bench.init();
-		double recall = bench.recall(apro);
+		pair<double, double> recall = bench.recall(apro);
 		double e = bench.recall(epro);
-		cout << "recall: " << recall << endl;
+		cout << "recall: " << recall.first << endl;
+		cout << "std_r: " << recall.second << endl;
 		cout << "cost: " << cost / p.size() << endl;
 		cout << "E: " << e << endl;
 		cout << "time: " << time << endl;

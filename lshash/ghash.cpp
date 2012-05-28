@@ -53,7 +53,7 @@ Ghash::init(u_int M, u_int K, double W, double R) {
 
 	for(int i = 0; i < U_NUM_IN_G; ++i)
 		h1TimesU[i].clear(), h2TimesU[i].clear();
-	
+
 	for(u_int i = 0; i < _M; ++i) {
 		vector<Point> u;
 		for(int j = (int)_K/ 2; j >= 0; --j) {
@@ -70,7 +70,7 @@ Ghash::init(u_int M, u_int K, double W, double R) {
 		h1Points.push_back(Util::randomU64(0, (u64)1LL<<63));
 		h2Points.push_back(Util::randomU64(0, (u64)1LL<<63));
 	}
-	
+
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
 		h1TimesU[i].resize(_M, 0);
 		h2TimesU[i].resize(_M, 0);
@@ -127,13 +127,13 @@ double Ghash::evaluateVector(const Point &p) {
 			disAve = disSum;
 		}
 		/*
-		if(edgeNum > 0) {
-			//disAve += disSum / edgeNum;
+		   if(edgeNum > 0) {
+		//disAve += disSum / edgeNum;
 		}
 		else {
-			std::cout << "iter->second.size(): " << iter->second.size() << std::endl;
+		std::cout << "iter->second.size(): " << iter->second.size() << std::endl;
 		}
-		*/
+		 */
 	}
 	return disAve;
 }
@@ -279,7 +279,7 @@ Ghash::restoreStaticFields(FILE *fh) {
 			h2TimesU[i].push_back(tu);
 		}
 	}
-	
+
 
 	//# projectValue info.
 	projectValue.clear();
@@ -340,7 +340,7 @@ Ghash::preComputeFields(Point &q) {
 			projectValue[i][j] = (u64)((uPoints[i][j] * q + _b)/_W);
 		}
 	}
-	
+
 	for(u_int i = 0; i < U_NUM_IN_G; ++i) {
 		for(u_int j = 0; j < _M; ++j) {
 			h1TimesU[i][j] = h2TimesU[i][j] = 0;
@@ -362,15 +362,71 @@ Ghash::Ghash(u_int *puIndex) {
 
 	if(!_use_uhash) {
 		_randVector.resize(_K);
-		for(u_int i = 0; i < _K; ++i) {
-			Point p;
-			selectRandomVector(p);
-			_randVector[i] = p;
+
+		/* 这里设计有问题. */
+		bool flag = true;
+		std::string rvid = eoaix::itoa(puIndex[0], 10);
+
+		std::string rvpath = Configer::get("project_dir").toString() + Configer::get("lsh_random_vector_path").toString() + rvid;
+
+		if(Configer::get("lsh_load_random_vector").toBool()) {
+			/* load from file. */
+			std::ifstream rvin(rvpath.c_str());
+
+			if(rvin.is_open()) {
+				rvin >> _b;
+				//cout << "load from random vector, rvpath: " << rvpath << endl;
+				for(u_int i = 0; i < _K; ++i) {
+					for(u_int j = 0; j < DIMS; ++j) {
+						rvin >> _randVector[i].d[j];
+			//			cout << _randVector[i].d[j] << " ";
+					}
+			//		cout << endl;
+				}
+				flag = false;
+			}
+			rvin.close();
+		}
+		if(flag) {
+			//cout << "randomized select vector, rvpath: " << rvpath << endl;
+			for(u_int i = 0; i < _K; ++i) {
+				Point p;
+				selectRandomVector(p);
+				_randVector[i] = p;
+			}
+		}
+		
+		if(Configer::get("lsh_save_random_vector").toBool()) {
+			std::ofstream orv(rvpath.c_str());
+			assert(orv.is_open());
+			orv << _b << endl;	
+			for(u_int i = 0; i < _K; ++i) {
+				for(u_int j = 0; j < DIMS; ++j) {
+					if(j > 0) orv << " ";
+					orv << _randVector[i].d[j];
+				}
+				orv << std::endl;
+			}
+			orv.close();
 		}
 	}
 }
 
 Ghash::~Ghash() {
+	// free talbes[];
+	for(int i = 0; i < TABLE_PRIME; ++i) {
+		if(this->tables[i] != NULL)
+			delloc(this->tables[i]);
+	}
+}
+
+void Ghash::delloc(Gnode* ptr) {
+	if(ptr->next != NULL) {
+		delloc(ptr->next);
+	}
+	if(ptr != NULL) {
+		delete ptr;
+	}
 }
 
 u_int
@@ -439,7 +495,7 @@ u_int Ghash::getUnemptyNum() const {
 void
 Ghash::addNode(const Point &q) {
 	Gnode *ptr = new Gnode();
-	
+
 	pair<u64, u64> mask = calh1Andh2(q);
 
 	ptr->h2value = mask.second;
@@ -473,7 +529,7 @@ Ghash::addNode(const Point &q) {
 Gnode*
 Ghash::findNode(const Point &q) {
 	pair<u64, u64> mask = calh1Andh2(q);
-	
+
 	Gnode *ptr = tables[mask.first];
 	while(ptr != NULL) {
 		//# It's wrong here, because there're many node whose h2value == mask.second.
@@ -488,7 +544,7 @@ Ghash::findNode(const Point &q) {
 void
 Ghash::findNodes(const Point &q, vector<u_int> &eid) {
 	pair<u64, u64> mask = calh1Andh2(q);
-	
+
 	Gnode *ptr = tables[mask.first];
 	while(ptr != NULL) {
 		//# It's wrong here, because there're many node whose h2value == mask.second.
@@ -536,16 +592,16 @@ Ghash::storeObjectFields(FILE *fh) {
 		assert(1 == fwrite(&counter[i], sizeof(u_int), 1, fh));
 		Gnode *ptr = tables[i];
 		/*
-		cout << counter[i] << endl;
-		int tnum = 0;
-		while(ptr != NULL) {
-			ptr = ptr->next;
-			++tnum;
-		}
-		cout << "tnum: " << tnum << " - counter[i]:" << counter[i] << endl;
-		assert(tnum == counter[i]);
-		ptr = tables[i];
-		*/
+		   cout << counter[i] << endl;
+		   int tnum = 0;
+		   while(ptr != NULL) {
+		   ptr = ptr->next;
+		   ++tnum;
+		   }
+		   cout << "tnum: " << tnum << " - counter[i]:" << counter[i] << endl;
+		   assert(tnum == counter[i]);
+		   ptr = tables[i];
+		 */
 		for(u_int j = 0; j < counter[i]; ++j) {
 			assert(ptr != NULL);
 			assert(1 == fwrite(ptr, sizeof(Gnode), 1, fh));

@@ -26,6 +26,8 @@ class Ghash {
 	Gnode *findNode(const Point &q);
 	//# Find all nodes hashed into buckets as same as q.
 	void findNodes(const Point &q, vector<u_int> &eid);
+	//# delete the tables[] memory allocated.
+	void delloc(Gnode* ptr);
 
 	//# Get the maximal length of buckets in current Ghash object.
 	u_int getMaxBucketLen() const;
@@ -36,6 +38,7 @@ class Ghash {
 	u_int getMedian() const;
 
 	std::string showStat();
+
 
 	//# static functions.
 	//# initial all the fields.

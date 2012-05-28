@@ -1,6 +1,7 @@
 
 #include "util.h"
 #include "config.h"
+#include "indexmapper.h"
 
 #include <cmath>
 #include <fstream>
@@ -71,6 +72,11 @@ class TestUtil {
 };
 
 int main() {
-	TestConfiger::testInit("test.config");
-	TestUtil::test();
+	//TestConfiger::testInit("test.config");
+	//TestUtil::test();
+	Configer::init("../all.config");
+	IndexMapper::init(Configer::get("project_dir").toString() + Configer::get("index_mapper_path").toString());
+
+	for(int i = 0; i < 330480; ++i)
+	std::cout << i << " " << IndexMapper::get(i) << std::endl;
 }

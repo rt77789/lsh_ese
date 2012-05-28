@@ -14,15 +14,16 @@ typedef unsigned long long u64;
 //# Batch fread Points at one time.
 #define BATCH_READ_NUM 1
 
-#define DIMS 4096
+#define DIMS 2048
 #define FREQUENT 100
 
 //# switch t0.
 //#define T0XCORR
 
 //#ifndef T0XCORR /* T0XCORR priority is higher than L2NORM. */
-#define L2NORM /* L2 metric for correlation. */
+#define L2NORM/* L2 metric for correlation. */
 //#endif
+
 
 /* Switch for normalize the input dataset and query or not. */
 #define NORMALIZE

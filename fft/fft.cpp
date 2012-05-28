@@ -181,6 +181,8 @@ FFT::xcorr(const vector<double> &x, const vector<double> &y) {
 		xmean += nx[i], ymean += ny[i];
 	}
 	xmean /= len; ymean /= len;
+//	xmean = ymean = 0;
+//	std::cout << "xmean: " << xmean << " - ymean: " << ymean << std::endl;
 
 	for(size_t i = 0; i < len; ++i) {
 		nx[i] -= xmean; ny[i] -= ymean;

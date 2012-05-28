@@ -16,6 +16,7 @@ LShash::LShash() {
 	}
 
 LShash::~LShash() {
+	_g.clear();
 }
 
 void LShash::init() {
@@ -60,14 +61,15 @@ void LShash::init(u_int K, int M, double prob, double W, double R) {
 		}
 		else {
 			/* Using L random vectors. */
-			uIndex[0] = uIndex[1] = 0;
 			int L = Configer::get("lsh_L").toInt();
 			std::cout << "L: " << L << std::endl;
-			for(int i = L; i > 0; --i) {
+
+			for(int i = 0; i < L; ++i) {
+				uIndex[0] = uIndex[1] = i;
 				_g.push_back(Ghash(uIndex));
 			}
 		}
-		if(uIndex == NULL) {
+		if(uIndex != NULL) {
 			delete[] uIndex;
 		}
 
@@ -92,7 +94,7 @@ void LShash::buildIndex() {
 	std::ifstream in(path.c_str(), ios_base::binary);
 
 	if(!in.is_open()) {
-		std::clog << path + " open failed..." << std::endl;
+		std::cerr << path + " open failed..." << std::endl;
 		throw path + " open failed...";
 	}
 

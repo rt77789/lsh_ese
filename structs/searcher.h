@@ -94,6 +94,7 @@ class Searcher {
 			double sim = FFT::corr(tin, sin);
 			_res.push_back(SearchRes(p.identity, sim, tin));
 
+			//cout << "p.identity: " << p.identity << " index[i]: " << index[i] << endl;
 			assert(p.identity == index[i]);
 			base = (u64)sizeof(Point) * index[i];
 
